@@ -1,0 +1,55 @@
+\documentclass[notitlepage,longbibliography]{revtex4-1}
+
+% Project name
+\newcommand{\kms}{SmartKMS}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[margin=5pt]{subfig}
+\usepackage[usenames]{color}
+\usepackage{librebaskerville}
+% \usepackage{xspace}
+\definecolor{darkgreen}{rgb}{0.00,0.50,0.25}
+\definecolor{darkblue}{rgb}{0.00,0.00,0.67}
+\newcommand{\figref}[1]{Fig.~\ref{#1}}
+\usepackage[breaklinks,pdftitle={SmartKMS: blockchain-based encryption as a service}, pdfauthor={Michael Egorov},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
+\usepackage[usenames]{color}
+\graphicspath{{pdf/}}
+
+\begin{document}
+
+\title{\kms~--- blockchain-based key management as a service}
+
+\author{M. Egorov}
+\email{michael@nucypher.com}
+\author{M. Wilkison}
+\email{maclane@nucypher.com}
+\affiliation{NuCypher}
+
+% TODO: include David Nunez when he agrees
+
+\begin{abstract}
+    \kms~is a global, world-sized Key Management System.
+    It provides encryption and access management functionality as a service, performed by the decentralized network,
+    with the help of proxy re-encryption~\cite{wiki:pre}.
+    Importantly, it doesn't rely on trusting a service provider, unlike centralized encryption-as-a-service solutions.
+    \kms~enables sharing of sensitive data for both decentralized and centralized applications,
+    giving a promise to revolutionize healthcare, secure identity data and enable creation of decentralized pay-for-content applications.
+\end{abstract}
+
+\date{\today}
+\maketitle
+
+\section{Introduction}
+
+The \kms~is a blockchain-based encryption and access control management as a service.
+
+(Overview of encryption: symmetric encryption, public key encryption, encryption at rest, TLS).
+
+(Overview of key management systems: what they do, why, KMS as a service - CloudHSM, truevault; self-run: hashicorp).
+
+(Brief statement that we enable KMSaas with combination of blockchain and PRE)
+
+\bibliography{kms-whitepaper}
+
+\end{document}
