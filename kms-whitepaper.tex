@@ -55,6 +55,27 @@ Key Management Tokens (KMT) are used to perform key management and access delega
 \section{Architecture}
 
 \subsection{Cryptographic primitives}
+Proxy re-encryption (PRE) is a type of public-key encryption (PKE) that allows a proxy entity to transform ciphertexts
+from one public key to another, without learning anything about the underlying message.
+Compared to existing PKE protocols which are ideal for 1-to-1 communication, PRE is more scalable for N-to-N communication
+with arbitrary numbers of producers and consumers. This makes it well-suited for distributed systems such as blockchain,
+distributed networks, and big data [https://nucypher.com/hadoop/].
+ 
+A simple PRE workflow is illustrated in Figure~\ref{fig-pre}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\columnwidth]{pre.png}
+\caption{Main actors and interactions in a PRE environment}\label{fig-pre}
+\end{figure}
+
+Alice, the data owner, encrypts a message $m$, with her public key $pk_{A}$, resulting in ciphertext $c_{A}$.
+She decides to delegate access to message m to Bob who has the key pair $(pk_{B}, sk_{B})$.
+To do so, Alice creates a re-encryption key $rk_{A->B}$, which is created by applying a function to her secret key $sk_{A}$ and
+Bob’s public key $pk_{B}$.
+Importantly, this re-encryption function is one way, and $rk_{A->B}$ cannot be decomposed into its component parts.
+All it can do is re-encrypt $c_{A}$ such that it is transformed into $c_{B}$, where $c_{B}$ = $ReEnc(rk_{A->B}, c_{A})$.
+Bob can then decrypt $c_{B}$ using his secret key $sk_{B}$.
 
 \subsection{Re-encryption nodes}
 
