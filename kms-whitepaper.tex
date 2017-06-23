@@ -43,12 +43,48 @@
 \section{Introduction}
 
 The \kms~is a blockchain-based encryption and access control management as a service.
+It enables secure private data sharing between arbitrary number of participants in public and/or decentralized networks.
+Key Management Tokens (KMT) are used to perform key management and access delegation/revokation operations.
 
 (Overview of encryption: symmetric encryption, public key encryption, encryption at rest, TLS).
 
 (Overview of key management systems: what they do, why, KMS as a service - CloudHSM, truevault; self-run: hashicorp).
 
 (Brief statement that we enable KMSaas with combination of blockchain and PRE)
+
+\section{Architecture}
+
+\subsection{Cryptographic primitives}
+
+\subsection{Re-encryption nodes}
+
+\subsection{Local encryption library and daemon}
+
+\section{Functionality}
+
+\subsection{Sharing short secrets}
+
+\subsection{Sharing files}
+
+\subsection{Sharing encrypted streams}
+
+\subsection{Time-based and condition-based policies}
+
+\subsection{Policies controlled by smart contracts}
+
+\section{Economics}
+
+\section{Use cases}
+
+\section{Security risks}
+
+\begin{itemize}
+    \item Split trust;
+    \item Node collusion;
+    \item Disinsentivising leakage of a re-encryption key.
+\end{itemize}
+
+\section{Proposed roadmap}
 
 \bibliography{kms-whitepaper}
 
