@@ -79,14 +79,40 @@ Key Management Tokens (KMT) are used to perform key management and access delega
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
 functionality, including:
-\begin{itemize}
-    \item Sharing encrypted files (``Decentralized dropbox'');
-    \item End-to-end encrypted group chat;
-    \item Decentralized digital rights management (DDRM);
-    \item Patient-controlled electronic health records (EHR);
-    \item Identity management;
-    \item Secret credentials management for scripts and backend applications
-\end{itemize}
+
+\subsection{Sharing encrypted files (``Decentralized dropbox'')}
+Files can be encrypted client-side and stored in decentralized filesystems like IPFS (or centralized ones like S3).
+The files can be easily shared with approved third-parties by providing a re-encryption token based on the third-parties
+public key.
+The third-parties access permission can be easily revoked by removing the re-encryption token from the network.
+
+\subsection{End-to-end encrypted group chat}
+PRE is an ideal primitive for end-to-end encrypted group messaging, in which multiple participants require read and write
+access to a channel. Members can easily be added or removed to the chat by issuing or revoking a re-encryption token.
+This avoids the overhead of encrypting and sending messages multiple times, individually for each participant.
+
+\subsection{Patient-controlled electronic health records (EHR)}
+A patient-controlled EHR can be created in the patient owns their data and encryption keys, as opposed to an centralized
+company like Epic.
+Again, the data can be stored centrally or in a decentralized system.
+When the patient wants to share their encrypted data with a hospital or insurance company, they issue a re-encryption token,
+which grants temporary access to the third-party.
+
+\subsection{Decentralized digital rights management (DDRM)}
+Cryptographic access controls can act as a kind of decentralized DRM.
+Access controls can be embedeed into the encryption itself so that they follow the data wherever it goes.
+Conditional re-encryption tokens can be controlled by a smart contract and released only upon payment.
+Services like a decentralized Netflix or an encrypted marketplace selling software, apps, photos, and other content
+can now be built using \kms.
+
+\subsection{Identity management}
+
+\subsection{Secret credentials management for scripts and backend applications}
+\kms~is ideal for the storage of any secrets, such as sensitive environment variables, database credentials, and API keys.
+It can be used for shared credentials that employees use to access web services.
+An audit log mechanism could be built to monitor what secrets are accessed and by whom.
+When an employee leaves, it is easy to revoke access or even roll keys.
+For scripts, a re-encryption token can be generated for the duration of a script, then revoked.
 
 \section{Security risks}
 
