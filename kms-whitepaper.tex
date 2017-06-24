@@ -66,6 +66,14 @@ $$c = \text{encrypt}_{sym}(dek, d),$$
 $$d = \text{decrypt}_{sym}(dek, c),$$
 where $d$ is plaintext data, and $c$ is ciphertext (encrypted data).
 
+A simple symmetric encryption workflow is illustrated in Figure~\ref{fig-symmetric}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\columnwidth]{symmetric.png}
+\caption{Main actors and interactions in a symmetric encryption environment}\label{fig-symmetric}
+\end{figure}
+
 The most useful symmetric key encryption algorithms for our purposes are AES (because it's normally hardware-accelerated)~\cite{wiki:aes}
 and Salsa20~\cite{wiki:salsa20}.
 
@@ -78,15 +86,29 @@ Public key encryption (PKE) is a type of encryption where two parties (a sender 
 Every participant has a key pair (a public $pk$ and a secret (or private) key $sk$).
 If the sender has a key pair $sk_s/pk_s$ and the receiver~--- $sk_r/pk_r$, the sender can encrypt a message with the receiver's public key (which is known in advance),
 and the receiver can decrypt with his secret key.
-Public key encryption can be combined with symmetric encryption to create an envelope encryption scheme that enjoys both the performance benefits
-of symmetric key encrytion while removing the need for a shared secret.
-An example encryption flow defines the functions:
+
+A simple PKE workflow is illustrated in Figure~\ref{fig-pke}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\columnwidth]{pke.png}
+\caption{Main actors and interactions in a symmetric encryption environment}\label{fig-pke}
+\end{figure}
+
+Hybrid cryptosystems can be created that combine the efficiency of symmetric encryption with the convenience of PKE.
+An example hybrid cryptosytem encryption flow defines the functions:
 $$dek = \text{random}();\qquad c = \text{encrypt}_{sym}(dek, d);\qquad edek=\text{encrypt}_{pke}(dek, pk_r).$$
 The pair $(edek, c)$ is used to transfer the encrypted data.
 The associated decryption by the receiver defines the functions:
 $$dek=\text{decrypt}_{pke}(edek, sk_r);\qquad d = \text{decrypt}_{sym}(dek, c).$$
 
-A simple envelope encryption workflow is illustrated in Figure~\ref{fig-envelope}.
+A simple hybrid cryptosystem workflow is illustrated in Figure~\ref{fig-hybrid}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\columnwidth]{hybrid.png}
+\caption{Main actors and interactions in a hybrid cryptosystem environment}\label{fig-hybrid}
+\end{figure}
 
 \subsubsection{Proxy re-encryption}
 Proxy re-encryption (PRE)~\cite{wiki:pre,phd:nunez} is a type of public-key encryption (PKE) that allows a proxy entity to transform ciphertexts
