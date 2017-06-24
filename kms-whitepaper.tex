@@ -81,6 +81,17 @@ We assume modes ending up with probabilistic encryption (such as GCM for AES).
 And for simplicity, we omit details about using particular modes, saying that the value of \emph{nonce} related to the mode of operation is a part of the
 ciphertext $c$.
 
+Public key encryption is a type of encryption where two parties (sender and receiver) can exchange information without any sort of a common secret.
+Rather than one key, every participant has a key pair (public $pk$ and secret (or private) keys $sk$).
+If sender has a key pair $sk_s/pk_s$ and receiver~--- $sk_r/pk_r$, sender can encrypt a message with receiver's public key (which he knows in advance),
+and the receiver can decrypt with his secret key.
+Here we will use public key encryption combined with symmetric encryption.
+E.g. encryption looks like:
+$$dek = \text{random}();\qquad c = \text{encrypt}_{sym}(dek, d);\qquad edek=\text{encrypt}_{pke}(dek, pk_r).$$
+The pair $(edek, c)$ is used to transfer the encrypted data.
+Decryption by the receiver will look like:
+$$dek=\text{decrypt}_{pke}(edek, sk_r);\qquad d = \text{decrypt}_{sym}(dek, c).$$
+
 \subsubsection{Proxy re-encryption}
 A simple PRE workflow is illustrated in Figure~\ref{fig-pre}.
 
