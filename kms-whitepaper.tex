@@ -66,14 +66,6 @@ $$c = \text{encrypt}_{sym}(dek, d),$$
 $$d = \text{decrypt}_{sym}(dek, c),$$
 where $d$ is plaintext data, and $c$ is ciphertext (encrypted data).
 
-A simple symmetric encryption workflow is illustrated in Figure~\ref{fig-symmetric}.
-
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{symmetric.png}
-\caption{Main actors and interactions in a symmetric encryption environment}\label{fig-symmetric}
-\end{figure}
-
 The most useful symmetric key encryption algorithms for our purposes are AES (because it's normally hardware-accelerated)~\cite{wiki:aes}
 and Salsa20~\cite{wiki:salsa20}.
 
@@ -87,14 +79,6 @@ Every participant has a key pair (a public $pk$ and a secret (or private) key $s
 If the sender has a key pair $sk_s/pk_s$ and the receiver~--- $sk_r/pk_r$, the sender can encrypt a message with the receiver's public key (which is known in advance),
 and the receiver can decrypt with his secret key.
 
-A simple PKE workflow is illustrated in Figure~\ref{fig-pke}.
-
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{pke.png}
-\caption{Main actors and interactions in a symmetric encryption environment}\label{fig-pke}
-\end{figure}
-
 Hybrid cryptosystems can be created that combine the efficiency of symmetric encryption with the convenience of PKE.
 An example hybrid cryptosytem encryption flow defines the functions:
 $$dek = \text{random}();\qquad c = \text{encrypt}_{sym}(dek, d);\qquad edek=\text{encrypt}_{pke}(dek, pk_r).$$
@@ -102,38 +86,38 @@ The pair $(edek, c)$ is used to transfer the encrypted data.
 The associated decryption by the receiver defines the functions:
 $$dek=\text{decrypt}_{pke}(edek, sk_r);\qquad d = \text{decrypt}_{sym}(dek, c).$$
 
-A simple hybrid cryptosystem workflow is illustrated in Figure~\ref{fig-hybrid}.
-
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{hybrid.png}
-\caption{Main actors and interactions in a hybrid cryptosystem environment}\label{fig-hybrid}
-\end{figure}
-
 \subsubsection{Proxy re-encryption}
 Proxy re-encryption (PRE)~\cite{wiki:pre,phd:nunez} is a type of public-key encryption (PKE) that allows a proxy entity to transform ciphertexts
-from one public key to another, without learning anything about the underlying message.
-
-A simple PRE workflow is illustrated in Figure~\ref{fig-pre}.
+from one public key to another, without learning anything about the underlying message~(Fig.~\ref{fig:pre}).
 
 \begin{figure}
 \centering
-\includegraphics[width=\columnwidth]{pre.png}
-\caption{Main actors and interactions in a PRE environment}\label{fig-pre}
+    \includegraphics[width=0.6\columnwidth]{pdf/pre.png}  % XXX to be replaced with a vector re-draw
+    \caption{Main actors and interactions in a PRE environment}
+    \label{fig:pre}
 \end{figure}
 
-Alice, the data owner, encrypts a message $m$, with her public key $pk_{A}$, resulting in ciphertext $c_{A}$.
-She decides to delegate access to message m to Bob who has the key pair $(pk_{B}, sk_{B})$.
-To do so, Alice creates a re-encryption key $rk_{A->B}$, which is created by applying a function to her secret key $sk_{A}$ and
-Bob’s public key $pk_{B}$.
-Importantly, this re-encryption function is one way, and $rk_{A->B}$ cannot be decomposed into its component parts.
-All it can do is re-encrypt $c_{A}$ such that it is transformed into $c_{B}$, where $c_{B}$ = $ReEnc(rk_{A->B}, c_{A})$.
+Alice, the data owner, encrypts a message $m$, with her public key $pk_A$, resulting in ciphertext $c_A$.
+She decides to delegate access to message m to Bob who has the key pair $(pk_B, sk_B)$.
+To do so, Alice creates a re-encryption key:
+$$rk_{A\rightarrow B} = \text{rekey}(sk_A, pk_B).$$
+Importantly, this re-encryption function is one way, and $rk_{A\rightarrow B}$ cannot be decomposed into its component parts
+(at least, without knowing also $sk_A$ or $sk_B$).
+All it can do is re-encrypt $c_A$ such that it is transformed into $c_B$:
+$$c_B = \text{reencrypt}(rk_{A\rightarrow B}, c_{A}).$$
 Bob can then decrypt $c_{B}$ using his secret key $sk_{B}$.
 
 Compared to existing PKE protocols which are ideal for 1-to-1 communication, PRE is more scalable for N-to-N communication
 with arbitrary numbers of producers and consumers.
 It also doesn't require knowing the recipient of a message in advance, as the re-encryption tokens can be created and applied at any point.
 This makes it well-suited for distributed systems such as blockchain, distributed networks, and big data~\cite{web:nucypher-hadoop}.
+
+There are many proxy re-encryption algorithms, with different properties.
+For the first version we choose the most simple one, derived from BBS98~\cite{bbs98}.
+However, sometimes we want to delegate re-encryption to multiple nodes, in order to split the trust to apply time-based or conditional policy
+between them.
+In this case we use ...~\cite{xxx}.
+
 \subsection{Re-encryption nodes}
 
 \subsection{Local encryption library and daemon}
