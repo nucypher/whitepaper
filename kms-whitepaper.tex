@@ -113,12 +113,31 @@ It also doesn't require knowing the recipient of a message in advance, as the re
 This makes it well-suited for distributed systems such as blockchain, distributed networks, and big data~\cite{web:nucypher-hadoop}.
 
 There are many proxy re-encryption algorithms, with different properties.
-For the first version we choose the most simple one, derived from BBS98~\cite{bbs98}.
+For the first version we choose the most simple one, derived from BBS98~\cite{BBS98}.
 However, sometimes we want to delegate re-encryption to multiple nodes, in order to split the trust to apply time-based or conditional policy
 between them.
-In this case we use ...~\cite{xxx}.
+In this case we use AFGH scheme~\cite{AFGH}.
 
 \subsection{Re-encryption nodes}
+\begin{figure}
+\centering
+    \includegraphics[width=0.4\columnwidth]{pdf/encrypt.pdf}
+    \caption{Architecture: encryption}
+    \label{fig:pre}
+\end{figure}
+
+\begin{figure}
+\centering
+    \includegraphics[width=0.4\columnwidth]{pdf/delegate.pdf}
+    \caption{Architecture: access delegation}
+    \label{fig:pre}
+\end{figure}
+\begin{figure}
+\centering
+    \includegraphics[width=0.6\columnwidth]{pdf/decrypt.pdf}
+    \caption{Architecture: decryption}
+    \label{fig:pre}
+\end{figure}
 
 \subsection{Local encryption library and daemon}
 
