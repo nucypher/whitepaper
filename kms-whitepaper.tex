@@ -113,12 +113,28 @@ It also doesn't require knowing the recipient of a message in advance, as the re
 This makes it well-suited for distributed systems such as blockchain, distributed networks, and big data~\cite{web:nucypher-hadoop}.
 
 There are many proxy re-encryption algorithms, with different properties.
-For the first version we choose the most simple one, derived from BBS98~\cite{BBS98}.
+For the first version we choose the most simple (and performant) one, derived from BBS98~\cite{BBS98}.
 However, sometimes we want to delegate re-encryption to multiple nodes, in order to split the trust to apply time-based or conditional policy
 between them.
 In this case we use AFGH scheme~\cite{AFGH}.
+There is also a possibility to use quantum-resistant NTRU if the need arises~\cite{ntru,ntrureencrypt}.
+
+When using BBS98, intrinsically this algorithm allows to make a re-encryption key out of two secret keys, not secret+public key.
+However, we don't want the sender to know receiver's secret key.
+In order to get around this problem, we randomly generate an ephemeral key pair $sk_e/pk_e$.
+Then, access delegation looks like:
+$$sk_e = \text{random}();$$
+$$rk_{A\rightarrow B} = \text{rekey}(sk_A, sk_e);$$
+$$sk_e^{\prime} = \text{encrypt}_{pke}(pk_B, sk_e).$$
+Re-encryption node also needs to tell the receiver his ephemeral key.
+So, in addition to $rk_{A\rightarrow B}$, the receiver will get $sk_e^{\prime}$, which will be stored by a re-encryption node along with re-encryption key.
+The decryption by the receiver will then look like:
+$$sk_e = \text{decrypt}_{pke}(sk_B, sk_e^{\prime});$$
+$$dek=\text{decrypt}_{pke}(edek, sk_e);\qquad d = \text{decrypt}_{sym}(dek, c).$$
 
 \subsection{Re-encryption nodes}
+
+When the data is stored in a cloud or decentralized storage, it is encrypted with data owner's (\emph{sender}) key $pk_s$.
 \begin{figure}
 \centering
     \includegraphics[width=0.4\columnwidth]{pdf/encrypt.pdf}
