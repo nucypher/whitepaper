@@ -163,12 +163,20 @@ This combination $(edek, c)$ can be stored anywhere - in IPFS, or S3, or any kin
     \label{fig:arch-encrypt}
 \end{figure}
 
+The user who we delegate to is not known in advance, when we are storing the data.
+Firstly, the receiver should show the sender his public key~(Fig.~\ref{fig:arch-delegate}).
+Often it makes sense to make the public key corresponding to the address in Ethereum network (then it will be shown once a transaction is made from that
+address to make the first payment for a digital content subscription, for example).
+The sender generates a reencryption key $re_{s\rightarrow r}$ (including an encrypted random ephemeral key when needed) and sends it to a random re-encryption
+node, selected according to proof-of-stake out of active nodes in a decentralized network.
+The case where multiple nodes are selected for redundancy or security will be discussed later.
 \begin{figure}
 \centering
     \includegraphics[width=0.4\columnwidth]{pdf/delegate.pdf}
     \caption{Architecture: access delegation}
     \label{fig:arch-delegate}
 \end{figure}
+
 \begin{figure}
 \centering
     \includegraphics[width=0.6\columnwidth]{pdf/decrypt.pdf}
