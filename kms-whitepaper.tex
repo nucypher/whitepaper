@@ -62,8 +62,10 @@ Symmetric or secret key encryption requires users to know a common secret key.
 We refer to this common secret key as DEK (data encryption key) for convenience.
 
 Two operations are defined for symmetric ciphers:
-$$c = \text{encrypt}_{sym}(dek, d),$$
-$$d = \text{decrypt}_{sym}(dek, c),$$
+\begin{align}
+    c &= \text{encrypt}_{sym}(dek, d);\\
+    d &= \text{decrypt}_{sym}(dek, c);
+\end{align}
 where $d$ is plaintext data, and $c$ is ciphertext (encrypted data).
 
 The most useful symmetric key encryption algorithms for our purposes are AES (because it's normally hardware-accelerated)~\cite{wiki:aes}
@@ -81,10 +83,17 @@ and the receiver can decrypt with his secret key.
 
 Hybrid cryptosystems can be created that combine the efficiency of symmetric encryption with the convenience of PKE.
 An example hybrid cryptosytem encryption flow defines the functions:
-$$dek = \text{random}();\qquad c = \text{encrypt}_{sym}(dek, d);\qquad edek=\text{encrypt}_{pke}(dek, pk_r).$$
+\begin{align}
+    dek &= \text{random}();\\
+    c &= \text{encrypt}_{sym}(dek, d);\\
+    edek &= \text{encrypt}_{pke}(dek, pk_r).
+\end{align}
 The pair $(edek, c)$ is used to transfer the encrypted data.
 The associated decryption by the receiver defines the functions:
-$$dek=\text{decrypt}_{pke}(edek, sk_r);\qquad d = \text{decrypt}_{sym}(dek, c).$$
+\begin{align}
+    dek &= \text{decrypt}_{pke}(edek, sk_r);\\
+    d &= \text{decrypt}_{sym}(dek, c).
+\end{align}
 
 \subsubsection{Proxy re-encryption}
 Proxy re-encryption (PRE)~\cite{wiki:pre,phd:nunez} is a type of public-key encryption (PKE) that allows a proxy entity to transform ciphertexts
@@ -100,11 +109,15 @@ from one public key to another, without learning anything about the underlying m
 Alice, the data owner, encrypts a message $m$, with her public key $pk_A$, resulting in ciphertext $c_A$.
 She decides to delegate access to message m to Bob who has the key pair $(pk_B, sk_B)$.
 To do so, Alice creates a re-encryption key:
-$$rk_{A\rightarrow B} = \text{rekey}(sk_A, pk_B).$$
+\begin{equation}
+    rk_{A\rightarrow B} = \text{rekey}(sk_A, pk_B).
+\end{equation}
 Importantly, this re-encryption function is one way, and $rk_{A\rightarrow B}$ cannot be decomposed into its component parts
 (at least, without knowing also $sk_A$ or $sk_B$).
 All it can do is re-encrypt $c_A$ such that it is transformed into $c_B$:
-$$c_B = \text{reencrypt}(rk_{A\rightarrow B}, c_{A}).$$
+\begin{equation}
+    c_B = \text{reencrypt}(rk_{A\rightarrow B}, c_{A}).
+\end{equation}
 Bob can then decrypt $c_{B}$ using his secret key $sk_{B}$.
 
 Compared to existing PKE protocols which are ideal for 1-to-1 communication, PRE is more scalable for N-to-N communication
@@ -123,36 +136,44 @@ When using BBS98, intrinsically this algorithm allows to make a re-encryption ke
 However, we don't want the sender to know receiver's secret key.
 In order to get around this problem, we randomly generate an ephemeral key pair $sk_e/pk_e$.
 Then, access delegation looks like:
-$$sk_e = \text{random}();$$
-$$rk_{A\rightarrow B} = \text{rekey}(sk_A, sk_e);$$
-$$sk_e^{\prime} = \text{encrypt}_{pke}(pk_B, sk_e).$$
+\begin{align}
+    sk_e &= \text{random}();\\
+    rk_{A\rightarrow B} &= \text{rekey}(sk_A, sk_e);\\
+    sk_e^{\prime} &= \text{encrypt}_{pke}(pk_B, sk_e).
+\end{align}
 Re-encryption node also needs to tell the receiver his ephemeral key.
 So, in addition to $rk_{A\rightarrow B}$, the receiver will get $sk_e^{\prime}$, which will be stored by a re-encryption node along with re-encryption key.
 The decryption by the receiver will then look like:
-$$sk_e = \text{decrypt}_{pke}(sk_B, sk_e^{\prime});$$
-$$dek=\text{decrypt}_{pke}(edek, sk_e);\qquad d = \text{decrypt}_{sym}(dek, c).$$
+\begin{align}
+    sk_e &= \text{decrypt}_{pke}(sk_B, sk_e^{\prime});\\
+    dek &= \text{decrypt}_{pke}(edek, sk_e);\\
+    d &= \text{decrypt}_{sym}(dek, c).
+\end{align}
 
 \subsection{Re-encryption nodes}
 
-When the data is stored in a cloud or decentralized storage, it is encrypted with data owner's (\emph{sender}) key $pk_s$.
+When the data is stored in a cloud or decentralized storage, it is encrypted with data owner's (\emph{sender}) key $pk_s$~(Fig.~\ref{fig:arch-encrypt}).
+The data itself is encrypted with a random symmetric key $dek$, one key per file.
+The $dek$, encrypted with $pk_s$ is attached to the encrypted data.
+This combination $(edek, c)$ can be stored anywhere - in IPFS, or S3, or any kind of decentralized or centralized storage.
 \begin{figure}
 \centering
     \includegraphics[width=0.4\columnwidth]{pdf/encrypt.pdf}
     \caption{Architecture: encryption}
-    \label{fig:pre}
+    \label{fig:arch-encrypt}
 \end{figure}
 
 \begin{figure}
 \centering
     \includegraphics[width=0.4\columnwidth]{pdf/delegate.pdf}
     \caption{Architecture: access delegation}
-    \label{fig:pre}
+    \label{fig:arch-delegate}
 \end{figure}
 \begin{figure}
 \centering
     \includegraphics[width=0.6\columnwidth]{pdf/decrypt.pdf}
     \caption{Architecture: decryption}
-    \label{fig:pre}
+    \label{fig:arch-decrypt}
 \end{figure}
 
 \subsection{Local encryption library and daemon}
