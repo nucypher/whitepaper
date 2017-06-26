@@ -3,6 +3,7 @@
 % Project name
 \newcommand{\kms}{SmartKMS}
 
+\usepackage{listings}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage[margin=5pt]{subfig}
@@ -191,9 +192,34 @@ Now, he can use DEK to decrypt the bulk of data.
     \label{fig:arch-decrypt}
 \end{figure}
 
+\section{Functionality}
+
 \subsection{Local encryption library and daemon}
 
-\section{Functionality}
+\kms~can be interfaced from a traditional, centralized application.
+In Python, sharing a file in IPFS would look like:
+\begin{lstlisting}[frame=single,language=Python]
+import smartkms as kms
+kms.connect()  # Using default config
+path = '/ipfs/QmTkzDw.../to_the_moon.avi'
+kms.share('0xab12...', path, time=86400)
+\end{lstlisting}
+If there is no library client available, there could be a local API server, similarly to how geth is used to interact with Ethereum network.
+
+Reading this file would be:
+\begin{lstlisting}[frame=single,language=Python]
+import smartkms as kms
+client = ipfsapi.Client(...)
+kms.connect()  # Using default config
+path = '/ipfs/QmTkzDw.../to_the_moon.avi'
+edata = client.cat(path)
+data = kms.decrypt(edata, path)
+print(data)
+\end{lstlisting}
+The ``decrypt'' function splits edata into $edek$ and the actual encrypted data,
+requests the kms network to transform $edek$ into $edek^{\prime}$,
+decrypts $edek^{\prime}$ with receiver's private key and
+decrypts data with the obtained $dek$.
 
 \subsection{Sharing short secrets}
 
