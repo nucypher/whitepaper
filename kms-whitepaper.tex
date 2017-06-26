@@ -170,6 +170,7 @@ address to make the first payment for a digital content subscription, for exampl
 The sender generates a reencryption key $re_{s\rightarrow r}$ (including an encrypted random ephemeral key when needed) and sends it to a random re-encryption
 node, selected according to proof-of-stake out of active nodes in a decentralized network.
 The case where multiple nodes are selected for redundancy or security will be discussed later.
+The nodes which have shared data of user \emph{sender} with a user \emph{receiver} register this information in the network.
 \begin{figure}
 \centering
     \includegraphics[width=0.4\columnwidth]{pdf/delegate.pdf}
@@ -177,6 +178,12 @@ The case where multiple nodes are selected for redundancy or security will be di
     \label{fig:arch-delegate}
 \end{figure}
 
+When the receiver wants to decrypt data shared with him, he firstly downloads that data from the storage or encrypted stream~(Fig.~\ref{fig:arch-decrypt}).
+He separates out EDEK from the message and sends $edek$ to the network of re-encryption nodes and finds active re-encryption nodes which can share data
+of the sender with the receiver (which have re-encryption key(s) $re_{s\rightarrow r}$).
+The receiver asks the node(s) which have the re-encryption key to transform $edek$ to $edek^{\prime}$ and uses his own secret key $sk_r$ to decrypt it and
+obtain DEK.
+Now, he can use DEK to decrypt the bulk of data.
 \begin{figure}
 \centering
     \includegraphics[width=0.6\columnwidth]{pdf/decrypt.pdf}
