@@ -32,10 +32,10 @@
 \begin{abstract}
     \kms~is a global, decentralized Key Management System.
     It provides encryption and cryptographic access controls as a service, performed by a decentralized network,
-    with the help of proxy re-encryption~\cite{wiki:pre}.
-    Importantly, it doesn't rely on trusting a service provider, unlike centralized encryption-as-a-service solutions.
+    leveraging proxy re-encryption~\cite{wiki:pre}.
+    Unlike centralized encryption-as-a-service solutions, it doesn't rely on trusting a service provider.
     \kms~enables sharing of sensitive data for both decentralized and centralized applications,
-    providing the infrastructure for applications from healthcare to identity to decentralized content marketplaces.
+    providing infrastructure for applications from healthcare to identity management to decentralized content marketplaces.
 \end{abstract}
 
 \date{\today}
@@ -45,7 +45,8 @@
 
 \kms~is a blockchain-based encryption and access control management as a service.
 It enables secure private data sharing between arbitrary number of participants in public and/or decentralized networks.
-Key Management Tokens (KMT) are used to perform key management and access delegation/revokation operations.
+It is a hybrid cryptosystem that combines the efficiency of symmetric encryption with the convenience of public-key encryption.
+In-network tokens are used to incentivize network participants to perform key management and access delegation/revokation operations.
 
 (Overview of encryption: symmetric encryption, public key encryption, encryption at rest, TLS).
 
@@ -60,7 +61,7 @@ Key Management Tokens (KMT) are used to perform key management and access delega
 \subsubsection{Prior information and definitions}
 
 Symmetric or secret key encryption requires users to know a common secret key.
-We refer to this common secret key as DEK (data encryption key) for convenience.
+For convenience, we refer to this common secret key as DEK (data encryption key).
 
 Two operations are defined for symmetric ciphers:
 \begin{align}
@@ -73,17 +74,17 @@ The most useful symmetric key encryption algorithms for our purposes are AES (be
 and Salsa20~\cite{wiki:salsa20}.
 
 Symmetric block ciphers can operate in different modes.
-We use modes of operation that yield probabilistic encryption (such as GCM for AES), which provide strong semantic security guarantees.
+We use modes of operation that yield probabilistic encryption (such as GCM for AES), which provides strong semantic security guarantees.
 For simplicity, we omit details about the particular modes of operations, saying that the value of \emph{nonce} related to the mode of operation is a part of the
 ciphertext $c$.
 
 Public key encryption (PKE) is a type of encryption where two parties (a sender and receiver) exchange information without any required common secret.
-Every participant has a key pair (a public $pk$ and a secret (or private) key $sk$).
-If the sender has a key pair $sk_s/pk_s$ and the receiver~--- $sk_r/pk_r$, the sender can encrypt a message with the receiver's public key (which is known in advance),
+Every participant has a key pair (a public $pk$ and a secret/or private key $sk$).
+If the sender has a key pair $sk_s/pk_s$ and the receiver has a key pair $sk_r/pk_r$, the sender can encrypt a message with the receiver's public key,
 and the receiver can decrypt with his secret key.
 
 Hybrid cryptosystems can be created that combine the efficiency of symmetric encryption with the convenience of PKE.
-An example hybrid cryptosytem encryption flow defines the functions:
+An hybrid cryptosytem encryption flow defines the functions:
 \begin{align}
     dek &= \text{random}();\\
     c &= \text{encrypt}_{sym}(dek, d);\\
@@ -108,7 +109,7 @@ from one public key to another, without learning anything about the underlying m
 \end{figure}
 
 Alice, the data owner, encrypts a message $m$, with her public key $pk_A$, resulting in ciphertext $c_A$.
-She decides to delegate access to message m to Bob who has the key pair $(pk_B, sk_B)$.
+She decides to delegate access to message $m$ to Bob, who has the key pair $(pk_B, sk_B)$.
 To do so, Alice creates a re-encryption key:
 \begin{equation}
     rk_{A\rightarrow B} = \text{rekey}(sk_A, pk_B).
@@ -127,7 +128,7 @@ It also doesn't require knowing the recipient of a message in advance, as the re
 This makes it well-suited for distributed systems such as blockchain, distributed networks, and big data~\cite{web:nucypher-hadoop}.
 
 There are many proxy re-encryption algorithms, with different properties.
-For the first version we choose the most simple (and performant) one, derived from BBS98~\cite{BBS98}.
+For the first version of \kms~we choose the most simple (and performant) one, derived from BBS98~\cite{BBS98}.
 However, sometimes we want to delegate re-encryption to multiple nodes, in order to split the trust between them and apply time-based or conditional
 re-encryption policies.
 In this case we use the AFGH scheme~\cite{AFGH}.
@@ -164,12 +165,12 @@ This combination $(edek, c)$ can be stored anywhere - in IPFS, S3, or any kind o
     \label{fig:arch-encrypt}
 \end{figure}
 
-When storing the data, the user who we delegate to is not necessarily known in advance.
+When storing the data, the user who we delegate access to is not necessarily known in advance.
 First, the receiver should show the sender his public key~(Fig.~\ref{fig:arch-delegate}).
-It often makes sense to make the public key corresponding to an address in the Ethereum network (then it will be shown once a transaction is made from that
-address to make the first payment for a digital content subscription, for example).
+It often makes sense for the public key to correspond to an address in the Ethereum network (then it will be shown once a transaction is made from that
+address to make a payment for a digital content subscription, for example).
 The sender generates a reencryption key $re_{s\rightarrow r}$ (including an encrypted random ephemeral key when needed) and sends it to a random re-encryption
-node, selected according to proof-of-stake out of active nodes in a decentralized network.
+node, selected according to proof-of-stake out of the active nodes in a decentralized network.
 The case where multiple nodes are selected for redundancy or security will be discussed later.
 The nodes which have shared data of user \emph{sender} with a user \emph{receiver} register this information in the network.
 \begin{figure}
@@ -182,9 +183,9 @@ The nodes which have shared data of user \emph{sender} with a user \emph{receive
 When the receiver wants to decrypt data shared with him, he first downloads that data from storage or an encrypted stream~(Fig.~\ref{fig:arch-decrypt}).
 He separates out EDEK from the message and sends $edek$ to the network of re-encryption nodes and finds active re-encryption nodes which can share the data
 of the sender with the receiver (which have re-encryption key(s) $re_{s\rightarrow r}$).
-The receiver asks the node(s) which have the re-encryption key to transform $edek$ to $edek^{\prime}$ and uses his own secret key $sk_r$ to decrypt it and
+The receiver asks the node(s) that have the re-encryption key to transform $edek$ to $edek^{\prime}$ and uses his own secret key $sk_r$ to decrypt it and
 obtain DEK.
-Now, he can use DEK to decrypt the bulk of data.
+Now, he can use DEK to decrypt the bulk of the data.
 \begin{figure}
 \centering
     \includegraphics[width=0.6\columnwidth]{pdf/decrypt.pdf}
@@ -236,11 +237,11 @@ decrypts data with the obtained $dek$.
 \section{Economics}
 Protocol economies consist of a network of miners that contributes work to provide a scarce resource and that is
 rewarded when said resource is consumed.
-\kms~is a network of miners providing re-enryption services.
-Anyone can become a miner and their rewards are differentiated based on the amount of work provided.
+In \kms, miners are re-enryption nodes.
+Anyone can become a miner and their rewards are differentiated based on the amount of re-encryption operations provided.
 Access to the scarce re-encryption services must be controlled and allocated to the most high value uses.
 The mechanism by which we achieve this is called \kms~Token. \kms~Token is both the reward miners get for contributing
-work and the price consumer pay for access to the network's re-encryption services.
+work and the price consumer pay for access to re-encryption services.
 
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
