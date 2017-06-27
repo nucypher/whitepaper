@@ -259,7 +259,16 @@ In \kms, miners are re-enryption nodes.
 Anyone can become a miner and their rewards are differentiated based on the amount of re-encryption operations provided.
 Access to the scarce re-encryption services must be controlled and allocated to the most high value uses.
 The mechanism by which we achieve this is called \kms~Token. \kms~Token is both the reward miners get for contributing
-work and the price consumer pay for access to re-encryption services.
+work and the price consumer (owner of the data) pay for access to re-encryption services.
+
+Firstly, miners have a quota of number of operations they can perform according to the amount of \kms~Token they are holding.
+This \kms~Token serves as a way to decentralize network in order to avoid collusion between miners and users of the data.
+It also is used as a collateral which miners risk if they commit any wrongdoing (such as providing fake data instead of re-encrypted data, leaking
+re-encryption keys, being offline for too long while claiming to be active guardians of re-encryption policies).
+
+Quotas are distributed proportional to the number of online (Staking) miners' tokens,
+where the miners promise to be online and hold/process up to certain amount of re-encryption keys,
+while their tokens are locked up by a smart contract.
 
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
