@@ -242,9 +242,28 @@ Preliminary version of the API will include the following functions:
 
 \subsection{Sharing short secrets}
 
+Low-level functionality allows to encrypt and delegate access to binary secrets (such as database credentials) or groups of these secrets without them
+being stored in individual files.
+A possible backend for storing simple secrets like these could be a hierarchical config file (in YAML or JSON format) stored in IPFS.
+Client-side software can parse this file and ask to re-encrypt only the secrets it needs.
+There could be per-field, per-subfield re-encryption keys, etc, for encryption granularity.
+
 \subsection{Sharing files}
 
+When working with files, each file and each directory is given its secret key.
+Each file has its DEK stored encrypted by its secret key, directory's secret key, and so on up to the root folder of the user.
+When a directory is shared, a re-encryption key only for shared directories are created.
+
 \subsection{Sharing encrypted streams}
+
+Sharing encrypted streams with multiple users is great for applications such as decentralized Netflix, where third parties who route the traffic don't have
+to see the content.
+
+The principle is easy: each block of data in the stream is encrypted with a random DEK, and EDEK is produced using a per-channel public key.
+However, it takes time to make a roundtrip with \kms.
+Therefore, it makes sense to include also an EDEK of the next block of data together with the previous block.
+
+Consumers of the stream, as usually, have their own key pairs and ask re-encryption nodes to make EDEKs decryptable by the consumers.
 
 \subsection{Time-based and condition-based policies}
 
