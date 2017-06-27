@@ -294,6 +294,14 @@ Quotas are distributed proportional to the number of online (Staking) miners' to
 where the miners promise to be online and hold/process up to certain amount of re-encryption keys,
 while their tokens are locked up by a smart contract.
 
+\section{Security risks}
+
+\begin{itemize}
+    \item Split trust;
+    \item Node collusion;
+    \item Disinsentivising leakage of a re-encryption key.
+\end{itemize}
+
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
 functionality, including:
@@ -334,16 +342,6 @@ It can be used for shared credentials that employees use to access web services.
 An audit log mechanism could be built to monitor what secrets are accessed and by whom.
 When an employee leaves, it is easy to revoke access or even roll keys.
 For scripts, a re-encryption token can be generated for the duration of a script, then revoked.
-
-\section{Security risks}
-
-\begin{itemize}
-    \item Split trust;
-    \item Node collusion;
-    \item Disinsentivising leakage of a re-encryption key.
-\end{itemize}
-
-\section{Proposed roadmap}
 
 \bibliography{kms-whitepaper}
 
