@@ -263,13 +263,18 @@ The principle is easy: each block of data in the stream is encrypted with a rand
 However, it takes time to make a roundtrip with \kms.
 Therefore, it makes sense to include also an EDEK of the next block of data together with the previous block.
 
-Consumers of the stream, as usually, have their own key pairs and ask re-encryption nodes to make EDEKs decryptable by the consumers.
+Consumers of the stream, as usually, have their own key pairs and ask miners nodes to make EDEKs decryptable by the consumers.
+Miners can also ensure that consumer actually paid for the subscription in time, or refuse to re-encrypt if he didn't.
 
 \subsection{Time-based and condition-based policies}
 
-\subsection{Policies controlled by smart contracts}
+While we don't trust miners with encrypted data or keys, we still trust them to control the duration of storing a re-encryption key.
+The simplest policy is time-based: reencryption is allowed only during the specified time interval, and if there is no time in future when
+reencryption is allowed, the reencryption key should be removed.
 
-\subsection{Protocol extendibility}
+It can go more complicated than that.
+Re-encryption can be allowed on a condition~--- for example when a certain transaction happened.
+This allows such applications as pay-per-content DRM, or storing secret data as an escrow for financial transactions (lending).
 
 \section{Economics}
 Protocol economies consist of a network of miners that contributes work to provide a scarce resource and that is
