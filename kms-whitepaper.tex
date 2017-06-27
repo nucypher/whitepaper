@@ -226,6 +226,20 @@ requests the kms network to transform $edek$ into $edek^{\prime}$,
 decrypts $edek^{\prime}$ with receiver's private key and
 decrypts data with the obtained $dek$.
 
+Preliminary version of the API will include the following functions:
+\begin{itemize}
+    \item connect~--- connect to the decentralized network,
+        taking configuration from arguments or config file;
+    \item write~--- encrypt data with a public key corresponding to the owner of the file (could be ourselves) and save in a storage backend;
+    \item read~--- download data from storage backend, ask the decentralized network to re-encrypt, and decrypt with our private key;
+    \item delete~--- delete file and re-encryption keys associated with it;
+    \item decrypt~--- decrypt data which we've already read;
+    \item split-edek~--- low level function to separate out encrypted symmetric encryption key from the data;
+    \item share/renew/revoke~--- create a permission to read all the data we own, or subset of it, based on file path or policy.
+        The policy can include time limits and other conditions;
+    \item read-policies/update-policies/delete-policies~--- read and change all the access policies we've created.
+\end{itemize}
+
 \subsection{Sharing short secrets}
 
 \subsection{Sharing files}
