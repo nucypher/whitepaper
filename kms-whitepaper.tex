@@ -276,6 +276,18 @@ It can go more complicated than that.
 Re-encryption can be allowed on a condition~--- for example when a certain transaction happened.
 This allows such applications as pay-per-content DRM, or storing secret data as an escrow for financial transactions (lending).
 
+\subsection{Key rotation}
+
+Many proxy re-encryption algorithms can be applied multiple times, and BBS98~\cite{BBS98} is one of them.
+This can be used for key rotation.
+Key rotation allows all the EDEK encrypted with an old version of a key to become encrypted with a new version of it.
+In order to do this transformation, the same proxy re-encryption can be used.
+
+In our case, owner of the data needs to produce re-encryption keys $re_{v1\rightarrow v2}$ between two versions of secret keys, essentially
+sharing data with his future self.
+Now, re-encryption nodes (assuming the encrypted storage is public, such as IPFS) will download EDEKs and apply a transformation for them.
+For this operation, no collusion risks exist since ``sender'' and ``receiver'' of the data are, essentially, the same person.
+
 \section{Economics}
 Protocol economies consist of a network of miners that contributes work to provide a scarce resource and that is
 rewarded when said resource is consumed.
@@ -296,11 +308,30 @@ while their tokens are locked up by a smart contract.
 
 \section{Security risks}
 
-\begin{itemize}
-    \item Split trust;
-    \item Node collusion;
-    \item Disinsentivising leakage of a re-encryption key.
-\end{itemize}
+Proxy re-encryption allows \kms~to split the trust between access management and decrypting the data,
+without introducing an always-online always-trusted entity (such as a traditional key management system).
+Miners will never see unencrypted data, or anything which allows them to decrypt the data,
+however they are responsible for applying the policy.
+
+The first risk is collusion of a miner and a reader of the data.
+If miner gives him re-encryption keys for the data shared with him,
+the data can be decryptable at any time by the data reader.
+This risk can be mitigated by several means.
+
+First of all, instead of one re-encryption key, m-of-n re-encryption keys can be used to produce ``re-encryption shares''.
+These shares can be combined at the client side.
+This scheme can be used with AFGH~\cite{AFGH} encryption, for example.
+``Collusion'' attack here would require $m$ miners \emph{and} the reader of the data.
+
+Secondly, we can disinsentivise miners from leaking re-encryption keys.
+Anyone can challenge a miner with a hash of a re-encryption key, and if it was leaked indeed, the miner can lose his collateral valued in \kms~Tokens.
+
+And finally, in order to test the security of the network (non-collusion), we can put bounty secrets~--- private keys for wallets with
+some crypto-currency.
+Anyone is free to hack the system and take the bounty.
+The fact of the bounty being taken would be a proof of security being compromised.
+This same mechanism can be used to provide a signal for a potential data leak by individual users of the network, also signalling that they may have exposed
+their key to the data.
 
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
