@@ -33,9 +33,9 @@
     \kms~is a global, decentralized Key Management System.
     It provides encryption and cryptographic access controls as a service, performed by a decentralized network,
     leveraging proxy re-encryption~\cite{wiki:pre}.
-    Unlike centralized encryption-as-a-service solutions, it doesn't rely on trusting a service provider.
+    Unlike centralized encryption-as-a-service solutions, it doesn't require trusting a service provider.
     \kms~enables sharing of sensitive data for both decentralized and centralized applications,
-    providing infrastructure for applications from healthcare to identity management to decentralized content marketplaces.
+    providing security infrastructure for applications from healthcare to identity management to decentralized content marketplaces.
 \end{abstract}
 
 \date{\today}
@@ -47,22 +47,18 @@
 
 \section{Introduction}
 
-\kms~is a blockchain-based encryption and access control management as a service.
-It enables secure private data sharing between arbitrary number of participants in public and/or decentralized networks.
+\kms~is a blockchain-based encryption and access control management service.
+It enables private data sharing between arbitrary number of participants in public and/or decentralized networks.
 It is a hybrid cryptosystem that combines the efficiency of symmetric encryption with the convenience of public-key encryption.
 In-network tokens are used to incentivize network participants to perform key management and access delegation/revokation operations.
 
-(Overview of encryption: symmetric encryption, public key encryption, encryption at rest, TLS).
-
 (Overview of key management systems: what they do, why, KMS as a service - CloudHSM, truevault; self-run: hashicorp).
-
-(Brief statement that we enable KMSaas with combination of blockchain and PRE)
 
 \section{Architecture}
 
 \subsection{Cryptographic primitives}
 
-\subsubsection{Prior information and definitions}
+\subsubsection{Symmetric encryption}
 
 Symmetric or secret key encryption requires users to know a common secret key.
 For convenience, we refer to this common secret key as DEK (data encryption key).
@@ -78,17 +74,19 @@ The most useful symmetric key encryption algorithms for our purposes are AES (be
 and Salsa20~\cite{wiki:salsa20}.
 
 Symmetric block ciphers can operate in different modes.
-We use modes of operation that yield probabilistic encryption (such as GCM for AES), which provides strong semantic security guarantees.
+We use modes of operation that yield probabilistic encryption (such as GCM for AES), to guarantee strong semantic security.
 For simplicity, we omit details about the particular modes of operations, saying that the value of \emph{nonce} related to the mode of operation is a part of the
 ciphertext $c$.
 
-Public key encryption (PKE) is a type of encryption where two parties (a sender and receiver) exchange information without any required common secret.
-Every participant has a key pair (a public $pk$ and a secret/or private key $sk$).
+\subsubsection{Public-key encryption}
+
+Public-key encryption (PKE) is a type of encryption where two parties (a sender and receiver) exchange information without any required common secret.
+Every participant has a key pair (a public $pk$ and a secret/private key $sk$).
 If the sender has a key pair $sk_s/pk_s$ and the receiver has a key pair $sk_r/pk_r$, the sender can encrypt a message with the receiver's public key,
 and the receiver can decrypt with his secret key.
 
 Hybrid cryptosystems can be created that combine the efficiency of symmetric encryption with the convenience of PKE.
-An hybrid cryptosytem encryption flow defines the functions:
+A hybrid cryptosytem encryption flow defines the functions:
 \begin{align}
     dek &= \text{random}();\\
     c &= \text{encrypt}_{sym}(dek, d);\\
@@ -127,9 +125,9 @@ All it can do is re-encrypt $c_A$ such that it is transformed into $c_B$:
 Bob can then decrypt $c_{B}$ using his secret key $sk_{B}$.
 
 Compared to existing PKE protocols which are ideal for 1-to-1 communication, PRE is more scalable for N-to-N communication
-with arbitrary numbers of producers and consumers.
-It also doesn't require knowing the recipient of a message in advance, as the re-encryption tokens can be created and applied at any point.
-This makes it well-suited for distributed systems such as blockchain, distributed networks, and big data~\cite{web:nucypher-hadoop}.
+with arbitrary numbers of data producers and consumers.
+It doesn't require knowing the recipient of a message in advance, as the re-encryption token can be created and applied at any point.
+This makes it well-suited for distributed systems such as blockchain, IoT, and big data~\cite{web:nucypher-hadoop}.
 
 There are many proxy re-encryption algorithms, with different properties.
 For the first version of \kms~we choose the most simple (and performant) one, derived from BBS98~\cite{BBS98}.
@@ -159,7 +157,7 @@ The decryption by the receiver will then look like:
 \subsection{Re-encryption nodes}
 
 When the data is stored in a cloud or decentralized storage, it is encrypted with data owner's (\emph{sender}) key $pk_s$~(Fig.~\ref{fig:arch-encrypt}).
-The data itself is encrypted with a random symmetric key $dek$, one key per file.
+The data itself is encrypted with a random symmetric key $dek$, with one key per file.
 The $dek$, encrypted with $pk_s$ is attached to the encrypted data.
 This combination $(edek, c)$ can be stored anywhere - in IPFS, S3, or any kind of decentralized or centralized storage.
 \begin{figure}
@@ -186,8 +184,8 @@ The nodes which have shared data of user \emph{sender} with a user \emph{receive
 
 When the receiver wants to decrypt data shared with him, he first downloads that data from storage or an encrypted stream~(Fig.~\ref{fig:arch-decrypt}).
 He separates out EDEK from the message and sends $edek$ to the network of re-encryption nodes and finds active re-encryption nodes which can share the data
-of the sender with the receiver (which have re-encryption key(s) $re_{s\rightarrow r}$).
-The receiver asks the node(s) that have the re-encryption key to transform $edek$ to $edek^{\prime}$ and uses his own secret key $sk_r$ to decrypt it and
+of the sender with the receiver (those which have re-encryption key(s) $re_{s\rightarrow r}$).
+The receiver asks the node(s) that has the re-encryption key to transform $edek$ to $edek^{\prime}$ and uses his own secret key $sk_r$ to decrypt it and
 obtain DEK.
 Now, he can use DEK to decrypt the bulk of the data.
 \begin{figure}
@@ -226,12 +224,12 @@ requests the kms network to transform $edek$ into $edek^{\prime}$,
 decrypts $edek^{\prime}$ with receiver's private key and
 decrypts data with the obtained $dek$.
 
-Preliminary version of the API will include the following functions:
+The preliminary version of the API will include the following functions:
 \begin{itemize}
     \item connect~--- connect to the decentralized network,
-        taking configuration from arguments or config file;
-    \item write~--- encrypt data with a public key corresponding to the owner of the file (could be ourselves) and save in a storage backend;
-    \item read~--- download data from storage backend, ask the decentralized network to re-encrypt, and decrypt with our private key;
+        taking configuration from arguments or a config file;
+    \item write~--- encrypt data with a public key corresponding to the owner of the file and save in a storage backend;
+    \item read~--- download data from the storage backend, ask the decentralized network to re-encrypt, and decrypt with our private key;
     \item delete~--- delete file and re-encryption keys associated with it;
     \item decrypt~--- decrypt data which we've already read;
     \item split-edek~--- low level function to separate out encrypted symmetric encryption key from the data;
@@ -246,30 +244,30 @@ Low-level functionality allows encrypting and delegating access to binary secret
 storing them in individual files.
 A possible backend for storing simple secrets like these could be a hierarchical config file (in YAML or JSON format) stored in IPFS.
 Client-side software can parse this file and ask to re-encrypt only the secrets it needs.
-There could be per-field, per-subfield re-encryption keys, etc, for encryption granularity.
+There could be per-field and per-subfield re-encryption keys for granular permissions.
 
 \subsection{Sharing files}
 
 When working with files, each file and each directory is encrypted under its secret key.
-Each file has its DEK stored encrypted by its secret key, directory's secret key, and so on up to the root folder of the user.
-When a directory is shared, a re-encryption key is created only for shared directories.
+Each file has its DEK stored encrypted by its secret key, directory's secret key, and so on, up to the root folder of the user.
+When a directory is shared, a re-encryption key is created only for the shared directories.
 
 \subsection{Sharing encrypted streams}
 
-Sharing encrypted streams with multiple users is great for applications such as decentralized Netflix, where third parties routing traffic
+Sharing encrypted streams with multiple users is ideal for applications such as a decentralized Netflix, where third parties routing traffic
 aren't permitted to see the content.
 
 The principle is simple: each block of data in the stream is encrypted with a random DEK, and EDEK is produced using a per-channel public key.
 However, it takes time to make a roundtrip with \kms.
 Therefore, it makes sense to also include an EDEK of the next block of data together with the previous block.
 
-As usual, consumers of the stream have their own key pairs and ask miners nodes to make EDEKs decryptable by the consumers.
-Miners can also ensure the consumer actually paid for the subscription in time, and refuse to re-encrypt if he didn't.
+As usual, consumers of the stream have their own key pairs and ask miner nodes to make EDEKs decryptable by the consumers.
+Miners can also ensure the consumer actually paid for the subscription and refuse to re-encrypt if they didn't.
 
 \subsection{Time-based and condition-based policies}
 
 While we don't trust miners with encrypted data or keys, we still trust them to control the duration of storing a re-encryption key.
-The simplest policy is time-based: reencryption is allowed only during the specified time interval, and if there is no time in the future when
+The simplest policy is time-based: reencryption is allowed only during the specified time interval and, if there is no time in the future when
 reencryption is allowed, the reencryption key should be removed.
 
 More complex policies can be created.
@@ -287,22 +285,22 @@ sharing data with his future self.
 Now, re-encryption nodes (assuming the encrypted storage is public, such as IPFS) will download EDEKs and apply the transformation.
 For this operation, no collusion risks exist since the ``sender'' and ``receiver'' of the data are, essentially, the same person.
 
-\section{Economics}
+\section{Cryptoeconomics}
 Protocol economies consist of a network of miners that contributes work to provide a scarce resource and that is
 rewarded when said resource is consumed.
-In \kms, miners are re-enryption nodes.
+In \kms, miners are re-encryption nodes.
 Anyone can become a miner and their rewards are differentiated based on the amount of re-encryption operations provided.
 Access to the scarce re-encryption services must be controlled and allocated to the most high value uses.
-The mechanism by which we achieve this is called \kms~Token. \kms~Token is both the reward miners get for contributing
-work and the price consumer (owner of the data) pay for access to re-encryption services.
+The mechanism by which we achieve this is \kms~Token. \kms~Token is both the reward miners get for contributing
+work and the price consumers (owners of the data) pay for access to re-encryption services.
 
-First, miners have a quota of number of operations they can perform according to the amount of \kms~Token they are holding.
-This \kms~Token serves as a way to decentralize the network in order to avoid collusion between miners and users of the data.
+First, miners have a quota on the number of operations they can perform according to the amount of \kms~Token they are holding.
+Thus, \kms~Token serves as a way to decentralize the network in order to avoid collusion between miners and users of the data.
 It also is used as collateral which miners risk if they commit any wrongdoing (such as providing fake data instead of re-encrypted data, leaking
-re-encryption keys, being offline for too long while claiming to be active guardians of re-encryption policies).
+re-encryption keys, or being offline for too long while claiming to be active guardians of re-encryption policies).
 
 Quotas are distributed proportional to the number of online (Staking) miners' tokens,
-where the miners promise to be online and hold/process up to certain amount of re-encryption keys,
+where the miners promise to be online and hold/process up to a certain amount of re-encryption keys,
 while their tokens are locked up by a smart contract.
 
 \section{Security risks}
@@ -310,7 +308,7 @@ while their tokens are locked up by a smart contract.
 Proxy re-encryption allows \kms~to split the trust between access management and decryption rights,
 without introducing an always-online always-trusted entity (such as a traditional key management system).
 Miners never see plaintext data, or anything which allows them to decrypt the data.
-They are solely responsible for applying the re-encryption function.
+They are solely responsible for storing re-encryption keys and applying re-encryption functions.
 
 The first risk is collusion of a miner and a reader of the data.
 If the miner gives the reader re-encryption keys for the data shared with him,
@@ -318,12 +316,12 @@ the data can be decrypted at any time by the data reader, circumventing any cond
 This risk can be mitigated in several ways.
 
 First of all, instead of one re-encryption key, m-of-n re-encryption keys can be used to produce ``re-encryption shares''.
-These shares can be combined at the client side.
+These shares can be combined client-side.
 This scheme can be used with AFGH~\cite{AFGH} encryption, for example.
 A ``collusion'' attack here would require $m$ miners \emph{and} the reader of the data.
 
-Secondly, we can disinsentivise miners from leaking re-encryption keys.
-Anyone can challenge a miner with a hash of a re-encryption key, and if the re-encryption key is proven to have been leaked, the miner can forfeit his collateral valued in \kms~Tokens.
+Secondly, we can disincentivize miners from leaking re-encryption keys.
+Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral valued in \kms~Tokens.
 
 Finally, in order to test the security of the network (non-collusion), we can put bounty secrets~--- private keys for wallets with
 some crypto-currency.
@@ -338,9 +336,9 @@ functionality, including:
 
 \subsection{Sharing encrypted files (``Decentralized dropbox'')}
 Files can be encrypted client-side and stored in decentralized filesystems like IPFS (or centralized ones like S3), Sia~\cite{web:sia}, or Storj~\cite{web:storj}.
-The files can be easily shared with approved third-parties by providing a re-encryption token based on the third-parties
+The files can be easily shared with approved third-parties by providing a re-encryption token based on the third-party's
 public key.
-The third-parties access permission can be easily revoked by removing the re-encryption token from the network.
+The third-party's access permission can be easily revoked by removing the re-encryption token from the network.
 
 \subsection{End-to-end encrypted group chat}
 PRE is an ideal primitive for end-to-end encrypted group messaging, in which multiple participants require read and write
@@ -348,9 +346,9 @@ access to a channel. Members can easily be added or removed to the chat by issui
 This avoids the overhead of encrypting and sending messages multiple times, individually for each participant.
 
 \subsection{Patient-controlled electronic health records (EHR)}
-A patient-controlled EHR can be created in the patient owns their data and encryption keys, as opposed to an centralized
-company like Epic.
-Again, the data can be stored centrally or in a decentralized system.
+A patient-controlled EHR can be created in which the patient owns their data and encryption keys, as opposed to centralized
+systems like Epic.
+Again, the data can be stored centrally or in a decentralized backend.
 When the patient wants to share their encrypted data with a hospital or insurance company, they issue a re-encryption token,
 which grants temporary access to the third-party.
 
@@ -361,10 +359,10 @@ Conditional re-encryption tokens can be controlled by a smart contract and relea
 Services like a decentralized Netflix or an encrypted marketplace selling software, apps, photos, and other content
 can now be built using \kms.
 
-\subsection{Identity management}
-A zero-knowledge identity management service can be constructed using \kms. Identities can be encrypted client-side and stored with the
-identity management provider. Users can create re-encryption keys for approved applications which are used to re-encrypt identity
-credentials for said third-party application, without the identity provider ever having access.
+\subsection{Blind identity management}
+A blind identity management service can be constructed using \kms. Identities can be encrypted client-side and stored with the
+identity management provider. Users can create re-encryption keys for approved applications. The service re-encrypts identity
+credentials for said third-party applications, without the identity provider ever having access.
 
 \subsection{Secret credentials management for scripts and backend applications}
 \kms~is ideal for the storage of any secrets, such as sensitive environment variables, database credentials, and API keys.
