@@ -52,7 +52,23 @@ It enables private data sharing between arbitrary number of participants in publ
 It is a hybrid cryptosystem that combines the efficiency of symmetric encryption with the convenience of public-key encryption.
 In-network tokens are used to incentivize network participants to perform key management and access delegation/revokation operations.
 
-(Overview of key management systems: what they do, why, KMS as a service - CloudHSM, truevault; self-run: hashicorp).
+A key management system (KMS) is an integrated approach for generating, distributing and managing cryptographic keys for devices and
+applications.
+A KMS includes the backend functionality for key generation, distribution, and rotation as well as the client functionality for
+injecting, storing, and managing keys on devices~\cite{wiki:kms}.
+
+As the root of trust, it's critical that a KMS is appropriately configured, managed, and protected.
+Historically, this has meant deploying a KMS on-premises in hardware security modules (HSM)~\cite{wiki:hsm} or using tools like
+HashiCorp's Vault~\cite{web:hashicorp-vault}.
+However, this requires a high degree of technical sophistication as well as upfront capital investment.
+To ease the technical burden and provide more competitive economics, vendors like Amazon CloudHSM~\cite{web:aws-cloudhsm},
+Google Cloud KMS~\cite{web:google-cloud-kms}, Azure Key Vault~\cite{web:azure-key-vault} and TrueVault~\cite{web:truevault}
+have begun offering KMS as a service.
+However, KMS as a service offerings necessitate placing an undo level of trust in the service provider, which may
+be inappropriate for security-critical applications.
+
+NuCypherKMS enables KMS as a service using a decentralized network and a native token to remove this trusted relationship
+as a single point of failure.
 
 \section{Architecture}
 
