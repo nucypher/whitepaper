@@ -1,6 +1,6 @@
 \documentclass[notitlepage,longbibliography]{revtex4-1}
 
-% Project name
+% NuCypherKMS
 \newcommand{\kms}{NuCypherKMS}
 
 \usepackage{listings}
@@ -310,6 +310,9 @@ Access to the scarce re-encryption services must be controlled and allocated to 
 The mechanism by which we achieve this is \kms~Token. \kms~Token is both the reward miners get for contributing
 work and the price consumers (owners of the data) pay for access to re-encryption services.
 
+\subsection{Functionality and necessity}
+% what does the token do?
+% why is the token necessary at all?
 First, miners have a quota on the number of operations they can perform according to the amount of \kms~Token they are holding.
 Thus, \kms~Token serves as a way to decentralize the network in order to avoid collusion between miners and users of the data.
 It also is used as collateral which miners risk if they commit any wrongdoing (such as providing fake data instead of re-encrypted data, leaking
@@ -318,6 +321,13 @@ re-encryption keys, or being offline for too long while claiming to be active gu
 Quotas are distributed proportional to the number of online (Staking) miners' tokens,
 where the miners promise to be online and hold/process up to a certain amount of re-encryption keys,
 while their tokens are locked up by a smart contract.
+
+\subsection{Incentives}
+% how do the tokens create and incentivize an economy around the protocol?
+% how do token holders benefit from that growing cryptoeconomy?
+
+\subsection{Issuance mechanism}
+% how are tokens minted/destroyed/used?
 
 \section{Security considerations}
 
@@ -347,7 +357,7 @@ The fact of the bounty being taken would be proof of security being compromised.
 This same mechanism can be used to warn of a potential data leak by individual users of the network, by signalling that they may have exposed
 their key to the data.
 
-\subsection{51% attack}
+\subsection{51\% attack}
 NuCypherKMS provides superior security guarantees than an alternative scheme in which private keys are split and stored across nodes.
 Under a split key scheme, if a malicious actor is able to compromise enough nodes and gather a sufficent number of key shares, they
 will be able to decrypt the target data.
