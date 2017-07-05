@@ -301,7 +301,7 @@ sharing data with his future self.
 Now, re-encryption nodes (assuming the encrypted storage is public, such as IPFS) will download EDEKs and apply the transformation.
 For this operation, no collusion risks exist since the ``sender'' and ``receiver'' of the data are, essentially, the same person.
 
-\section{Cryptoeconomics}
+\section{Token economics}
 Protocol economies consist of a network of miners that contributes work to provide a scarce resource and that is
 rewarded when said resource is consumed.
 In \kms, miners are re-encryption nodes.
@@ -319,13 +319,14 @@ Quotas are distributed proportional to the number of online (Staking) miners' to
 where the miners promise to be online and hold/process up to a certain amount of re-encryption keys,
 while their tokens are locked up by a smart contract.
 
-\section{Security risks}
+\section{Security considerations}
 
 Proxy re-encryption allows \kms~to split the trust between access management and decryption rights,
 without introducing an always-online always-trusted entity (such as a traditional key management system).
 Miners never see plaintext data, or anything which allows them to decrypt the data.
 They are solely responsible for storing re-encryption keys and applying re-encryption functions.
 
+\subsection{Collusion}
 The first risk is collusion of a miner and a reader of the data.
 If the miner gives the reader re-encryption keys for the data shared with him,
 the data can be decrypted at any time by the data reader, circumventing any conditional or time-based constraints.
@@ -345,6 +346,13 @@ Anyone is free to hack the system and take the bounty.
 The fact of the bounty being taken would be proof of security being compromised.
 This same mechanism can be used to warn of a potential data leak by individual users of the network, by signalling that they may have exposed
 their key to the data.
+
+\subsection{51% attack}
+NuCypherKMS provides superior security guarantees than an alternative scheme in which private keys are split and stored across nodes.
+Under a split key scheme, if a malicious actor is able to compromise enough nodes and gather a sufficent number of key shares, they
+will be able to decrypt the target data.
+In contrast, if an attacker is able to gather a sufficient number of re-encryption tokens, they will only be able to re-encrypt the data
+to the target key, a dramatic increase in security and confidentiality guarantees.
 
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
