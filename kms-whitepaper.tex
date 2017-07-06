@@ -75,7 +75,8 @@ data are well-established~\cite{cryptoeprint:2017:201}. Consensus networks emplo
 which is subject to constant churn and not as reliable as central infrastructure when it comes to enforcing access management rules. 
 
 NuCypherKMS enables KMS as a service. It uses a decentralized network to remove the trusted relationship with central service
-providers and a token incentive mechanism to ensure reliability, availability, and correctness.
+providers, proxy re-encryption for cryptographic access controls, and a token incentive mechanism to ensure reliability,
+availability, and correctness.
 
 \section{Architecture}
 
@@ -329,9 +330,12 @@ Quotas are distributed proportional to the number of online (Staking) miners' to
 where the miners promise to be online and hold/process up to a certain amount of re-encryption keys,
 while their tokens are locked up by a smart contract.
 
-\subsection{Incentives}
+\subsection{Network effects and incentives}
 % how do the tokens create and incentivize an economy around the protocol?
 % how do token holders benefit from that growing cryptoeconomy?
+An interesting property of \kms~is that security improves as the number of network participants grows. As additional re-encryption
+nodes enter the network, the less chance of collusion and the greater decentralization of re-encryption tokens. This improves both the
+security and censorship-resistance of the system.
 
 \subsection{Issuance mechanism}
 % how are tokens minted/destroyed/used?
@@ -366,13 +370,17 @@ their key to the data.
 
 \subsection{51\% attack}
 NuCypherKMS provides superior security guarantees than an alternative scheme in which private keys are split and stored across nodes.
-Under a split key scheme, if a malicious actor is able to compromise enough nodes and gather a sufficent number of key shares, they
+Under a split private key scheme, if a malicious actor is able to compromise enough nodes and gather a sufficent number of key shares, they
 will be able to decrypt the target data.
-In contrast, if an attacker is able to gather a sufficient number of re-encryption tokens, they will only be able to re-encrypt the data
+In contrast, if an attacker is able to gather a sufficient number of re-encryption token shares, they will only be able to re-encrypt the data
 to the target key, a dramatic increase in security and confidentiality guarantees.
 
-\subsection{Misbehaving nodes}
-Re-encryption nodes may fraudulently return random data instead of appropriately re-encrypted ciphertext.
+\subsection{Ensuring correctness}
+Re-encryption nodes may, maliciously or otherwise, return random data instead of appropriately re-encrypted ciphertext. To ensure correctness,
+a challenge mechanism can be used, under which a known ciphertext can be compared to the node's response. If the two ciphertexts do not match,
+the node will forfeit it's staking bond.
+
+\subsection{Availability}
 
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
