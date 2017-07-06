@@ -384,7 +384,8 @@ the node will forfeit it's staking bond.
 
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
-functionality, including:
+functionality. The ability to condition decryption operations on public actions on the consensus network, such as the publication
+of certain messages, payments made between specific parties, and other events enables a range of applications including:
 
 \subsection{Sharing encrypted files (``Decentralized dropbox'')}
 Files can be encrypted client-side and stored in decentralized filesystems like IPFS (or centralized ones like S3), Sia~\cite{web:sia}, or Storj~\cite{web:storj}.
@@ -422,6 +423,17 @@ It can be used for shared credentials that employees use to access web services.
 An audit log mechanism could be built to monitor what secrets are accessed and by whom.
 When an employee leaves, it is easy to revoke access or even roll keys.
 For scripts, a re-encryption token can be generated for the duration of a script, then revoked.
+
+\subsection{Mandatory access logging}
+In some corporate and enterprise settings, clients must publish access logs for sensitive files.
+This requires that each file access be recorded by some online system.
+Conditional re-encryption can be used to mandate logging of each file access before the file can be accessed by the user.
+
+\subsection{?Autonomous ransomware}
+%Probably shouldn't include this, but putting a placeholder for now to be thorough
+
+\subscection{Fairness in multi-party computation}
+% valid use case?
 
 \bibliography{kms-whitepaper}
 
