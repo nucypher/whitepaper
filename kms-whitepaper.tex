@@ -364,6 +364,9 @@ will be able to decrypt the target data.
 In contrast, if an attacker is able to gather a sufficient number of re-encryption tokens, they will only be able to re-encrypt the data
 to the target key, a dramatic increase in security and confidentiality guarantees.
 
+\subsection{Misbehaving nodes}
+Re-encryption nodes may fraudulently return random data instead of appropriately re-encrypted ciphertext.
+
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
 functionality, including:
