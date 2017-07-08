@@ -9,6 +9,8 @@
 \usepackage[margin=5pt]{subfig}
 \usepackage[usenames]{color}
 \usepackage{librebaskerville}
+\renewcommand{\baselinestretch}{1.4}
+\setlength{\parskip}{1em}
 % \usepackage{xspace}
 \definecolor{darkgreen}{rgb}{0.00,0.50,0.25}
 \definecolor{darkblue}{rgb}{0.00,0.00,0.67}
@@ -72,7 +74,7 @@ be inappropriate for security-critical applications.
 Public consensus networks, such as Bitcoin and Ethereum, are a promising solution to this centralization problem.
 But the limitations of public consensus networks to perform cryptographic operations that involve the manipulation of secret
 data are well-established~\cite{cryptoeprint:2017:201}. Consensus networks employ a volunteer network of nodes,
-which is subject to constant churn and not as reliable as central infrastructure when it comes to enforcing access management rules. 
+which is subject to constant churn and not as reliable as central infrastructure when it comes to enforcing access management rules.
 
 NuCypherKMS enables KMS as a service. It uses a decentralized network to remove the trusted relationship with central service
 providers, proxy re-encryption for cryptographic access controls, and a token incentive mechanism to ensure reliability,
@@ -116,7 +118,7 @@ A hybrid cryptosytem encryption flow defines the functions:
     c &= \text{encrypt}_{sym}(dek, d);\\
     edek &= \text{encrypt}_{pke}(dek, pk_r).
 \end{align}
-The pair $(edek, c)$ is used to transfer the encrypted data.
+The pair $(edek, c)$ is used to transform the encrypted data.
 The associated decryption by the receiver defines the functions:
 \begin{align}
     dek &= \text{decrypt}_{pke}(edek, sk_r);\\
@@ -226,21 +228,21 @@ Now, he can use DEK to decrypt the bulk of the data.
 \kms~can be interfaced from a traditional, centralized application.
 In Python, sharing a file in IPFS would look like:
 \begin{lstlisting}[frame=single,language=Python]
-import smartkms as kms
-kms.connect()  # Using default config
-path = '/ipfs/QmTkzDw.../to_the_moon.avi'
-kms.share('0xab12...', path, time=86400)
+import nkms
+nkms.connect()  # Using default config
+path = 'ipfs://QmTkzDw.../to_the_moon.avi'
+nkms.share('0xab12...', path, time=86400)
 \end{lstlisting}
 If there is no library client available, there could be a local API server, similarly to how geth is used to interact with Ethereum network.
 
 Reading this file would be:
 \begin{lstlisting}[frame=single,language=Python]
-import smartkms as kms
+import nkms
 client = ipfsapi.Client(...)
-kms.connect()  # Using default config
-path = '/ipfs/QmTkzDw.../to_the_moon.avi'
+nkms.connect()  # Using default config
+path = 'ipfs://QmTkzDw.../to_the_moon.avi'
 edata = client.cat(path)
-data = kms.decrypt(edata, path)
+data = nkms.decrypt(edata, path)
 print(data)
 \end{lstlisting}
 The ``decrypt'' function splits edata into $edek$ and the actual encrypted data,
@@ -266,7 +268,8 @@ The preliminary version of the API will include the following functions:
 
 Low-level functionality allows encrypting and delegating access to binary secrets (such as database credentials) or groups of these secrets without
 storing them in individual files.
-A possible backend for storing simple secrets like these could be a hierarchical config file (in YAML or JSON format) stored in IPFS.
+A possible backend for storing simple secrets like these could be a hierarchical config file (in YAML or JSON format) stored in IPFS,
+or even simply in the same instance image.
 Client-side software can parse this file and ask to re-encrypt only the secrets it needs.
 There could be per-field and per-subfield re-encryption keys for granular permissions.
 
