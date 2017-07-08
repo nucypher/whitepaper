@@ -429,6 +429,11 @@ In some corporate and enterprise settings, clients must publish access logs for 
 This requires that each file access be recorded by some online system.
 Conditional re-encryption can be used to mandate logging of each file access before the file can be accessed by the user.
 
+\subsection{Mobile device management and recovaction}
+In an enterprise MDM setting, re-encryption tokens can be created for valid devices. When a device is lost or retired,
+or an employee leaves the organization, the re-encryption token can be deleted to revoke their access. This avoids the
+problem of re-organizing hierachical key trees.
+
 \bibliography{kms-whitepaper}
 
 \end{document}
