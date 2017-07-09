@@ -221,6 +221,79 @@ Now, he can use DEK to decrypt the bulk of the data.
     \label{fig:arch-decrypt}
 \end{figure}
 
+\section{Network security}
+
+In network, there are multiple re-encryption nodes which apply access management polocies.
+
+Proxy re-encryption allows \kms~to split the trust between access management and decryption rights,
+without introducing an always-online always-trusted entity (such as a traditional key management system).
+Miners never see plaintext data, or anything which allows them to decrypt the data.
+They are solely responsible for storing re-encryption keys and applying re-encryption functions.
+
+The first risk of this model is collusion of a miner and a reader of the data.
+If the miner gives the reader re-encryption keys for the data shared with him,
+the data can be decrypted at any time by the data reader, circumventing any conditional or time-based constraints.
+We use multiple ways of counter-acting this threat: pseudo-anonymity of re-encryption keys, split-key proxy re-encryption and challenge protocol.
+On top of those, we apply economic incentives for fair operation, described in Sec.~\ref{sec:token}.
+
+The second risk is nodes starting to malfunction (return fake data instead of performing re-encryptions).
+We solve this problem using a challenge protocol.
+
+The third risk is nodes colluding with each other to perform 50\% attacks.
+This risk is usually deadly for multi-party computations (such as Enigma~\cite{enigma}), however in our case it gives the attacker ability to only wrongfully apply policies, not to decrypt data or to grant access to a user who never has access to the data.
+The system should, ideally, be as much more decentralized as possible, however 50\% attacks don't compromise security of the data, just like 50\% attacks in
+proof-of-work cryptocurrencies don't give an attacker an ability to move funds.
+
+\subsection{Pseudo-anonymity}
+
+It is highly beneficial for the system security that re-encryption nodes do not know what is it they are re-encrypting.
+One reason for that is that they don't know which re-encryption keys to perform collusion attacks on (and trying to collude with all the network participants
+would be infeasible when the network is decentralized).
+But also, importantly, pseudo-anonymity of re-encryption keys allows to run a challenge protocol (Sec.~\ref{sec:challenge-protocol}).
+
+In order to achieve pseudo-anonymity, we propose the following protocol.
+If each recipient of the data has a key pair $s_r/p_r$, and the path or identifier of the data shared is $n$,
+each re-encryption key has a unique ID $i_r$ associated with it:
+\begin{align}
+    nonce &= \text{random}(), \\
+    i_r &= \text{HMAC}(p_r \| n, nonce),
+\end{align}
+where HMAC is a hash-based message authentication code~\cite{wiki:hmac}.
+The value of $i_r$ is unique and impossible to guess without knowing a random nonce.
+The nonce should be told the recipient of the data once the data is shared, so that the recipient can form a proper request to apply the re-encryption key
+related to the data shared, not the other data.
+
+Re-encryption nodes store re-encryption keys $re$ in an in-memory key-value store $i_r\rightarrow re$.
+
+\subsection{Split-key re-encryption}
+
+Imagine that a re-encryption node decides to re-encrypt data all the time rather than to apply policies.
+Analog to split-key schemes in proxy re-encryption can be used to solve this problem.
+
+Instead of one re-encryption key, m-of-n re-encryption keys can be used to produce ``re-encryption shares''.
+These shares can be combined client-side.
+An m-of-m scheme exists for AFGH~\cite{AFGH} encryption, for example.
+A ``collusion'' attack here would require $m$ miners \emph{and} the reader of the data.
+
+A threshold-based m-of-n scheme, to be published by NICS labs, appears to be the most appropriate for this task.
+
+\subsection{Challenge protocol}
+\label{sec:challenge-protocol}
+
+There is a risk of miners returning just random numbers instead of re-encrypting the actual data.
+Since the data is private, users of the system cannot publish this data and their key as a proof that the miner has cheated.
+
+Provided we have pseudo-anonymity, a miner cannot distinguish between a ``true re-encryption'' and a re-encryption of random data.
+So, we can produce a number of ``fake'' re-encryption keys which are designed specifically to challenge the miners.
+If a miner cheats, the data and the key for this challenge aren't associated with any private data.
+
+The miners should show the hashes of data before and after re-encryption to the network.
+If this re-encryption was a challenge and the miner has cheated, the user can present a proof that non-sensitive keys related to this challenge should actually
+produce a different re-encryption result, and the miner's collateral deposit should be taken to reward the challengers.
+
+The system should produce a number of ``wrong re-encryptions'' also by itself, in order to incentivise challengers to operate, as was pointed out by
+Truebit~\cite{truebit}.
+
 \section{Functionality}
 
 \subsection{Local encryption library and daemon}
@@ -313,6 +386,8 @@ Now, re-encryption nodes (assuming the encrypted storage is public, such as IPFS
 For this operation, no collusion risks exist since the ``sender'' and ``receiver'' of the data are, essentially, the same person.
 
 \section{Token economics}
+\label{sec:token}
+
 Protocol economies consist of a network of miners that contributes work to provide a scarce resource and that is
 rewarded when said resource is consumed.
 In \kms, miners are re-encryption nodes.
@@ -320,8 +395,15 @@ Anyone can become a miner and their rewards are differentiated based on the amou
 Access to the scarce re-encryption services must be controlled and allocated to the most high value uses.
 The mechanism by which we achieve this is \kms~Token. \kms~Token is both the reward miners get for contributing
 work and the price consumers (owners of the data) pay for access to re-encryption services.
+Vitally, the token also incentivising correctness of computation and security if the system.
 
-\subsection{Functionality and necessity}
+\subsection{Token distribution}
+
+\subsection{Correctness of computations}
+
+\subsection{Security of re-encryption keys}
+
+\subsection{Functionality and necessity}  % XXX
 % what does the token do?
 % why is the token necessary at all?
 First, miners have a quota on the number of operations they can perform according to the amount of \kms~Token they are holding.
@@ -333,33 +415,22 @@ Quotas are distributed proportional to the number of online (Staking) miners' to
 where the miners promise to be online and hold/process up to a certain amount of re-encryption keys,
 while their tokens are locked up by a smart contract.
 
-\subsection{Network effects and incentives}
+\subsection{Network effects and incentives}  % XXX
 % how do the tokens create and incentivize an economy around the protocol?
 % how do token holders benefit from that growing cryptoeconomy?
 An interesting property of \kms~is that security improves as the number of network participants grows. As additional re-encryption
 nodes enter the network, the less chance of collusion and the greater decentralization of re-encryption tokens. This improves both the
 security and censorship-resistance of the system.
 
-\subsection{Issuance mechanism}
+\subsection{Issuance mechanism}  % XXX
 % how are tokens minted/destroyed/used?
 
 \section{Security considerations}
+% XXX remove
 
-Proxy re-encryption allows \kms~to split the trust between access management and decryption rights,
-without introducing an always-online always-trusted entity (such as a traditional key management system).
-Miners never see plaintext data, or anything which allows them to decrypt the data.
-They are solely responsible for storing re-encryption keys and applying re-encryption functions.
 
 \subsection{Collusion}
-The first risk is collusion of a miner and a reader of the data.
-If the miner gives the reader re-encryption keys for the data shared with him,
-the data can be decrypted at any time by the data reader, circumventing any conditional or time-based constraints.
-This risk can be mitigated in several ways.
-
-First of all, instead of one re-encryption key, m-of-n re-encryption keys can be used to produce ``re-encryption shares''.
-These shares can be combined client-side.
-This scheme can be used with AFGH~\cite{AFGH} encryption, for example.
-A ``collusion'' attack here would require $m$ miners \emph{and} the reader of the data.
+% XXX
 
 Secondly, we can disincentivize miners from leaking re-encryption keys.
 Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral valued in \kms~Tokens.
@@ -370,18 +441,6 @@ Anyone is free to hack the system and take the bounty.
 The fact of the bounty being taken would be proof of security being compromised.
 This same mechanism can be used to warn of a potential data leak by individual users of the network, by signalling that they may have exposed
 their key to the data.
-
-\subsection{51\% attack}
-NuCypherKMS provides superior security guarantees than an alternative scheme in which private keys are split and stored across nodes.
-Under a split private key scheme, if a malicious actor is able to compromise enough nodes and gather a sufficent number of key shares, they
-will be able to decrypt the target data.
-In contrast, if an attacker is able to gather a sufficient number of re-encryption token shares, they will only be able to re-encrypt the data
-to the target key, a dramatic increase in security and confidentiality guarantees.
-
-\subsection{Ensuring correctness}
-Re-encryption nodes may, maliciously or otherwise, return random data instead of appropriately re-encrypted ciphertext. To ensure correctness,
-a challenge mechanism can be used, under which a known ciphertext can be compared to the node's response. If the two ciphertexts do not match,
-the node will forfeit it's staking bond.
 
 \subsection{Availability}
 
