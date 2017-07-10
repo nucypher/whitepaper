@@ -399,41 +399,23 @@ Vitally, the token also incentivising correctness of computation and security if
 
 \subsection{Token distribution}
 
-\subsection{Correctness of computations}
+All the \kms~Tokens exist from the time of creation of the system on main net.
 
-\subsection{Security of re-encryption keys}
+Miners can hold a number of re-encryption keys proportional to number of tokens they hold as a collateral deposit, locked up by a smart contract.
+The miners are paid for both serving re-encryptions and making themselves available to re-encrypt data.
+The miners could be paid either by the owner of the data, or (partly) by users of the data.
+The latter is more relevant for a usecase of DAOs based on decentralized DRM.
 
-\subsection{Functionality and necessity}  % XXX
-% what does the token do?
-% why is the token necessary at all?
-First, miners have a quota on the number of operations they can perform according to the amount of \kms~Token they are holding.
-Thus, \kms~Token serves as a way to decentralize the network in order to avoid collusion between miners and users of the data.
-It also is used as collateral which miners risk if they commit any wrongdoing (such as providing fake data instead of re-encrypted data, leaking
-re-encryption keys, or being offline for too long while claiming to be active guardians of re-encryption policies).
+If miners become unavailable, they lose their ``availability'' for the time period.
 
-Quotas are distributed proportional to the number of online (Staking) miners' tokens,
-where the miners promise to be online and hold/process up to a certain amount of re-encryption keys,
-while their tokens are locked up by a smart contract.
+If miners cheat and provide wrong re-encryptions, they lose a fraction of their security deposit (Sec.~\ref{sec:challenge-protocol}).
 
-\subsection{Network effects and incentives}  % XXX
-% how do the tokens create and incentivize an economy around the protocol?
-% how do token holders benefit from that growing cryptoeconomy?
+We can disincentivize miners from leaking re-encryption keys.
+Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral valued in \kms~Tokens.
+
 An interesting property of \kms~is that security improves as the number of network participants grows. As additional re-encryption
 nodes enter the network, the less chance of collusion and the greater decentralization of re-encryption tokens. This improves both the
 security and censorship-resistance of the system.
-
-\subsection{Issuance mechanism}  % XXX
-% how are tokens minted/destroyed/used?
-
-\section{Security considerations}
-% XXX remove
-
-
-\subsection{Collusion}
-% XXX
-
-Secondly, we can disincentivize miners from leaking re-encryption keys.
-Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral valued in \kms~Tokens.
 
 Finally, in order to test the security of the network (non-collusion), we can put bounty secrets~--- private keys for wallets with
 some crypto-currency.
@@ -441,8 +423,6 @@ Anyone is free to hack the system and take the bounty.
 The fact of the bounty being taken would be proof of security being compromised.
 This same mechanism can be used to warn of a potential data leak by individual users of the network, by signalling that they may have exposed
 their key to the data.
-
-\subsection{Availability}
 
 \section{Use cases}
 \kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
