@@ -1,7 +1,7 @@
 \documentclass[notitlepage,longbibliography]{revtex4-1}
 
 % NuCypherKMS
-\newcommand{\kms}{NuCypherKMS}
+\newcommand{\kms}{NuCypher KMS}
 
 \usepackage{listings}
 \usepackage{graphicx}
@@ -461,10 +461,15 @@ credentials for said third-party applications, without the identity provider eve
 
 \subsection{Secret credentials management for scripts and backend applications}
 \kms~is ideal for the storage of any secrets, such as sensitive environment variables, database credentials, and API keys.
-It can be used for shared credentials that employees use to access web services.
-An audit log mechanism could be built to monitor what secrets are accessed and by whom.
-When an employee leaves, it is easy to revoke access or even roll keys.
 For scripts, a re-encryption token can be generated for the duration of a script, then revoked.
+For example, developers can safely store encrypted database credentials on GitHub, giving temporary access to these credentials
+once an instance is deployed.
+Even if the GitHub repository is public, the credentials cannot be used by an unauthorized person.
+
+\subsection{Shared credentials and enterprise password management}
+\kms~can be used for shared credentials that employees use to access web services.
+An audit log can be built to monitor what secrets are accessed and by whom.
+When an employee leaves, it is easy to revoke access or even roll keys.
 
 \subsection{Mandatory access logging}
 In some corporate and enterprise settings, clients must publish access logs for sensitive files.
