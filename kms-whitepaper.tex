@@ -270,9 +270,9 @@ Re-encryption nodes store re-encryption keys $re$ in an in-memory key-value stor
 Imagine that a re-encryption node decides to re-encrypt data immediately rather than to apply conditional policies as instructed.
 A split-key proxy re-encryption scheme can be used to solve this problem.
 
-Instead of one re-encryption key, m-of-n re-encryption keys can be used to produce ``re-encryption shares''.
+Instead of one re-encryption key, m-of-m re-encryption keys can be used to produce ``re-encryption shares''.
 These shares can be combined client-side.
-An m-of-n scheme exists for AFGH~\cite{AFGH} encryption.
+An m-of-m scheme exists for AFGH~\cite{AFGH} encryption.
 A ``collusion'' attack here would require $m$ miners \emph{and} the reader of the data.
 
 A threshold-based m-of-n scheme, to be published by NICS Labs, appears to be the most appropriate for this task.
