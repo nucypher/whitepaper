@@ -15,13 +15,13 @@
 \definecolor{darkgreen}{rgb}{0.00,0.50,0.25}
 \definecolor{darkblue}{rgb}{0.00,0.00,0.67}
 \newcommand{\figref}[1]{Fig.~\ref{#1}}
-\usepackage[breaklinks,pdftitle={SmartKMS: blockchain-based encryption as a service}, pdfauthor={Michael Egorov},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
+\usepackage[breaklinks,pdftitle={NuCypher KMS: decentralized key management system}, pdfauthor={Michael Egorov},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
 \usepackage[usenames]{color}
 \graphicspath{{pdf/}}
 
 \begin{document}
 
-\title{\kms: Decentralized key management as a service}
+\title{\kms: Decentralized key management system}
 
 \author{M. Egorov}
 \email{michael@nucypher.com}
@@ -32,9 +32,9 @@
 % TODO: include David Nunez when he agrees
 
 \begin{abstract}
-    \kms~is a decentralized, censorship-resistant Key Management System that addresses the limitations of using consensus
-    networks to securely store and operate on encrypted data~\cite{cryptoeprint:2017:201}.
-    It provides encryption and cryptographic access controls as a service, performed by a decentralized network,
+    \kms~is a decentralized Key Management System (KMS) that addresses the limitations of using consensus
+    networks to securely store and manipulate private, encrypted data~\cite{cryptoeprint:2017:201}.
+    It provides encryption and cryptographic access controls, performed by a decentralized network,
     leveraging proxy re-encryption~\cite{wiki:pre}.
     Unlike centralized KMS as a service solutions, it doesn't require trusting a service provider.
     \kms~enables sharing of sensitive data for both decentralized and centralized applications,
