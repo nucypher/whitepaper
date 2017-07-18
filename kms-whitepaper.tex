@@ -1,6 +1,5 @@
-\documentclass[notitlepage,longbibliography]{revtex4-1}
+\documentclass[longbibliography]{revtex4-1}
 
-% NuCypherKMS
 \newcommand{\kms}{NuCypher KMS}
 
 \usepackage{listings}
@@ -8,16 +7,22 @@
 \usepackage{amsmath}
 \usepackage[margin=5pt]{subfig}
 \usepackage[usenames]{color}
-\usepackage{librebaskerville}
 \renewcommand{\baselinestretch}{1.4}
 \setlength{\parskip}{1em}
-% \usepackage{xspace}
 \definecolor{darkgreen}{rgb}{0.00,0.50,0.25}
 \definecolor{darkblue}{rgb}{0.00,0.00,0.67}
 \newcommand{\figref}[1]{Fig.~\ref{#1}}
 \usepackage[breaklinks,pdftitle={NuCypher KMS: decentralized key management system}, pdfauthor={Michael Egorov},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
 \usepackage[usenames]{color}
 \graphicspath{{pdf/}}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\lstset{
+    basicstyle=\ttfamily,
+    basewidth={0.5em, 0.5em},
+    columns=fullflexible,
+}
 
 \begin{document}
 
@@ -29,7 +34,6 @@
 \email{maclane@nucypher.com}
 \affiliation{NuCypher}
 
-% TODO: include David Nunez when he agrees
 
 \begin{abstract}
     \kms~is a decentralized Key Management System (KMS) that addresses the limitations of using consensus
@@ -44,9 +48,8 @@
 \date{\today}
 \maketitle
 
-\newpage
 \tableofcontents
-\newpage
+
 
 \section{Introduction}
 
@@ -127,7 +130,7 @@ The associated decryption by the receiver defines the functions:
 
 \subsubsection{Proxy re-encryption}
 Proxy re-encryption (PRE)~\cite{wiki:pre,phd:nunez} is a type of public-key encryption (PKE) that allows a proxy entity to transform ciphertexts
-from one public key to another, without learning anything about the underlying message~(Fig.~\ref{fig:pre}).
+from one public key to another, without learning anything about the underlying message~(\figref{fig:pre}).
 
 \begin{figure}
 \centering
@@ -182,7 +185,7 @@ The decryption by the receiver will then look like:
 
 \subsection{Re-encryption nodes}
 
-When the data is stored in a cloud or decentralized storage, it is encrypted with the data owner's (\emph{sender}) key $pk_s$~(Fig.~\ref{fig:arch-encrypt}).
+When the data is stored in a cloud or decentralized storage, it is encrypted with the data owner's (\emph{sender}) key $pk_s$~(\figref{fig:arch-encrypt}).
 The data itself is encrypted with a random symmetric key $dek$, with one key per file.
 The $dek$, encrypted with $pk_s$ is attached to the encrypted data.
 This combination $(edek, c)$ can be stored anywhere - in IPFS, S3, or any kind of decentralized or centralized storage.
@@ -194,7 +197,7 @@ This combination $(edek, c)$ can be stored anywhere - in IPFS, S3, or any kind o
 \end{figure}
 
 When storing the data, the user to whom we delegate access is not necessarily known in advance.
-First, the receiver should show the sender his public key~(Fig.~\ref{fig:arch-delegate}).
+First, the receiver should show the sender his public key~(\figref{fig:arch-delegate}).
 It often makes sense for the public key to correspond to an address in the Ethereum network (then it will be shown once a transaction is made from that
 address to make a payment for a digital content subscription, for example).
 The sender generates a re-encryption key $re_{s\rightarrow r}$ (including an encrypted random ephemeral key when needed) and sends it to a random re-encryption
@@ -208,7 +211,7 @@ The nodes which have shared data of user \emph{sender} with a user \emph{receive
     \label{fig:arch-delegate}
 \end{figure}
 
-When the receiver wants to decrypt data shared with him, he first downloads that data from storage or an encrypted stream~(Fig.~\ref{fig:arch-decrypt}).
+When the receiver wants to decrypt data shared with him, he first downloads that data from storage or an encrypted stream~(\figref{fig:arch-decrypt}).
 He separates out $edek$ from the message and sends $edek$ to the network of re-encryption nodes and finds active re-encryption nodes which can share the data
 of the sender with the receiver (those which have re-encryption key(s) $re_{s\rightarrow r}$).
 The receiver asks the node(s) that has the re-encryption key to transform $edek$ to $edek^{\prime}$ and uses his own secret key $sk_r$ to decrypt it and
