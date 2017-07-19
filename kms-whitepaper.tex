@@ -398,13 +398,13 @@ rewarded when said resource is consumed.
 In \kms, miners are re-encryption nodes.
 Anyone can become a miner and their rewards are differentiated based on the amount of re-encryption operations provided.
 Access to the scarce re-encryption services must be controlled and allocated to the highest value uses.
-The mechanism by which we achieve this is \kms~Token. \kms~Token is both the reward miners get for contributing
-work and the price consumers (owners of the data) pay for access to re-encryption services.
+The mechanism by which we achieve this is \kms~Token (NKMS).
+NKMS is both the reward miners get for contributing work and the price consumers (owners of the data) pay for access to re-encryption services.
 Vitally, the token also incentivizes correctness of computation and security of the system.
 
 \subsection{Token distribution}
 
-All the \kms~Tokens exist from the time of creation of the system on mainnet.
+All the NKMS Tokens exist from the time of creation of the system on mainnet.
 
 Miners can hold a number of re-encryption keys proportional to the number of tokens they hold as a collateral deposit, locked by a smart contract.
 The miners are paid both for providing re-encryption services and making themselves available to re-encrypt data.
@@ -416,7 +416,8 @@ If miners become unavailable, they lose their ``availability'' compensation for 
 If miners cheat and provide wrong re-encryptions, they lose a fraction of their security deposit (Sec.~\ref{sec:challenge-protocol}).
 
 We can disincentivize miners from leaking re-encryption keys.
-Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral valued in \kms~Tokens.
+Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral
+valued in NKMS.
 
 An interesting property of \kms~is that security improves as the number of network participants grows. As additional re-encryption
 nodes enter the network, the lower the chance of collusion.
