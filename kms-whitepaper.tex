@@ -38,7 +38,7 @@
 \begin{abstract}
     \kms~is a decentralized Key Management System (KMS) that addresses the limitations of using consensus
     networks to securely store and manipulate private, encrypted data~\cite{cryptoeprint:2017:201}.
-    It provides encryption and cryptographic access controls, performed by a decentralized network,
+    It provides encryption and cryptographic access control, performed by a decentralized network,
     leveraging proxy re-encryption~\cite{wiki:pre}.
     Unlike centralized KMS as a service solutions, it doesn't require trusting a service provider.
     \kms~enables sharing of sensitive data for both decentralized and centralized applications,
@@ -55,7 +55,7 @@
 
 \kms~is a decentralized key management system (KMS), encryption, and access control service.
 It enables private data sharing between arbitrary numbers of participants in public consensus networks,
-using proxy re-encryption to delegate decryption rights in a way that cannot be achieved by traditional symmetric or public-key encryption schemes.
+using proxy re-encryption to delegate decryption rights in a way that cannot be achieved by traditional symmetric or public-key encryption schemes. 
 Native tokens are used to incentivize network participants to perform key management and access delegation/revocation operations.
 
 \subsection{Background}
@@ -139,13 +139,16 @@ from one public key to another, without learning anything about the underlying m
     \label{fig:pre}
 \end{figure}
 
-Alice, the data owner, encrypts a message $m$, with her public key $pk_A$, resulting in ciphertext $c_A$.
-She decides to delegate access to message $m$ to Bob, who has the key pair $(pk_B, sk_B)$.
+In a typical proxy re-encryption scenario, there are several actors. 
+Alice, the data owner, has public key $pk_A$. Any entity that knows this key can produce encrypted data that only her can decrypt, using her secret key $sk_A$. 
+Suppose that a data producer encrypts a message $m$, with Alice's public key $pk_A$, 
+resulting in ciphertext $c_A$.
+Alice decides to delegate access to message $m$ to Bob, who has the key pair $(pk_B, sk_B)$.
 To do so, Alice creates a re-encryption key:
 \begin{equation}
     rk_{A\rightarrow B} = \text{rekey}(sk_A, pk_B).
 \end{equation}
-Importantly, this re-encryption function is one way, and $rk_{A\rightarrow B}$ cannot be decomposed into its component parts
+Importantly, in single-use, unidirectional proxy re-encryption schemes, this re-encryption function is one way, and $rk_{A\rightarrow B}$ cannot be decomposed into its component parts
 (at least, without also knowing $sk_A$ or $sk_B$).
 All it can do is re-encrypt $c_A$ such that it is transformed into $c_B$:
 \begin{equation}
