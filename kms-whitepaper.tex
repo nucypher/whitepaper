@@ -173,8 +173,10 @@ However, we don't want the sender to know the receiver's secret key.
 To get around this problem, we randomly generate an ephemeral key pair $sk_e/pk_e$.
 Then, access delegation looks like:
 \begin{align}
+    \label{eq:ephemeral-trick}
     sk_e &= \text{random}();\\
     rk_{A\rightarrow B} &= \text{rekey}(sk_A, sk_e);\\
+    \label{eq:ephemeral-trick-end}
     sk_e^{\prime} &= \text{encrypt}_{pke}(pk_B, sk_e).
 \end{align}
 The re-encryption node also needs to tell the receiver his ephemeral key.
@@ -190,11 +192,32 @@ The decryption by the receiver will then look like:
 
 \subsection{A brief review of re-encryption schemes}
 
+There are different properties which re-encryption schemes may enjoy.
+In this subsection, we consider some of them relevant to our use-cases.
+A full survey with consideration of all the known proxy re-encryption algorithm with their properties was published rencently~\cite{nunez2017proxy}.
+
+One of important proxy re-encryption properties is whether the algorithm is interactive or not.
+``Interactive'' means that a re-encryption key is computed out of two secret keys:
+$$re_{ab} = \text{rekey}(sk_a, sk_b).$$
+``Non-interactive'' means that one needs to know only owner's private key and delegatee's public key:
+$$re_{ab} = \text{rekey}(sk_a, pk_b).$$
+Examples of interactive algorithms are: BBS98~\cite{BBS98}, our ECIES re-encryption (based on BBS98) and LWE-based reencryption~\cite{lwe-reencryption}.
+One of ``non-interactive'' examples is AFGH~\cite{AFGH}.
+Even though it initially seems that we are only interested in non-interactive algorithms, we can share with a public rather than a private key on a protocol
+level using ephemeral keys (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
+
 % In consideration:
 % * BBS98
 % * ECIES + reencryption
 % * AFGH
 % * LWE
+
+% Properties:
+% interactiveness
+% bi-directional or not
+% anonymous or not
+% collusion-resistant or not
+% single-hop or multi-hop
 
 \subsection{Re-encryption nodes}
 
