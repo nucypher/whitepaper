@@ -188,8 +188,6 @@ The decryption by the receiver will then look like:
     d &= \text{decrypt}_{sym}(dek, c).
 \end{align}
 
-\subsection{Signing encrypted messages}
-
 \subsection{A brief review of re-encryption schemes}
 
 There are different properties which re-encryption schemes may enjoy.
@@ -255,13 +253,21 @@ Finally, as for any cryptosystem, notions of CPA-security~\cite{wiki:cpa} (secur
 and CCA-security~\cite{wiki:cca} (security against chosen-ciphertext attacks) are applicable to proxy re-encryption as well.
 All of the algorithms we have mentioned so far are CPA-secure.
 However AFGH~\cite{AFGH}, ECIES and LWE~\cite{lwe-reencryption} are also CCA-secure while BBS98~\cite{BBS98} is not.
-% Properties:
-% + interactiveness
-% + bi-directional or not
-% + single-hop or multi-hop
-% + collusion-resistant or not
-% anonymous or not
-% * CCA/CPA
+
+\subsection{Signing encrypted messages}
+
+In public keys encryption algorithms, everyone can encrypt using $pub_a$.
+This sometimes useful, but also opens up a window for malicious users of the network encrypting the data as if it was created by $A$.
+So, the data has to be signed in order to prove $B$ the identity of the original data owner.
+
+However, we want to make it possible to anonymize the protocol~(Sec.~\ref{sec:anonimity}).
+And a public digital signature certainly authenticates the owner of the data (which opens a potential for a re-encryption node to extort money from the owner).
+As such, it makes sense to:
+\begin{itemize}
+    \item include a digital signature as a part of plain text, so that it is impossible to verify the signature until the ciphertext is decrypted,
+    \item use a different key pairs for signing and for encryption (especially considering the lack of collusion-resistance of some re-encryption
+        cryptosystems).
+\end{itemize}
 
 \subsection{Re-encryption nodes}
 
