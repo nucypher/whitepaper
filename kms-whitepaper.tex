@@ -1,4 +1,4 @@
-\documentclass[longbibliography]{revtex4-1}
+\documentclass[longbibliography,nofootinbib]{revtex4-1}
 
 \newcommand{\kms}{NuCypher KMS}
 
@@ -186,6 +186,16 @@ The decryption by the receiver will then look like:
     d &= \text{decrypt}_{sym}(dek, c).
 \end{align}
 
+\subsection{Signing encrypted messages}
+
+\subsection{A brief review of re-encryption schemes}
+
+% In consideration:
+% * BBS98
+% * ECIES + reencryption
+% * AFGH
+% * LWE
+
 \subsection{Re-encryption nodes}
 
 When the data is stored in a cloud or decentralized storage, it is encrypted with the data owner's (\emph{sender}) key $pk_s$~(\figref{fig:arch-encrypt}).
@@ -246,11 +256,14 @@ The second risk is nodes malfunctioning (returning fake data instead of performi
 We solve this problem using a challenge protocol.
 
 The third risk is nodes colluding with each other to perform 50\% attacks.
-This risk is usually deadly for multi-party computations (such as Enigma~\cite{enigma}). However, in our case the attacker only gains the ability to wrongfully apply re-encryption policies, not to decrypt data or to grant access to a user who hasn't been granted access to the data.
+This risk is usually deadly for multi-party computations~\cite{vitalik-secret-dao} (such as Enigma~\cite{enigma}). However, in our case the attacker only gains the ability to wrongfully apply re-encryption policies, not to decrypt data or to grant access to a user who hasn't been granted access to the data.
 Ideally, the system should be as decentralized as possible, however 50\% attacks don't compromise the confidentiality of the data, just like 50\% attacks in
 proof-of-work cryptocurrencies don't give an attacker the ability to move funds.
 
-\subsection{Pseudo-anonymity}
+\subsection{Pseudo-anonymity
+\footnote{We are completely reviewing this subsection.
+Most likely, the actual anonymization protocol will be based on re-encryption mixnets.}
+}
 
 It is highly beneficial for the security of the system that re-encryption nodes do not know what is it they are re-encrypting.
 This prevents them from knowing which re-encryption keys to perform collusion attacks on (and trying to collude with all the network participants
@@ -301,6 +314,11 @@ produce a different re-encryption result, and the miner's collateral deposit can
 
 The system should also intentionally produce a number of ``wrong re-encryptions'', in order to incentivize challengers to operate, as pointed out by
 Truebit~\cite{truebit}.
+
+\subsection{Relevancy of possible threats to different use cases}
+
+\subsection{Hardware-enforced security}
+% GPUs and SGX
 
 \section{Functionality}
 
@@ -354,7 +372,7 @@ or even simply in the same instance image.
 Client-side software can parse this file and ask to re-encrypt only the secrets it needs.
 There could be per-field and per-subfield re-encryption keys for granular permissions.
 
-\subsection{Sharing files}
+\subsection{Sharing files and hierarchical data}
 
 When working with files, each file and each directory is encrypted under its secret key.
 Each file has its DEK stored encrypted by its secret key, directory's secret key, and so on, up to the root folder of the user.
