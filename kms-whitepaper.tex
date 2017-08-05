@@ -206,6 +206,29 @@ One of ``non-interactive'' examples is AFGH~\cite{AFGH}.
 Even though it initially seems that we are only interested in non-interactive algorithms, we can share with a public rather than a private key on a protocol
 level using ephemeral keys (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
 
+Another property which is interesting for us is whether the algorithm is uni-directional or bi-directional.
+Bi-directionality means that it is possible to compute $re_{ba}$ from just $re_{ab}$.
+In uni-directional algorithms that is impossible.
+Bi-directional algorithms are automatically converted to be effectively uni-directional when using ephemeral keys
+(Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
+Nevertheless, in Sec.~\ref{sec:hierarchical-data} we show that uni-directionality can be very convenient to make complex hierarchical data shareable in a
+scalable way.
+An example of a bi-directional algorithm is BBS98~\cite{BBS98}.
+
+Proxy re-encryption algorithms can also be single-hop and multi-hop.
+``Multi-hop'' means that if we have $re_{ab}$ and $re_{bc}$, these two re-encryption keys can be applied in series to convert ciphertext $c_a$ to a ciphertext
+$c_c$ without participation of $b$:
+$$c_c = \text{reencrypt}(re_{bc}, \text{reencrypt}(re_{ab}, c_a)).$$
+Sometimes it is even possible to compute $re_{ac}$, which is for BBS98 is:
+$$re_{ac} = re_{ab} \cdot re_{bc}.$$
+``Single-hop'' means that as long as $c_b$ is obtained via re-encryption, it is impossible to re-encrypt it further.
+Multi-hop schemes are useful for key rotation (Sec.~\ref{sec:key-rotation}) and for our hierarchical data sharing scheme (Sec.~\ref{sec:hierarchical-data}).
+An ephemeral key trick (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}) is, effectively, single-hop
+(although still doesn't prevent key rotation because ephemeral keys are only created when data are shared with other parties).
+Examples of multi-hop algorithms include BBS98~\cite{BBS98} and the LWE-based algorithm~\cite{lwe-reencryption}.
+AFGH algorithm~\cite{AFGH} is single-hop.
+
+
 % In consideration:
 % * BBS98
 % * ECIES + reencryption
@@ -213,11 +236,12 @@ level using ephemeral keys (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-tric
 % * LWE
 
 % Properties:
-% interactiveness
-% bi-directional or not
-% anonymous or not
-% collusion-resistant or not
+% + interactiveness
+% + bi-directional or not
 % single-hop or multi-hop
+% collusion-resistant or not
+% anonymous or not
+% * CCA/CPA
 
 \subsection{Re-encryption nodes}
 
@@ -396,6 +420,7 @@ Client-side software can parse this file and ask to re-encrypt only the secrets 
 There could be per-field and per-subfield re-encryption keys for granular permissions.
 
 \subsection{Sharing files and hierarchical data}
+\label{sec:hierarchical-data}
 
 When working with files, each file and each directory is encrypted under its secret key.
 Each file has its DEK stored encrypted by its secret key, directory's secret key, and so on, up to the root folder of the user.
@@ -424,6 +449,7 @@ Re-encryption can be allowed on a condition~--- for example, pending the complet
 This allows applications like pay-per-content DRM, or storing secret data as an escrow for financial transactions.
 
 \subsection{Key rotation}
+\label{sec:key-rotation}
 
 Many proxy re-encryption algorithms can be applied multiple times, BBS98~\cite{BBS98} included.
 Thus, proxy re-encryption can be used for key rotation.
