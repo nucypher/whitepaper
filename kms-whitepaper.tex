@@ -228,18 +228,38 @@ An ephemeral key trick (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-en
 Examples of multi-hop algorithms include BBS98~\cite{BBS98} and the LWE-based algorithm~\cite{lwe-reencryption}.
 AFGH algorithm~\cite{AFGH} is single-hop.
 
+Another seemingly important property is collusion resistance.
+Collusion-resistance means that having just $re_{ab}$ and $sk_b$ it is impossible to derive $sk_a$.
+The lack of collusion-resistance makes it possible to obtain $sk_a$ from $re_{ab}$ and $sk_b$.
+At the first glance it seems to be very much desired for security.
+However, even when having a collusion-resistant algorithm, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable to decrypt data encrypted by
+$sk_a$ whenever he wants to anyway.
+Collusion-resistance property only becomes important when the same key is used for signing and for encryption, but it's a good practice for the two key pairs
+to be not the same.
+However, if any other key is derived from $sk_a$ then a collusion-resistant algorithm should be used.
+For our purposes, it appears to be not important that the algorithm is collusion-resistant because we don't derive any subkeys from keys which are used to
+encrypt data.
+Collusion-resistant algorithms include AFGH~\cite{AFGH} and LWE-based re-encryption~\cite{lwe-reencryption}.
+Non collusion-resistant algorithms are BBS98~\cite{BBS98} and ECIES re-encryption.
 
-% In consideration:
-% * BBS98
-% * ECIES + reencryption
-% * AFGH
-% * LWE
+We may need to make it impossible to identify producers and/or consumers of the data from re-encryption keys~(Sec.~\ref{sec:anonymity}).
+Often the following way of doing so is possible for a proxy who knows all public keys in the system.
+Imagine, there is an unknown re-encryption key $re_{xy}$ known to the proxy.
+If the proxy iterates through all $a$ and $b$ in the system, it can discover that for some pair $(a, b)$:
+$$\text{reencrypt}(re_{xy}, \text{encrypt}(pub_a, \text{'any text'})) = \text{encrypt}(pub_b, \text{'any text'}).$$
+If such a pair is found, then it is proven that $x=a$ and $y=b$.
+Many schemes are vulnerable to this attack~\cite{BBS98,AFGH}.
+However, the LWE-based re-encryption~\cite{lwe-reencryption} enjoys the property of anonimity.
 
+Finally, as for any cryptosystem, notions of CPA-security~\cite{wiki:cpa} (security against chosen-plaintext attacks)
+and CCA-security~\cite{wiki:cca} (security against chosen-ciphertext attacks) are applicable to proxy re-encryption as well.
+All of the algorithms we have mentioned so far are CPA-secure.
+However AFGH~\cite{AFGH}, ECIES and LWE~\cite{lwe-reencryption} are also CCA-secure while BBS98~\cite{BBS98} is not.
 % Properties:
 % + interactiveness
 % + bi-directional or not
-% single-hop or multi-hop
-% collusion-resistant or not
+% + single-hop or multi-hop
+% + collusion-resistant or not
 % anonymous or not
 % * CCA/CPA
 
@@ -311,6 +331,7 @@ proof-of-work cryptocurrencies don't give an attacker the ability to move funds.
 \footnote{We are completely reviewing this subsection.
 Most likely, the actual anonymization protocol will be based on re-encryption mixnets.}
 }
+\label{sec:anonymity}
 
 It is highly beneficial for the security of the system that re-encryption nodes do not know what is it they are re-encrypting.
 This prevents them from knowing which re-encryption keys to perform collusion attacks on (and trying to collude with all the network participants
