@@ -397,12 +397,32 @@ Truebit~\cite{truebit}.
 \subsection{Relevancy of possible threats to different use cases}
 
 % Mobile Device Management
+In a mobile device management use case~(Sec.~\ref{sec:mdm}),
+the most important thing is to revoke access from a lost device before someone else founds it.
+A possible attack here is a user who took the device finding all relevant miners to collude with.
+As such, there must be no way for miners to identify a revoked user, as well as for the revoked user to identify who the miners were.
+One of the possible attacks would be a group of miners revoking access and asking to pay to get it back.
+However, there is no incentive to do so since the owner of the data can easily re-grant access to that mobile device.
+Another possible threat would be for a mining node to keep re-encryption keys for a long time, waiting for someone to attack the end-user device and come
+to collude with a mining node.
+In order to prevent this threat, it is important that the mining node cannot figure out if the data is valuable or not,
+and a good way to do it is to anonymize the data owner and the data itself (e.g. the mining node cannot figure out which data the $edek$ corresponds to).
 
 % Decentralized DRM
+Decentralized DRM~(Sec.~\ref{sec:drm}) assumes that once content (a file or a piece of video) is decrypted, it's ``bought''.
+In other word, access revokation is not really a problem in most of DRM use cases.
+However, if a node knows that the content is very expensive, they may choose to approach the buyer and ask him to pay them a cheaper price for the
+content.
+A way to prevent it would be to anonymize the recipient of the data.
+It would also help to hide the exact pricing information from the mining node while still having it possible to check if the necessary amount was paid using
+zk-SNARKs~\cite{consensys-snarks}.
 
 % Access control for shared files
-
-% Multi-user chats
+When \kms~is used to secure access to files~(Sec.~\ref{sec:files}) or messages, both granting and revokation of access are important.
+So, for this use case, full anonymization is highly desirable.
+Possible attacks include: recipients of the data bribing miners to continue having access,
+miners extorting fees from the owner when they know that the data is so valuable that it is critical to revoke the access.
+Anonymization appears to be an important part of making such an attack infeasible.
 
 \subsection{Hardware-enforced security}
 
@@ -560,6 +580,7 @@ functionality. The ability to condition decryption operations on public actions 
 of certain messages, payments made between specific parties, and other events, enables a range of applications including:
 
 \subsection{Sharing encrypted files (``Decentralized Dropbox'')}
+\label{sec:files}
 Files can be encrypted client-side and stored in decentralized filesystems like Swarm~\cite{swarm}, IPFS~\cite{whitepaper:ipfs}, Sia~\cite{web:sia}, or Storj~\cite{web:storj}, or centralized ones like S3.
 The files can be easily shared with approved third-parties by providing a re-encryption token based on the third-party's
 public key.
@@ -578,6 +599,7 @@ When the patient wants to share their encrypted data with a hospital or insuranc
 which grants temporary access to the third-party.
 
 \subsection{Decentralized digital rights management (DDRM)}
+\label{sec:drm}
 Cryptographic access controls can act as a decentralized DRM.
 Access controls can be embedded into the encryption itself so that they follow the data wherever it goes.
 Conditional re-encryption tokens can be controlled by a smart contract and released only upon payment.
@@ -606,6 +628,7 @@ In some corporate and enterprise settings, clients must publish access logs for 
 This requires that each file access be recorded and conditional re-encryption can be used to mandate these logging rules.
 
 \subsection{Mobile device management (MDM) and revocation}
+\label{sec:mdm}
 In an enterprise MDM setting, re-encryption tokens can be created for valid devices. When a device is lost or retired,
 or an employee leaves the organization, the re-encryption token can be deleted to revoke the device's access. This avoids the
 problem of re-organizing hierarchical key trees.
