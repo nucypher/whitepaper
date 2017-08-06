@@ -405,7 +405,19 @@ Truebit~\cite{truebit}.
 % Multi-user chats
 
 \subsection{Hardware-enforced security}
-% GPUs and SGX
+
+If miners start misbehaving, they may lose their collateral deposit.
+However, rather than being their fault, it could be a result of the mining node being attacked.
+In order for miners to prevent their nodes from being invaded, they can use commonly accessible secure hardware:
+last generation of Intel CPUs (Skylake+) which support SGX, or NVidia GPUs.
+
+Intel SGX technology~\cite{wiki:sgx} promises to run \emph{any} computations in a secure environment.
+It was proposed to have a decentralized network for managing secrets relying on the SGX technology rather than fairness of
+miners or re-encryption~\cite{sgx-blockchain-encryption}.
+
+Alternatively, holding and using re-encryption keys can be done inside GPUs.
+It was shown that GPUs can server as trusted platform modules with limited capabilities (although they can certainly execute
+re-encryption)~\cite{gpu-trusted}.
 
 \section{Performance considerations}
 
