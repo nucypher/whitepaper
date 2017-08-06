@@ -519,6 +519,19 @@ When working with files, each file and each directory is encrypted under its sec
 Each file has its DEK stored encrypted by its secret key, directory's secret key, and so on, up to the root folder of the user.
 When a directory is shared, a re-encryption key is created only for the shared directories.
 
+The method above requires to store as many EDEKs, as many there is the number of levels in the tree structure.
+If we use a multi-hop uni-directional algorithm (there is only one~\cite{lwe-reencryption}), we can have re-encryption keys from the bottom levels to
+the top levels~(\figref{fig:hierarchical-pre}).
+When access is granted to a directory, all its files and subdirectories have a path to be reencrypted under the directory key, and then reencrypted for the
+recipient:
+$$edek_b = \text{reencrypt}(re_{xb}, \text{reencrypt}(re_{1x}, edek_1))$$.
+\begin{figure}
+\centering
+    \includegraphics[width=0.45\columnwidth]{pdf/hierarchical.pdf}
+    \caption{Sharing hierarchical structures (such as files and folders)}
+    \label{fig:hierarchical-pre}
+\end{figure}
+
 \subsection{Sharing encrypted streams}
 
 Sharing encrypted streams with multiple users is ideal for applications such as a decentralized Netflix, where third parties routing traffic
