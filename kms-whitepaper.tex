@@ -47,7 +47,7 @@
     \kms~enables sharing of sensitive data for both decentralized and centralized applications,
     providing security infrastructure for applications from healthcare to identity management to decentralized content marketplaces.
     We expect \kms~to be an essential part of decentralized applications,
-    just like SSL/TLS become the essential part of every secure web application.
+    just like SSL/TLS is an essential part of every secure web application.
 \end{abstract}
 
 \date{\today}
@@ -196,81 +196,81 @@ The decryption by the receiver will then look like:
 \subsection{A brief review of re-encryption schemes}
 
 There are different properties which re-encryption schemes may enjoy.
-In this subsection, we consider some of them relevant to our use-cases.
-A full survey with consideration of all the known proxy re-encryption algorithm with their properties was published rencently~\cite{nunez2017proxy}.
+In this subsection, we consider several of them relevant to our use cases.
+A full survey with consideration of all the known proxy re-encryption algorithms and their properties was published recently~\cite{nunez2017proxy}.
 
-One of important proxy re-encryption properties is whether the algorithm is interactive or not.
+One of the important properties to consider is whether an algorithm is interactive or not.
 ``Interactive'' means that a re-encryption key is computed out of two secret keys:
 $$re_{ab} = \text{rekey}(sk_a, sk_b).$$
-``Non-interactive'' means that one needs to know only owner's private key and delegatee's public key:
+``Non-interactive'' means that one needs to know only the owner's private key and the delegatee's public key:
 $$re_{ab} = \text{rekey}(sk_a, pk_b).$$
-Examples of interactive algorithms are: BBS98~\cite{BBS98}, our ECIES re-encryption (based on BBS98) and LWE-based reencryption~\cite{lwe-reencryption}.
-One of ``non-interactive'' examples is AFGH~\cite{AFGH}.
-Even though it initially seems that we are only interested in non-interactive algorithms, we can share with a public rather than a private key on a protocol
+Examples of interactive algorithms are: BBS98~\cite{BBS98}, our ECIES re-encryption (based on BBS98), and LWE-based reencryption~\cite{lwe-reencryption}.
+An example of a ``non-interactive'' algorithm is AFGH~\cite{AFGH}.
+Even though it initially seems that we are only interested in non-interactive algorithms, we can tweak interactive algorithms to share with a public rather than a private key on a protocol
 level using ephemeral keys (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
 
-Another property which is interesting for us is whether the algorithm is uni-directional or bi-directional.
+Another property which is interesting is whether the algorithm is uni-directional or bi-directional.
 Bi-directionality means that it is possible to compute $re_{ba}$ from just $re_{ab}$.
 In uni-directional algorithms that is impossible.
-Bi-directional algorithms are automatically converted to be effectively uni-directional when using ephemeral keys
+Bi-directional algorithms are effectively uni-directional when using ephemeral keys
 (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
-Nevertheless, in Sec.~\ref{sec:hierarchical-data} we show that uni-directionality can be very convenient to make complex hierarchical data shareable in a
+Nevertheless, in Sec.~\ref{sec:hierarchical-data} we show that uni-directionality can be very convenient for making complex hierarchical data shareable in a
 scalable way.
 An example of a bi-directional algorithm is BBS98~\cite{BBS98}.
 
-Proxy re-encryption algorithms can also be single-hop and multi-hop.
+Proxy re-encryption algorithms can also be single-hop or multi-hop.
 ``Multi-hop'' means that if we have $re_{ab}$ and $re_{bc}$, these two re-encryption keys can be applied in series to convert ciphertext $c_a$ to a ciphertext
-$c_c$ without participation of $b$:
+$c_c$ without the participation of $b$:
 $$c_c = \text{reencrypt}(re_{bc}, \text{reencrypt}(re_{ab}, c_a)).$$
-Sometimes it is even possible to compute $re_{ac}$, which is for BBS98 is:
+Sometimes, it is even possible to compute $re_{ac}$, which for BBS98 is:
 $$re_{ac} = re_{ab} \cdot re_{bc}.$$
-``Single-hop'' means that as long as $c_b$ is obtained via re-encryption, it is impossible to re-encrypt it further.
+``Single-hop'' means that if $c_b$ is obtained via re-encryption, it is impossible to re-encrypt it further.
 Multi-hop schemes are useful for key rotation (Sec.~\ref{sec:key-rotation}) and for our hierarchical data sharing scheme (Sec.~\ref{sec:hierarchical-data}).
-An ephemeral key trick (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}) is, effectively, single-hop
-(although still doesn't prevent key rotation because ephemeral keys are only created when data are shared with other parties).
+The ephemeral key trick (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}) is, effectively, single-hop
+(although key rotation is still possible because ephemeral keys are only created when data is shared with other parties).
 Examples of multi-hop algorithms include BBS98~\cite{BBS98} and the LWE-based algorithm~\cite{lwe-reencryption}.
-AFGH algorithm~\cite{AFGH} is single-hop.
+The AFGH algorithm~\cite{AFGH} is single-hop.
 
 Another seemingly important property is collusion resistance.
-Collusion-resistance means that having just $re_{ab}$ and $sk_b$ it is impossible to derive $sk_a$.
-The lack of collusion-resistance makes it possible to obtain $sk_a$ from $re_{ab}$ and $sk_b$.
-At the first glance it seems to be very much desired for security.
-However, even when having a collusion-resistant algorithm, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable to decrypt data encrypted by
-$sk_a$ whenever he wants to anyway.
-Collusion-resistance property only becomes important when the same key is used for signing and for encryption, but it's a good practice for the two key pairs
-to be not the same.
-However, if any other key is derived from $sk_a$ then a collusion-resistant algorithm should be used.
-For our purposes, it appears to be not important that the algorithm is collusion-resistant because we don't derive any subkeys from keys which are used to
+Collusion resistance means that having just $re_{ab}$ and $sk_b$ it is impossible to derive $sk_a$.
+A lack of collusion-resistance makes it possible to obtain $sk_a$ from $re_{ab}$ and $sk_b$.
+At first glance this seems to be very much desired for security.
+However, even with collusion-resistant algorithms, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable of decrypting data encrypted by
+$sk_a$ whenever he wants.
+Collusion-resistance only becomes important when the same key is used for signing and for encryption, but it's good practice to use separate key pairs
+for both functions.
+However, if any other key is derived from $sk_a$, then a collusion-resistant algorithm should be used.
+For our purposes, it appears unimportant whether an algorithm is collusion-resistant because we don't derive any subkeys from keys which are used to
 encrypt data.
 Collusion-resistant algorithms include AFGH~\cite{AFGH} and LWE-based re-encryption~\cite{lwe-reencryption}.
 Non collusion-resistant algorithms are BBS98~\cite{BBS98} and ECIES re-encryption.
 
 We may need to make it impossible to identify producers and/or consumers of the data from re-encryption keys~(Sec.~\ref{sec:anonymity}).
-Often the following way of doing so is possible for a proxy who knows all public keys in the system.
-Imagine, there is an unknown re-encryption key $re_{xy}$ known to the proxy.
+Often, a proxy who knows all public keys in the system is able to deduce this information.
+Imagine there is an unknown re-encryption key $re_{xy}$ which known to the proxy.
 If the proxy iterates through all $a$ and $b$ in the system, it can discover that for some pair $(a, b)$:
 $$\text{reencrypt}(re_{xy}, \text{encrypt}(pub_a, \text{'any text'})) = \text{encrypt}(pub_b, \text{'any text'}).$$
 If such a pair is found, then it is proven that $x=a$ and $y=b$.
 Many schemes are vulnerable to this attack~\cite{BBS98,AFGH}.
-However, the LWE-based re-encryption~\cite{lwe-reencryption} enjoys the property of anonimity.
+However, the LWE-based re-encryption~\cite{lwe-reencryption} enjoys the property of anonymity.
 
 Finally, as for any cryptosystem, notions of CPA-security~\cite{wiki:cpa} (security against chosen-plaintext attacks)
-and CCA-security~\cite{wiki:cca} (security against chosen-ciphertext attacks) are applicable to proxy re-encryption as well.
+and CCA-security~\cite{wiki:cca} (security against chosen-ciphertext attacks) are applicable to proxy re-encryption.
 All of the algorithms we have mentioned so far are CPA-secure.
-However AFGH~\cite{AFGH}, ECIES and LWE~\cite{lwe-reencryption} are also CCA-secure while BBS98~\cite{BBS98} is not.
+However AFGH~\cite{AFGH}, ECIES, and LWE~\cite{lwe-reencryption} are also CCA-secure while BBS98~\cite{BBS98} is not.
 
 \subsection{Signing encrypted messages}
 
-In public keys encryption algorithms, everyone can encrypt using $pub_a$.
-This sometimes useful, but also opens up a window for malicious users of the network encrypting the data as if it was created by $A$.
-So, the data has to be signed in order to prove $B$ the identity of the original data owner.
+In public-key encryption algorithms, everyone can encrypt using $pub_a$.
+This is useful, but it also allows for malicious users of the network to encrypt data as if it were created by $A$.
+So the data has to be signed in order to prove the identity of the original data owner.
 
-However, we want to make it possible to anonymize the protocol~(Sec.~\ref{sec:anonimity}).
-And a public digital signature certainly authenticates the owner of the data (which opens a potential for a re-encryption node to extort money from the owner).
+However, we want to make it possible to anonymize the protocol~(Sec.~\ref{sec:anonimity}) because
+a public digital signature that authenticates the owner of the data also raises the possibility of a re-encryption node attempting to extort money from the owner.
 As such, it makes sense to:
 \begin{itemize}
-    \item include a digital signature as a part of plain text, so that it is impossible to verify the signature until the ciphertext is decrypted,
-    \item use a different key pairs for signing and for encryption (especially considering the lack of collusion-resistance of some re-encryption
+    \item include a digital signature as part of the plain text, so that it is impossible to verify the signature until the ciphertext is decrypted,
+    \item use different key pairs for signing and for encryption (especially considering the lack of collusion-resistance of some re-encryption
         cryptosystems).
 \end{itemize}
 
@@ -406,17 +406,17 @@ Truebit~\cite{truebit}.
 
 \subsection{Hardware-enforced security}
 
-If miners start misbehaving, they may lose their collateral deposit.
-However, rather than being their fault, it could be a result of the mining node being attacked.
-In order for miners to prevent their nodes from being invaded, they can use commonly accessible secure hardware:
-last generation of Intel CPUs (Skylake+) which support SGX, or NVidia GPUs.
+If miners misbehave, they risk losing their collateral deposit.
+However, rather purposeful ill-intent, miner nodes could be the target of a third-party attack.
+In order for miners to prevent their nodes from being compromised, they can use commonly accessible secure hardware,
+such as the latest generation of Intel CPUs (Skylake+) which support SGX, or NVidia GPUs.
 
 Intel SGX technology~\cite{wiki:sgx} promises to run \emph{any} computations in a secure environment.
-It was proposed to have a decentralized network for managing secrets relying on the SGX technology rather than fairness of
+It was previously proposed to have a decentralized network for managing secrets relying on the SGX technology rather than fairness of
 miners or re-encryption~\cite{sgx-blockchain-encryption}.
 
-Alternatively, holding and using re-encryption keys can be done inside GPUs.
-It was shown that GPUs can server as trusted platform modules with limited capabilities (although they can certainly execute
+Alternatively, holding and applying re-encryption keys can be done inside GPUs.
+It was shown that GPUs can serve as trusted platform modules with limited capabilities (although they can certainly execute
 re-encryption)~\cite{gpu-trusted}.
 
 \section{Performance considerations}
