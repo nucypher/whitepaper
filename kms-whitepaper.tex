@@ -394,22 +394,22 @@ produce a different re-encryption result, and the miner's collateral deposit can
 The system should also intentionally produce a number of ``wrong re-encryptions'', in order to incentivize challengers to operate, as pointed out by
 Truebit~\cite{truebit}.
 
-A special consideration should be given to protecting re-encryption keys from leaking.
-The following challenge protocol is proposed for that.
+Special consideration should be given to protecting re-encryption keys from leaking.
+The following challenge protocol is proposed.
 
-When accepting to handle a re-encryption key, a miner expects to get a fee $f$ over the time $T$, so the owner of the data deposits $f$ coins.
-The miner should also put up a collateral $c$ as a capital he is risking to lose if he leaks the rekey.
+When accepting responsibility for a re-encryption key, a miner expects to get a fee $f$ over time $T$, so the owner of the data deposits $f$ coins.
+The miner should also put up collateral $c$ which will be forfeit if leaks the re-encryption key is leaked.
 
-If someone proved that the miner has leaked re-encryption key, the challenger should be rewarded.
-However, what if the data owner himself challenges the miner in order to get challenging rewards?
-We make this ``self-challenging'' infeasible.
-If the challenge has happened after the time $t$, the challenger will get
+If a challenger proves that the miner has leaked a re-encryption key, the challenger should be rewarded.
+However, the data owner may challenge the miner in order to fraudulently collect the challenge reward.
+We make this ``self-challenge'' infeasible.
+If the challenge has happened after time $t$, the challenger will get
 $\alpha f t/T$ coins, where $\alpha < 1$.
 The data owner in this case gets $(1 - t/T) f$ coins returned.
 The collateral and the rest of the fee gets seized for the benefit of the other participants of the network, with the total amount of $c + (1 - \alpha) t/T$.
 
 There also should be no incentive for the owner of the data to fake-challenge the miner instead of revoking the policy.
-So, in a ``correct'' revokation, the owner of the data gets $(1 - t/T) f$ coins back, and the miner gets $c + ft/T$ coins, where $c$ is the collateral which
+So, in a ``correct'' revocation, the owner of the data gets $(1 - t/T) f$ coins back, and the miner gets $c + ft/T$ coins, where $c$ is the collateral which
 was staked.
 
 
@@ -417,31 +417,32 @@ was staked.
 
 % Mobile Device Management
 In a mobile device management use case~(Sec.~\ref{sec:mdm}),
-the most important thing is to revoke access from a lost device before someone else founds it.
-A possible attack here is a user who took the device finding all relevant miners to collude with.
-As such, there must be no way for miners to identify a revoked user, as well as for the revoked user to identify who the miners were.
-One of the possible attacks would be a group of miners revoking access and asking to pay to get it back.
+the most important thing is to revoke access from a lost or stolen device before the data is compromised.
+A possible attack is a user who takes the device colluding with the relevant miners.
+As such, there must be no way for miners to identify a user, and vice versa.
+Another possible attacks is a group of miners revoking access and demanding additional payment to re-encrypt.
 However, there is no incentive to do so since the owner of the data can easily re-grant access to that mobile device.
-Another possible threat would be for a mining node to keep re-encryption keys for a long time, waiting for someone to attack the end-user device and come
-to collude with a mining node.
+Another possible threat is a mining node keeping re-encryption keys for a long time beyond the life of the policy,
+waiting for someone to attack the end-user device and collude with the mining node.
 In order to prevent this threat, it is important that the mining node cannot figure out if the data is valuable or not,
-and a good way to do it is to anonymize the data owner and the data itself (e.g. the mining node cannot figure out which data the $edek$ corresponds to).
+and a good way to do it is to anonymize the data owner and the data itself.
+In other words, we prevent the mining node from discovering which data the $edek$ corresponds to.
 
 % Decentralized DRM
-Decentralized DRM~(Sec.~\ref{sec:drm}) assumes that once content (a file or a piece of video) is decrypted, it's ``bought''.
-In other word, access revokation is not really a problem in most of DRM use cases.
+Decentralized DRM~(Sec.~\ref{sec:drm}) assumes that once content (a file or a piece of video) is decrypted, it has been purchased,
+so access revokation is not really a problem in most DRM use cases.
 However, if a node knows that the content is very expensive, they may choose to approach the buyer and ask him to pay them a cheaper price for the
 content.
-A way to prevent it would be to anonymize the recipient of the data.
-It would also help to hide the exact pricing information from the mining node while still having it possible to check if the necessary amount was paid using
+To prevent this, we should anonymize the recipient of the data.
+It would also help to hide the exact pricing information from the mining node while still allowing it to check if the necessary amount was paid using
 zk-SNARKs~\cite{consensys-snarks}.
 
 % Access control for shared files
-When \kms~is used to secure access to files~(Sec.~\ref{sec:files}) or messages, both granting and revokation of access are important.
+When \kms~is used to secure access to files~(Sec.~\ref{sec:files}) or messages, both granting and revocation of access are important.
 So, for this use case, full anonymization is highly desirable.
-Possible attacks include: recipients of the data bribing miners to continue having access,
-miners extorting fees from the owner when they know that the data is so valuable that it is critical to revoke the access.
-Anonymization appears to be an important part of making such an attack infeasible.
+Possible attacks include: recipients of the data bribing miners to continue having access after it should have been revoked and
+miners extorting fees from the owner when it is critical to revoke access.
+Anonymization appears to be an important part of making such attacks infeasible.
 
 \subsection{Hardware-enforced security}
 
@@ -519,10 +520,10 @@ When working with files, each file and each directory is encrypted under its sec
 Each file has its DEK stored encrypted by its secret key, directory's secret key, and so on, up to the root folder of the user.
 When a directory is shared, a re-encryption key is created only for the shared directories.
 
-The method above requires to store as many EDEKs, as many there is the number of levels in the tree structure.
-If we use a multi-hop uni-directional algorithm (there is only one~\cite{lwe-reencryption}), we can have re-encryption keys from the bottom levels to
+The method above requires storing as many EDEKs as there are levels in the tree structure.
+If we use a multi-hop, uni-directional algorithm (LWE is the only one~\cite{lwe-reencryption}), we can have re-encryption keys from the bottom levels to
 the top levels~(\figref{fig:hierarchical-pre}).
-When access is granted to a directory, all its files and subdirectories have a path to be reencrypted under the directory key, and then reencrypted for the
+When access is granted to a directory, all its files and subdirectories have a path to be re-encrypted under the directory key, and then re-encrypted for the
 recipient:
 $$edek_b = \text{reencrypt}(re_{xb}, \text{reencrypt}(re_{1x}, edek_1))$$.
 \begin{figure}
