@@ -394,6 +394,25 @@ produce a different re-encryption result, and the miner's collateral deposit can
 The system should also intentionally produce a number of ``wrong re-encryptions'', in order to incentivize challengers to operate, as pointed out by
 Truebit~\cite{truebit}.
 
+A special consideration should be given to protecting re-encryption keys from leaking.
+The following challenge protocol is proposed for that.
+
+When accepting to handle a re-encryption key, a miner expects to get a fee $f$ over the time $T$, so the owner of the data deposits $f$ coins.
+The miner should also put up a collateral $c$ as a capital he is risking to lose if he leaks the rekey.
+
+If someone proved that the miner has leaked re-encryption key, the challenger should be rewarded.
+However, what if the data owner himself challenges the miner in order to get challenging rewards?
+We make this ``self-challenging'' infeasible.
+If the challenge has happened after the time $t$, the challenger will get
+$\alpha f t/T$ coins, where $\alpha < 1$.
+The data owner in this case gets $(1 - t/T) f$ coins returned.
+The collateral and the rest of the fee gets seized for the benefit of the other participants of the network, with the total amount of $c + (1 - \alpha) t/T$.
+
+There also should be no incentive for the owner of the data to fake-challenge the miner instead of revoking the policy.
+So, in a ``correct'' revokation, the owner of the data gets $(1 - t/T) f$ coins back, and the miner gets $c + ft/T$ coins, where $c$ is the collateral which
+was staked.
+
+
 \subsection{Relevancy of possible threats to different use cases}
 
 % Mobile Device Management
