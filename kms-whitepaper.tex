@@ -34,7 +34,7 @@
 \email{maclane@nucypher.com}
 \affiliation{NuCypher}
 
-\author{David N{\'u}{\~n}ez}
+\author{David Nu{\~n}ez}
 \email{dnunez@lcc.uma.es}
 \affiliation{NICS Lab, Universidad de M{\'a}laga, Spain}
 
@@ -181,17 +181,27 @@ Then, access delegation looks like:
 \begin{align}
     \label{eq:ephemeral-trick}
     sk_e &= \text{random}();\\
-    rk_{A\rightarrow B} &= \text{rekey}(sk_A, sk_e);\\
+    rk_{A\rightarrow e} &= \text{rekey}(sk_A, sk_e);\\
     \label{eq:ephemeral-trick-end}
-    sk_e^{\prime} &= \text{encrypt}_{pke}(pk_B, sk_e).
+    sk_e^{\prime} &= \text{encrypt}_{pke}(pk_B, sk_e);\\
+    rk_{A\rightarrow B} &= (rk_{A\rightarrow e}, sk_e^{\prime});
 \end{align}
-The re-encryption node also needs to tell the receiver his ephemeral key.
-So, in addition to $rk_{A\rightarrow B}$, the receiver will get $sk_e^{\prime}$, which will be stored by a re-encryption node along with the re-encryption key.
+
+The re-encryption node uses $rk_{A\rightarrow e}$ to re-encrypt any ciphertext $c_A$ (whose underlying message is $m$) so it can be decrypted by $sk_e$. Since the receiver needs $sk_e^{\prime}$ to decrypt the re-encrypted ciphertext, this is attached to the re-encryption result. Therefore, the re-encryption process is as follows:
+
+\begin{align}
+    c_e = \text{reencrypt}(rk_{A\rightarrow e}, c_{A});\\
+    c_B = (c_e, sk_e^{\prime});\\
+\end{align}
+
+%The re-encryption node also needs to tell the receiver his ephemeral key.
+%So, in addition to $rk_{A\rightarrow e}$, the receiver will get $sk_e^{\prime}$, which will be stored by a re-encryption node along with the re-encryption key. 
+
 The decryption by the receiver will then look like:
 \begin{align}
     sk_e &= \text{decrypt}_{pke}(sk_B, sk_e^{\prime});\\
-    dek &= \text{decrypt}_{pke}(edek, sk_e);\\
-    d &= \text{decrypt}_{sym}(dek, c).
+    m &= \text{decrypt}_{pke}(sk_e, c_e);\\
+%    d &= \text{decrypt}_{sym}(dek, c).
 \end{align}
 
 \subsection{A brief review of re-encryption schemes}
@@ -234,32 +244,23 @@ Examples of multi-hop algorithms include BBS98~\cite{BBS98} and the LWE-based al
 The AFGH algorithm~\cite{AFGH} is single-hop.
 
 Another seemingly important property is collusion resistance.
-Collusion resistance means that having just $re_{ab}$ and $sk_b$ it is impossible to derive $sk_a$.
-A lack of collusion resistance makes it possible to obtain $sk_a$ from $re_{ab}$ and $sk_b$.
+Informally, collusion resistance means that having just $re_{ab}$ and $sk_b$ it is impossible to derive $sk_a$. 
+Conversely, a lack of collusion resistance makes it possible to obtain $sk_a$ from $re_{ab}$ and $sk_b$.
 At first glance this seems to be very desirable for security.
-However, even with collusion resistant algorithms, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable of decrypting data encrypted by
-$sk_a$ whenever he wants.
-Thus, collusion resistance only becomes important when the same key is used for signing and for encryption, but it's good practice to use separate key pairs
-for both functions.
-However, if any other key is derived from $sk_a$, then a collusion resistant algorithm should be used.
-For our purposes, collusion resistance appears unimportant because we don't derive any subkeys from keys which are used to
-encrypt data.
+However, even with collusion resistant algorithms, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable of re-encrypting and reading any data that, originally, is decryptable by $sk_a$. 
+Thus, collusion resistance only becomes important when the same keypair is used for other purposes (e.g., signing, key derivation, etc). Nonetheless, it is good practice to use separate key pairs for both functions. 
+%However, if any other key is derived from $sk_a$, then a collusion resistant algorithm should be used.
+For our purposes, collusion resistance appears not a priority because we don't have another uses for the delegator's keypair apart from encryption. %, such as deriving any subkeys or signing. 
 Collusion resistant algorithms include AFGH~\cite{AFGH} and LWE-based re-encryption~\cite{lwe-reencryption}.
 Non-collusion resistant algorithms are BBS98~\cite{BBS98} and ECIES re-encryption.
 
 We may need to make it impossible to identify producers and/or consumers of the data from re-encryption keys~(Sec.~\ref{sec:anonymity}).
-Often, a proxy who knows all public keys in the system is able to deduce this information.
-Imagine there is an pseudonymous re-encryption key $re_{xy}$ which is known to the proxy.
-If the proxy iterates through all $a$ and $b$ in the system, it can discover that for some pair $(a, b)$:
-$$\text{reencrypt}(re_{xy}, \text{encrypt}(pub_a, \text{'any text'})) = \text{encrypt}(pub_b, \text{'any text'}).$$
-If such a pair is found, then it is proven that $x=a$ and $y=b$.
-Many schemes are vulnerable to this attack~\cite{BBS98,AFGH}.
-However, the LWE-based re-encryption~\cite{lwe-reencryption} enjoys the property of anonymity.
+Often, a proxy who knows all public keys in the system is able to deduce this information. 
+Many PRE schemes are not anonymous from the re-encryption point of view ~\cite{BBS98,AFGH}. However, the LWE-based re-encryption scheme ~\cite{lwe-reencryption} enjoys the property of anonymity.
 
 Finally, as for any cryptosystem, notions of CPA-security~\cite{wiki:cpa} (security against chosen-plaintext attacks)
 and CCA-security~\cite{wiki:cca} (security against chosen-ciphertext attacks) are applicable to proxy re-encryption.
-All of the algorithms we have mentioned so far are CPA-secure.
-However AFGH~\cite{AFGH}, ECIES, and LWE~\cite{lwe-reencryption} are also CCA-secure while BBS98~\cite{BBS98} is not.
+All of the algorithms we have mentioned so far are CPA-secure, except ECIES re-encryption and LWE~\cite{lwe-reencryption}.
 
 \subsection{Signing encrypted messages}
 
