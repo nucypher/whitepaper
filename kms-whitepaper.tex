@@ -55,6 +55,7 @@
 
 \tableofcontents
 
+\newpage
 
 \section{Introduction}
 
@@ -86,7 +87,7 @@ which is subject to constant churn and not as reliable as central infrastructure
 enforcing access management rules.
 
 \kms~ uses a decentralized network to remove the reliance on central service providers, proxy re-encryption for cryptographic
-access controls, and a token incentive mechanism to ensure reliability, availability, and correctness.
+access control, and a token incentive mechanism to ensure reliability, availability, and correctness.
 
 \section{Architecture}
 
@@ -145,7 +146,7 @@ from one public key to another, without learning anything about the underlying m
 \end{figure}
 
 In a typical proxy re-encryption scenario, there are several actors. 
-Alice, the data owner, has public key $pk_A$. Any entity that knows this key can produce encrypted data that only her can decrypt, using her secret key $sk_A$. 
+Alice, the data owner, has public key $pk_A$. Any entity that knows this key can produce encrypted data that only she can decrypt, using her secret key $sk_A$. 
 Suppose that a data producer encrypts a message $m$, with Alice's public key $pk_A$, 
 resulting in ciphertext $c_A$.
 Alice decides to delegate access to message $m$ to Bob, who has the key pair $(pk_B, sk_B)$.
@@ -153,7 +154,7 @@ To do so, Alice creates a re-encryption key:
 \begin{equation}
     rk_{A\rightarrow B} = \text{rekey}(sk_A, pk_B).
 \end{equation}
-Importantly, in single-use, unidirectional proxy re-encryption schemes, this re-encryption function is one way, and $rk_{A\rightarrow B}$ cannot be decomposed into its component parts
+Importantly, in single-use, uni-directional proxy re-encryption schemes, this re-encryption function is one way, and $rk_{A\rightarrow B}$ cannot be decomposed into its component parts
 (at least, without also knowing $sk_A$ or $sk_B$).
 All it can do is re-encrypt $c_A$ such that it is transformed into $c_B$:
 \begin{equation}
@@ -204,12 +205,13 @@ One of the important properties to consider is whether an algorithm is interacti
 $$re_{ab} = \text{rekey}(sk_a, sk_b).$$
 ``Non-interactive'' means that one needs to know only the owner's private key and the delegatee's public key:
 $$re_{ab} = \text{rekey}(sk_a, pk_b).$$
-Examples of interactive algorithms are: BBS98~\cite{BBS98}, our ECIES re-encryption (based on BBS98), and LWE-based reencryption~\cite{lwe-reencryption}.
+Examples of interactive algorithms are: BBS98~\cite{BBS98}, our ECIES re-encryption (based on BBS98), and LWE-based re-encryption~\cite{lwe-reencryption}.
 An example of a ``non-interactive'' algorithm is AFGH~\cite{AFGH}.
-Even though it initially seems that we are only interested in non-interactive algorithms, we can tweak interactive algorithms to share with a public rather than a private key on a protocol
-level using ephemeral keys (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
+Even though it initially seems that we would only be interested in non-interactive algorithms,
+we can tweak interactive algorithms on the protocol level to share with a public rather than a private key by 
+using ephemeral keys (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
 
-Another property which is interesting is whether the algorithm is uni-directional or bi-directional.
+Another interesting property is whether an algorithm is uni-directional or bi-directional.
 Bi-directionality means that it is possible to compute $re_{ba}$ from just $re_{ab}$.
 In uni-directional algorithms that is impossible.
 Bi-directional algorithms are effectively uni-directional when using ephemeral keys
@@ -233,21 +235,21 @@ The AFGH algorithm~\cite{AFGH} is single-hop.
 
 Another seemingly important property is collusion resistance.
 Collusion resistance means that having just $re_{ab}$ and $sk_b$ it is impossible to derive $sk_a$.
-A lack of collusion-resistance makes it possible to obtain $sk_a$ from $re_{ab}$ and $sk_b$.
-At first glance this seems to be very much desired for security.
-However, even with collusion-resistant algorithms, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable of decrypting data encrypted by
+A lack of collusion resistance makes it possible to obtain $sk_a$ from $re_{ab}$ and $sk_b$.
+At first glance this seems to be very desirable for security.
+However, even with collusion resistant algorithms, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable of decrypting data encrypted by
 $sk_a$ whenever he wants.
-Collusion-resistance only becomes important when the same key is used for signing and for encryption, but it's good practice to use separate key pairs
+Thus, collusion resistance only becomes important when the same key is used for signing and for encryption, but it's good practice to use separate key pairs
 for both functions.
-However, if any other key is derived from $sk_a$, then a collusion-resistant algorithm should be used.
-For our purposes, it appears unimportant whether an algorithm is collusion-resistant because we don't derive any subkeys from keys which are used to
+However, if any other key is derived from $sk_a$, then a collusion resistant algorithm should be used.
+For our purposes, collusion resistance appears unimportant because we don't derive any subkeys from keys which are used to
 encrypt data.
-Collusion-resistant algorithms include AFGH~\cite{AFGH} and LWE-based re-encryption~\cite{lwe-reencryption}.
-Non collusion-resistant algorithms are BBS98~\cite{BBS98} and ECIES re-encryption.
+Collusion resistant algorithms include AFGH~\cite{AFGH} and LWE-based re-encryption~\cite{lwe-reencryption}.
+Non-collusion resistant algorithms are BBS98~\cite{BBS98} and ECIES re-encryption.
 
 We may need to make it impossible to identify producers and/or consumers of the data from re-encryption keys~(Sec.~\ref{sec:anonymity}).
 Often, a proxy who knows all public keys in the system is able to deduce this information.
-Imagine there is an unknown re-encryption key $re_{xy}$ which known to the proxy.
+Imagine there is an pseudonymous re-encryption key $re_{xy}$ which is known to the proxy.
 If the proxy iterates through all $a$ and $b$ in the system, it can discover that for some pair $(a, b)$:
 $$\text{reencrypt}(re_{xy}, \text{encrypt}(pub_a, \text{'any text'})) = \text{encrypt}(pub_b, \text{'any text'}).$$
 If such a pair is found, then it is proven that $x=a$ and $y=b$.
@@ -262,15 +264,15 @@ However AFGH~\cite{AFGH}, ECIES, and LWE~\cite{lwe-reencryption} are also CCA-se
 \subsection{Signing encrypted messages}
 
 In public-key encryption algorithms, anyone can encrypt using $pub_a$.
-This is useful, but it also allows for malicious users of the network to encrypt data as if it were created by $A$.
-So the data has to be signed in order to prove the identity of the original data owner to the recipient.
+While this is useful, it also allows for malicious users of the network to encrypt data as if they were $A$.
+So the data has to be signed in order to prove the identity of the sender to the recipient.
 
-However, we want to make it possible to anonymize the protocol~(Sec.~\ref{sec:anonimity}) because
+However, we want to make it possible to anonymize the protocol~(Sec.~\ref{sec:anonymity}) because
 a public digital signature that authenticates the owner of the data also raises the possibility of a re-encryption node attempting to extort money from the owner.
 As such, it makes sense to:
 \begin{itemize}
     \item include a digital signature as part of the plain text, so that it is impossible to verify the signature until the ciphertext is decrypted,
-    \item use different key pairs for signing and for encryption (especially considering the lack of collusion-resistance of some re-encryption
+    \item use different key pairs for signing and for encryption (especially considering the lack of collusion resistance of some re-encryption
         cryptosystems).
 \end{itemize}
 
@@ -289,8 +291,8 @@ This combination $(edek, c)$ can be stored anywhere - in IPFS, Swarm, S3, or any
 
 When storing the data, the user to whom we delegate access is not necessarily known in advance.
 First, the receiver should show the sender his public key~(\figref{fig:arch-delegate}).
-It often makes sense for the public key to correspond to an address in the Ethereum network (then it will be shown once a transaction is made from that
-address to make a payment for a digital content subscription, for example).
+It often makes sense for the public key to correspond to an address in the Ethereum network (to prove a payment has been made from that
+address for a digital content subscription, for example).
 The sender generates a re-encryption key $re_{s\rightarrow r}$ (including an encrypted random ephemeral key when needed) and sends it to a random re-encryption
 node, selected according to proof-of-stake out of the active nodes in a decentralized network.
 The case where multiple nodes are selected for redundancy or security will be discussed later.
@@ -325,7 +327,7 @@ Miners never see plaintext data, or anything which allows them to decrypt the da
 They are solely responsible for storing re-encryption keys and applying re-encryption functions.
 
 The first risk of this model is collusion between a miner and a reader of the data.
-If the miner gives the reader re-encryption keys for the data shared with him,
+If the miner gives the reader re-encryption keys for the data,
 the data can be decrypted at any time by the data reader, circumventing any conditional or time-based constraints.
 We counteract this threat in multiple ways: pseudo-anonymity of re-encryption keys, split-key proxy re-encryption, and a challenge protocol.
 In addition, we apply economic incentives for fair operation, described in Sec.~\ref{sec:token}.
@@ -334,7 +336,7 @@ The second risk is nodes malfunctioning (returning fake data instead of performi
 We solve this problem using a challenge protocol.
 
 The third risk is nodes colluding with each other to perform 50\% attacks.
-This risk is usually deadly for multi-party computations~\cite{vitalik-secret-dao} (such as Enigma~\cite{enigma}). However, in our case the attacker only gains the ability to wrongfully apply re-encryption policies, not to decrypt data or to grant access to a user who hasn't been granted access to the data.
+This risk is usually deadly for multi-party computations~\cite{vitalik-secret-dao} (such as Enigma~\cite{enigma}). However, in our case the attacker only gains the ability to wrongfully apply re-encryption policies, not to decrypt data nor to grant access to a user who hasn't been granted access to the data.
 Ideally, the system should be as decentralized as possible, however 50\% attacks don't compromise the confidentiality of the data, just like 50\% attacks in
 proof-of-work cryptocurrencies don't give an attacker the ability to move funds.
 
@@ -344,7 +346,7 @@ Most likely, the actual anonymization protocol will be based on re-encryption mi
 }
 \label{sec:anonymity}
 
-It is highly beneficial for the security of the system that re-encryption nodes do not know what is it they are re-encrypting.
+It is highly beneficial for the security of the system that re-encryption nodes do not know what it is they are re-encrypting.
 This prevents them from knowing which re-encryption keys to perform collusion attacks on (and trying to collude with all the network participants
 is infeasible when the network is decentralized).
 But pseudo-anonymity of re-encryption keys also enables us to run a challenge protocol (Sec.~\ref{sec:challenge-protocol}).
@@ -375,7 +377,7 @@ These shares can be combined client-side.
 An m-of-m scheme exists for AFGH~\cite{AFGH} encryption.
 A collusion attack here would require $m$ miners \emph{and} the reader of the data.
 
-A threshold-based m-of-n scheme, similar to what will soon be published by NICS Labs from University of M{\'a}laga, appears to be the most appropriate for this task.
+A threshold-based m-of-n scheme, similar to what will soon be published by NICS Labs from University of M{\'a}laga, appears to be even more appropriate for this task.
 
 \subsection{Challenge protocol}
 \label{sec:challenge-protocol}
@@ -418,20 +420,20 @@ was staked.
 % Mobile Device Management
 In a mobile device management use case~(Sec.~\ref{sec:mdm}),
 the most important thing is to revoke access from a lost or stolen device before the data is compromised.
-A possible attack is a user who takes the device and colludes with the relevant miners.
+Imagine a possible attack where someone steals the device and colludes with the relevant miners.
 As such, there must be no way for miners to identify a user, and vice versa.
-Another possible attacks is a group of miners revoking access and demanding additional payment to re-encrypt.
+Another possible attack is a group of miners revoking access and demanding additional payment to re-encrypt.
 However, there is no incentive to do so since the owner of the data can easily re-grant access to that mobile device.
 Another possible threat is a mining node keeping re-encryption keys for a long time beyond the life of the policy,
 waiting for someone to attack the end-user device and collude with the mining node.
 In order to prevent this threat, it is important that the mining node cannot figure out if the data is valuable or not,
-and a good way to do it is to anonymize the data owner and the data itself.
+and a good way to do this is to anonymize the data owner and the data itself.
 In other words, we prevent the mining node from discovering which data the $edek$ corresponds to.
 
 % Decentralized DRM
 Decentralized DRM~(Sec.~\ref{sec:drm}) assumes that once content (a file or a piece of video) is decrypted, it has been purchased,
-so access revokation is not really a problem in most DRM use cases.
-However, if a node knows that the content is very expensive, they may attempt to approach the buyer and ask him to pay them a cheaper price for the
+so access revokation is not really an issue.
+However, if a node knows that the content is very expensive, they may attempt to approach the buyer and solicit a cheaper price for the
 content, cutting out the original seller.
 To prevent this, we should anonymize the recipient of the data.
 It would also help to hide the exact pricing information from the mining node while still allowing it to verify the necessary amount was paid using
@@ -633,7 +635,7 @@ which grants temporary access to the third-party.
 
 \subsection{Decentralized digital rights management (DDRM)}
 \label{sec:drm}
-Cryptographic access controls can act as a decentralized DRM.
+Cryptographic access control can act as a decentralized DRM.
 Access controls can be embedded into the encryption itself so that they follow the data wherever it goes.
 Conditional re-encryption tokens can be controlled by a smart contract and released only upon payment.
 Services like a decentralized Netflix or an encrypted marketplace selling software, apps, photos, and other digital content
