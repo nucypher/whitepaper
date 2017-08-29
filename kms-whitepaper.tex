@@ -570,6 +570,40 @@ sharing data with her future self.
 Now, re-encryption nodes (assuming the encrypted storage is public, such as IPFS) will download EDEKs and apply the transformation.
 For this operation, no collusion risks exist since the ``sender'' and ``receiver'' of the data are, essentially, the same person.
 
+\section{Designing a smart contract}
+
+At the first release, we will ensure that the nodes are staying online and correctly re-encrypting the data.
+The nodes are expected to become professionalized and invest heavily in their security.
+Thus, we will have a minimum stake requirement to $s_{\min}$ for nodes to provide re-encryption services.
+This also naturally limits number of nodes, similar to how it is done for staking master nodes in cryptocurrency DASH.
+
+The amount of stake is public, so clients of the network decide for themselves whether to deploy re-encryption keys with the node or not.
+The software will automatically deploy a re-encryption key at the node which will be available by quotas, meaning:
+\begin{equation}
+    n_{\text{rekeys}} < (1 + \alpha) \frac{\text{stake}}{\text{total\_stake}},
+\end{equation}
+where $alpha$ is a small value (for example, $\alpha=0.1$.
+If the condition above is satisfied, the ``closest'' hash of the node's pubkey (the smallest Hamming distance) to the hash of the policy is to be chosen to
+use, out of the nodes left available.
+If the client decides to ignore the quotas, he might compromise the security of his own policy not touching anybody else's, so this quota doesn't have
+to be enforced by a smart contract.
+
+In order to become a node which provides re-encryption services, a node needs to send its deposit to a smart contract (while specifying the lock time).
+After the time expires, the node can withdraw the stake from it.
+The objective is to have the rewards minted to staking nodes if they correctly provide re-encryption services.
+
+Let's call the suite of tests which are possible to do a generalized ``ping''.
+This includes:
+\begin{itemize}
+    \item the actual ping (is node still showing in the network?);
+    \item check if an old but active re-encryption policy still works;
+    \item check if a create-reencrypt-revoke sequence works;
+    \item check if the re-encryption policies above work if requested by a different address, not related to the mining node.
+\end{itemize}
+The result of this test is a 5-bit value where all ``ones'' mean that all the tests pass correctly.
+
+% To be continued
+
 \section{Token economics}
 \label{sec:token}
 
