@@ -608,14 +608,16 @@ The idea is that nodes are betting on which are the misbehaving nodes, and get r
 The ``correct'' guess is considered to be the one shown by the stake majority of the nodes, as calculated by the smart contract from votes of all the nodes.
 
 The protocol wouldn't scale well with the total number of nodes in the system $N$ if we check every single node each $h$ blocks.
-So, only a portion of the nodes (for example, $\sqrt{N}$ of them closest to the current block hash by hamming distance) will be checked.
-So, we will have the health of every node checked every $h\sqrt{N}$ blocks in average.
+So, only a portion of the nodes (for example, $k=\sqrt{N}$ of them) will be checked.
 For example, if $100,000$ nodes are online and Ethereum block time is $24$~s (current value), health of every node will be checked approximately every $21$
 hours.
+The selection of the nodes to be validated can be done by the current validating nodes exchanging random bytes off-chain and calculating a hash of these
+random bytes ordered and joined.
 It is also not very feasible to do the health check performed by all the nodes.
-So, a portion of nodes (for example, $\sqrt{N}$ of nodes furthest away from the current block hash) will be able to get rewards for health checking in the
-current round.
+So, a portion of nodes (for example, $\sqrt{N}$ of nodes closest to the current block hash by Hamming distance) will be able to get rewards for health checking
+in the current round.
 If the nodes are found to be not healthy, they're can be punished by an losing average amount of block rewards they've obtained since the last health check.
+Nodes which currently don't participate in the validation won't be able to distinguish if they are challenged or it's a real client using the system.
 
 \section{Token economics}
 \label{sec:token}
