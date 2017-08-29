@@ -612,8 +612,10 @@ So, only a portion of the nodes (for example, $\sqrt{N}$ of them closest to the 
 So, we will have the health of every node checked every $h\sqrt{N}$ blocks in average.
 For example, if $100,000$ nodes are online and Ethereum block time is $24$~s (current value), health of every node will be checked approximately every $21$
 hours.
-
-% To be continued
+It is also not very feasible to do the health check performed by all the nodes.
+So, a portion of nodes (for example, $\sqrt{N}$ of nodes furthest away from the current block hash) will be able to get rewards for health checking in the
+current round.
+If the nodes are found to be not healthy, they're can be punished by an losing average amount of block rewards they've obtained since the last health check.
 
 \section{Token economics}
 \label{sec:token}
