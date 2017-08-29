@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\title{[Draft 2] \kms: Decentralized key management system}
+\title{[Draft 3] \kms: Decentralized key management system}
 
 \author{Michael Egorov}
 \email{michael@nucypher.com}
@@ -600,7 +600,18 @@ This includes:
     \item check if a create-reencrypt-revoke sequence works;
     \item check if the re-encryption policies above work if requested by a different address, not related to the mining node.
 \end{itemize}
-The result of this test is a 5-bit value where all ``ones'' mean that all the tests pass correctly.
+When one performs this ``ping'', he can choose to do only part of the tests if he believes they're enough.
+For example, if the nodes comes offline, the actual, very lightweight ping will be enough to determine the node's status.
+
+Now, we want to design a system of nodes which does a self-check every $h$ blocks (where $h=10$, for example).
+The idea is that nodes are betting on which are the misbehaving nodes, and get rewards mined depending on whether their guess is correct or not.
+The ``correct'' guess is considered to be the one shown by the stake majority of the nodes, as calculated by the smart contract from votes of all the nodes.
+
+The protocol wouldn't scale well with the total number of nodes in the system $N$ if we check every single node each $h$ blocks.
+So, only a portion of the nodes (for example, $\sqrt{N}$ of them closest to the current block hash by hamming distance) will be checked.
+So, we will have the health of every node checked every $h\sqrt{N}$ blocks in average.
+For example, if $100,000$ nodes are online and Ethereum block time is $24$~s (current value), health of every node will be checked approximately every $2$
+hours.
 
 % To be continued
 
