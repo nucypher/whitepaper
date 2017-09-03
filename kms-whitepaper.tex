@@ -573,54 +573,54 @@ For this operation, no collusion risks exist since the ``sender'' and ``receiver
 \section{Designing a smart contract}
 \label{sec:smart-contract}
 
-In the first release, we will ensure that the nodes are staying online and correctly re-encrypting the data without requiring
-anonymization~(Sec.~\ref{sec:anonymity}).
-The nodes are expected to become professionalized and invest heavily in their security.
-Thus, we will have a minimum stake requirement to $s_{\min}$ for nodes to provide re-encryption services.
-This also naturally limits number of nodes, similar to how it is done for staking master nodes in cryptocurrency DASH~\cite{dash:whitepaper}.
+For the initial release, we will ensure that the nodes are staying online and correctly re-encrypting the data without requiring
+anonymization~(Sec.~\ref{sec:anonymity})..
+We expect the nodes to become professionalized and invest heavily in their security, similar to what's happened in other networks.
+Thus, we will have a minimum stake requirement of $s_{\min}$ for nodes to provide re-encryption services.
+This also naturally limits the number of nodes, similar to the mechanism for staking master nodes in the DASH cryptocurrency~\cite{dash:whitepaper}.
 
-The amount of stake is public, so clients of the network decide for themselves whether to deploy re-encryption keys with the node or not.
+The amount of stake is public, so clients of the network can decide for themselves whether to deploy re-encryption keys with a node or not.
 The software will automatically deploy a re-encryption key at the node which will be available by quotas, meaning:
 \begin{equation}
     n_{\text{rekeys}} < (1 + \alpha) \frac{\text{stake}}{\text{total\_stake}},
 \end{equation}
-where $\alpha$ is a small value (for example, $\alpha=0.1$).
-If the condition above is satisfied, the ``closest'' hash of the node's pubkey (the smallest Hamming distance) to the hash of the policy is to be chosen to
-use, out of the nodes left available.
-If the client decides to ignore the quotas, he might compromise the security of his own policy not touching anybody else's, so this quota doesn't have
+where $\alpha$ is a small value (for example, $\alpha=0.1$.
+If the condition above is satisfied, the ``closest'' hash of the node's pubkey (the smallest Hamming distance) to the hash of the policy is chosen,
+out of the remaining available nodes.
+If the client decides to ignore the quotas, he risks compromising the security of his own policy (but not anyone else's), so this quota doesn't have
 to be enforced by a smart contract.
 
-In order to become a node which provides re-encryption services, a node needs to send its deposit to a smart contract (while specifying the lock time).
+In order to provide re-encryption services, a node needs to send its deposit to a smart contract (while specifying the lock time).
 After the time expires, the node can withdraw the stake from it.
-The objective is to have the rewards minted to staking nodes if they correctly provide re-encryption services.
+The objective is to have rewards minted to staking nodes if they correctly provide re-encryption services.
 
-Let's call the suite of tests which are possible to do a generalized ``ping''.
+Let's call the suite of possible tests a generalized ``ping''.
 This includes:
 \begin{itemize}
-    \item the actual ping (is node still showing in the network?);
+    \item the actual ping (is the node still showing in the network?);
     \item check if an old but active re-encryption policy still works;
     \item check if a create-reencrypt-revoke sequence works;
     \item check if the re-encryption policies above work if requested by a different address, not related to the mining node.
 \end{itemize}
-When one performs this ``ping'', he can choose to do only part of the tests if he believes that this part is sufficient to determine availability.
-For example, if the nodes comes offline, the actual, very lightweight ping will be enough to determine the node's status.
+When performing this ``ping'', one can choose to do only the tests desired.
+For example, if a node goes offline, the (very lightweight) actual ping will be enough to determine the node's status.
 
 Now, we want to design a system of nodes which does a self-check every $h$ blocks (where $h=10$, for example).
-The idea is that nodes are betting on which are the misbehaving nodes, and get rewards mined depending on whether their guess is correct or not.
+The idea is that nodes are betting on which nodes are misbehaving, and mine rewards depending on whether their guess is correct or not.
 The ``correct'' guess is considered to be the one shown by the stake majority of the nodes, as calculated by the smart contract from votes of all the nodes.
 
 The protocol wouldn't scale well with the total number of nodes in the system $N$ if we check every single node each $h$ blocks.
 So, only a portion of the nodes (for example, $k=\sqrt{N}$ of them) will be checked.
-For example, if $100,000$ nodes are online and Ethereum block time is $24$~s (current value), health of every node will be checked approximately every $21$
+For example, if $100,000$ nodes are online and Ethereum block time is $24$~s (current value), the health of every node will be checked approximately every $21$
 hours.
 The selection of the nodes to be validated can be done by the current validating nodes exchanging random bytes off-chain and calculating a hash of these
 random bytes ordered and joined.
-Nodes which currently don't participate in the validation won't be able to distinguish if they are challenged or it's a real client using the system.
+Nodes which currently don't participate in the validation won't be able to distinguish whether they are being challenged or receiving a real client request.
 
-It is also not very feasible to do the health check performed by all the nodes.
+It is also not feasible for all the nodes to perform the health check.
 So, a portion of nodes (for example, $\sqrt{N}$ of nodes closest to the current block hash by Hamming distance) will be able to get rewards for health checking
 in the current round.
-If the nodes are found to be not healthy, they're can be punished by an losing average amount of block rewards they've obtained since the last health check.
+If nodes are found to be not healthy, they're punished by losing the average amount of block rewards they've obtained since the last health check.
 
 \section{Token economics}
 \label{sec:token}
