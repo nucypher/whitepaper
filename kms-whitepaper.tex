@@ -571,18 +571,20 @@ Now, re-encryption nodes (assuming the encrypted storage is public, such as IPFS
 For this operation, no collusion risks exist since the ``sender'' and ``receiver'' of the data are, essentially, the same person.
 
 \section{Designing a smart contract}
+\label{sec:smart-contract}
 
-At the first release, we will ensure that the nodes are staying online and correctly re-encrypting the data.
+In the first release, we will ensure that the nodes are staying online and correctly re-encrypting the data without requiring
+anonymization~(Sec.~\ref{sec:anonymity}).
 The nodes are expected to become professionalized and invest heavily in their security.
 Thus, we will have a minimum stake requirement to $s_{\min}$ for nodes to provide re-encryption services.
-This also naturally limits number of nodes, similar to how it is done for staking master nodes in cryptocurrency DASH.
+This also naturally limits number of nodes, similar to how it is done for staking master nodes in cryptocurrency DASH~\cite{dash:whitepaper}.
 
 The amount of stake is public, so clients of the network decide for themselves whether to deploy re-encryption keys with the node or not.
 The software will automatically deploy a re-encryption key at the node which will be available by quotas, meaning:
 \begin{equation}
     n_{\text{rekeys}} < (1 + \alpha) \frac{\text{stake}}{\text{total\_stake}},
 \end{equation}
-where $alpha$ is a small value (for example, $\alpha=0.1$.
+where $\alpha$ is a small value (for example, $\alpha=0.1$).
 If the condition above is satisfied, the ``closest'' hash of the node's pubkey (the smallest Hamming distance) to the hash of the policy is to be chosen to
 use, out of the nodes left available.
 If the client decides to ignore the quotas, he might compromise the security of his own policy not touching anybody else's, so this quota doesn't have
@@ -600,7 +602,7 @@ This includes:
     \item check if a create-reencrypt-revoke sequence works;
     \item check if the re-encryption policies above work if requested by a different address, not related to the mining node.
 \end{itemize}
-When one performs this ``ping'', he can choose to do only part of the tests if he believes they're enough.
+When one performs this ``ping'', he can choose to do only part of the tests if he believes that this part is sufficient to determine availability.
 For example, if the nodes comes offline, the actual, very lightweight ping will be enough to determine the node's status.
 
 Now, we want to design a system of nodes which does a self-check every $h$ blocks (where $h=10$, for example).
@@ -613,11 +615,12 @@ For example, if $100,000$ nodes are online and Ethereum block time is $24$~s (cu
 hours.
 The selection of the nodes to be validated can be done by the current validating nodes exchanging random bytes off-chain and calculating a hash of these
 random bytes ordered and joined.
+Nodes which currently don't participate in the validation won't be able to distinguish if they are challenged or it's a real client using the system.
+
 It is also not very feasible to do the health check performed by all the nodes.
 So, a portion of nodes (for example, $\sqrt{N}$ of nodes closest to the current block hash by Hamming distance) will be able to get rewards for health checking
 in the current round.
 If the nodes are found to be not healthy, they're can be punished by an losing average amount of block rewards they've obtained since the last health check.
-Nodes which currently don't participate in the validation won't be able to distinguish if they are challenged or it's a real client using the system.
 
 \section{Token economics}
 \label{sec:token}
@@ -639,6 +642,8 @@ Miners can hold a number of re-encryption keys proportional to the number of tok
 The miners are paid both for providing re-encryption services and making themselves available to re-encrypt data.
 The miners can be paid either by the owner of the data, or by users of the data.
 The latter is more relevant for usecases where DAOs distribute content under decentralized DRM.
+In addition, the miners have ``availability rewards'' generated if they stay online and always ready to provide their services, being checked with the help of
+smart contract~(Sec.~\ref{sec:smart-contract}).
 
 If miners become unavailable, they lose their ``availability'' compensation for the time period.
 
