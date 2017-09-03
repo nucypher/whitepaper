@@ -602,7 +602,7 @@ This includes:
     \item check if a create-reencrypt-revoke sequence works;
     \item check if the re-encryption policies above work if requested by a different address, not related to the mining node.
 \end{itemize}
-When performing this ``ping'', one can choose to do only the tests desired.
+When performing this ``ping'', one can choose to do only the tests required to determine availability.
 For example, if a node goes offline, the (very lightweight) actual ping will be enough to determine the node's status.
 
 Now, we want to design a system of nodes which does a self-check every $h$ blocks (where $h=10$, for example).
@@ -615,7 +615,7 @@ For example, if $100,000$ nodes are online and Ethereum block time is $24$~s (cu
 hours.
 The selection of the nodes to be validated can be done by the current validating nodes exchanging random bytes off-chain and calculating a hash of these
 random bytes ordered and joined.
-Nodes which currently don't participate in the validation won't be able to distinguish whether they are being challenged or receiving a real client request.
+Nodes which don't participate in the validation won't be able to distinguish whether they are being challenged or receiving a real client request.
 
 It is also not feasible for all the nodes to perform the health check.
 So, a portion of nodes (for example, $\sqrt{N}$ of nodes closest to the current block hash by Hamming distance) will be able to get rewards for health checking
@@ -642,7 +642,7 @@ Miners can hold a number of re-encryption keys proportional to the number of tok
 The miners are paid both for providing re-encryption services and making themselves available to re-encrypt data.
 The miners can be paid either by the owner of the data, or by users of the data.
 The latter is more relevant for usecases where DAOs distribute content under decentralized DRM.
-In addition, the miners have ``availability rewards'' generated if they stay online and always ready to provide their services, being checked with the help of
+In addition, the miners have ``availability rewards'' generated if they stay online and ready to provide their services, proof of which is checked with the help of
 smart contract~(Sec.~\ref{sec:smart-contract}).
 
 If miners become unavailable, they lose their ``availability'' compensation for the time period.
