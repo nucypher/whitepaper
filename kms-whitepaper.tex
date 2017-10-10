@@ -212,9 +212,13 @@ A full survey with consideration of all the known proxy re-encryption algorithms
 
 One of the important properties to consider is whether an algorithm is interactive or not.
 ``Interactive'' means that a re-encryption key is computed out of two secret keys:
-$$re_{ab} = \text{rekey}(sk_a, sk_b).$$
+\begin{equation}
+    re_{ab} = \text{rekey}(sk_a, sk_b).
+\end{equation}
 ``Non-interactive'' means that one needs to know only the owner's private key and the delegatee's public key:
-$$re_{ab} = \text{rekey}(sk_a, pk_b).$$
+\begin{equation}
+    re_{ab} = \text{rekey}(sk_a, pk_b).
+\end{equation}
 Examples of interactive algorithms are: BBS98~\cite{BBS98}, our ECIES re-encryption (based on BBS98), and LWE-based re-encryption~\cite{lwe-reencryption}.
 An example of a ``non-interactive'' algorithm is AFGH~\cite{AFGH}.
 Even though it initially seems that we would only be interested in non-interactive algorithms,
@@ -233,9 +237,13 @@ An example of a bi-directional algorithm is BBS98~\cite{BBS98}.
 Proxy re-encryption algorithms can also be single-hop or multi-hop.
 ``Multi-hop'' means that if we have $re_{ab}$ and $re_{bc}$, these two re-encryption keys can be applied in series to convert ciphertext $c_a$ to a ciphertext
 $c_c$ without the participation of $b$:
-$$c_c = \text{reencrypt}(re_{bc}, \text{reencrypt}(re_{ab}, c_a)).$$
+\begin{equation}
+    c_c = \text{reencrypt}(re_{bc}, \text{reencrypt}(re_{ab}, c_a)).
+\end{equation}
 Sometimes, it is even possible to compute $re_{ac}$, which for BBS98 is:
-$$re_{ac} = re_{ab} \cdot re_{bc}.$$
+\begin{equation}
+    re_{ac} = re_{ab} \cdot re_{bc}.
+\end{equation}
 ``Single-hop'' means that if $c_b$ is obtained via re-encryption, it is impossible to re-encrypt it further.
 Multi-hop schemes are useful for key rotation (Sec.~\ref{sec:key-rotation}) and for our hierarchical data sharing scheme (Sec.~\ref{sec:hierarchical-data}).
 The ephemeral key trick (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}) is, effectively, single-hop
@@ -528,7 +536,9 @@ If we use a multi-hop, uni-directional algorithm (LWE being the only one~\cite{l
 the top levels~(\figref{fig:hierarchical-pre}).
 When access is granted to a directory, all its files and sub-directories have a path to be re-encrypted under the directory key, and then re-encrypted for the
 recipient:
-$$edek_b = \text{reencrypt}(re_{xb}, \text{reencrypt}(re_{1x}, edek_1))$$.
+\begin{equation}
+    edek_b = \text{reencrypt}(re_{xb}, \text{reencrypt}(re_{1x}, edek_1)).
+\end{equation}
 \begin{figure}
 \centering
     \includegraphics[width=0.45\columnwidth]{pdf/hierarchical.pdf}
