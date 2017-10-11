@@ -168,13 +168,14 @@ It doesn't require knowing the recipient of a message in advance, as the re-encr
 This makes it well-suited for distributed systems such as blockchain, IoT, and big data~\cite{web:nucypher-hadoop}.
 
 There are many proxy re-encryption algorithms with different properties.
-For the first version of \kms~we choose the most simple (and performant) one, derived from BBS98~\cite{BBS98}.
+For the first version of \kms~we choose ECIES for which we created a proxy re-encryption algorithm~\cite{umbral-spec}.
+It is very similar to the most simple (and performant) one~--- BBS98~\cite{BBS98}, however provides better security guarantees.
 However, sometimes we want to delegate re-encryption to multiple nodes, in order to split the trust between them and apply time-based or conditional
 re-encryption policies.
 In this case we use the AFGH scheme~\cite{AFGH}.
 Quantum-resistant NTRU may also be used if the need arises~\cite{wiki:ntru,ntrureencrypt}.
 
-The BBS98 algorithm creates a re-encryption key out of two secret keys, rather than a secret+public key.
+Just like BBS98, our proxy re-encryption for ECIES creates a re-encryption key out of two secret keys, rather than a secret+public key.
 However, we don't want the sender to know the receiver's secret key.
 To get around this problem, we randomly generate an ephemeral key pair $sk_e/pk_e$.
 Then, access delegation looks like:
@@ -268,7 +269,8 @@ Many PRE schemes are not anonymous from the re-encryption point of view ~\cite{B
 
 Finally, as for any cryptosystem, notions of CPA-security~\cite{wiki:cpa} (security against chosen-plaintext attacks)
 and CCA-security~\cite{wiki:cca} (security against chosen-ciphertext attacks) are applicable to proxy re-encryption.
-All of the algorithms we have mentioned so far are CPA-secure, except ECIES re-encryption and LWE~\cite{lwe-reencryption}.
+All of the algorithms we have mentioned so far are only CPA-secure, except ECIES re-encryption and LWE which are also CCA-secure~\cite{lwe-reencryption}.
+% XXX check
 
 \subsection{Signing encrypted messages}
 
@@ -349,10 +351,7 @@ This risk is usually deadly for multi-party computations~\cite{vitalik-secret-da
 Ideally, the system should be as decentralized as possible, however 50\% attacks don't compromise the confidentiality of the data, just like 50\% attacks in
 proof-of-work cryptocurrencies don't give an attacker the ability to move funds.
 
-\subsection{Pseudo-anonymity
-\footnote{We are completely reviewing this subsection.
-Most likely, the actual anonymization protocol will be based on re-encryption mixnets.}
-}
+\subsection{Pseudo-anonymity}
 \label{sec:anonymity}
 
 It is highly beneficial for the security of the system that re-encryption nodes do not know what it is they are re-encrypting.
@@ -360,21 +359,12 @@ This prevents them from knowing which re-encryption keys to perform collusion at
 is infeasible when the network is decentralized).
 But pseudo-anonymity of re-encryption keys also enables us to run a challenge protocol (Sec.~\ref{sec:challenge-protocol}).
 
-In order to achieve pseudo-anonymity, we propose the following protocol.
-If each recipient of the data has a key pair $s_r/p_r$, and the path or identifier of the data shared is $n$,
-each re-encryption key has a unique ID $i_r$ associated with it:
-\begin{align}
-    nonce &= \text{random}(), \\
-    i_r &= \text{HMAC}(p_r \| n, nonce),
-\end{align}
-where HMAC is a hash-based message authentication code~\cite{wiki:hmac}.
-The value of $i_r$ is unique and impossible to guess without knowing a random nonce.
-The nonce should be told to the recipient of the data once the data is shared, so that the recipient can form a proper request to apply the re-encryption key
-related to the data shared.
-
-Re-encryption nodes store re-encryption keys $re$ in an in-memory key-value store $i_r\rightarrow re$.
-The messages can be conveniently transmitted over Ethereum's Whisper protocol~\cite{eth:whisper} which conveniently supports
-anonymity of encrypted messages.
+We leave designing an anonymous protocol for re-encryption to the future work.
+However, we point out the following properties it should (and should not) possess.
+Firstly, the re-encryption scheme should be key-private~\cite{Ateniese-key-private,lwe-reencryption}.
+Otherwise, it would be possible to determine the ownership of the key by iterating over pairs of all the known public keys.
+Secondly, the re-encryption node and the recipient of the data should not have the same identifier for the same re-encryption key.
+This rules out a simple way of storing a re-encryption key in a key-value store while the recipient can come up with the key.
 
 \subsection{Split-key re-encryption}
 
