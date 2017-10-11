@@ -536,6 +536,19 @@ recipient:
     \label{fig:hierarchical-pre}
 \end{figure}
 
+\subsection{Encrypting bulk data}
+
+When we have a per-file symmetric encryption key, it is possible for a malicious recipient to download all the encrypted symmetric keys and decrypt them
+while he has access without the necessity to download overly too much data.
+He can use these symmetric keys later on to decrypt bulk of the data.
+This is something called ``key scraping attack''.
+
+In the applications where this is a problem, we can use an approach of applying all-or-nothing transformation to the data, so that one has to download all the
+file in order to be able to decrypt it.
+This approach was published~\cite{aont-bulk} and is readily available to be used in our key management system.
+One thing to keep in mind is that it could imply that the actual bulk of the data should pass through re-encryption nodes, not just encrypted symmetric
+keys.
+
 \subsection{Sharing encrypted streams}
 
 Sharing encrypted streams with multiple users is ideal for applications such as a decentralized Netflix, where third parties routing traffic
