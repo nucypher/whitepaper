@@ -169,7 +169,7 @@ This makes it well-suited for distributed systems such as blockchain, IoT, and b
 
 There are many proxy re-encryption algorithms with different properties.
 For the first version of \kms~we choose ECIES for which we created a proxy re-encryption algorithm~\cite{umbral-spec}.
-It is very similar to the most simple (and performant) one~--- BBS98~\cite{BBS98}, however provides better security guarantees.
+It is very similar to the most simple (and performant) algorithm,~--- BBS98~\cite{BBS98}, but provides better security guarantees.
 However, sometimes we want to delegate re-encryption to multiple nodes, in order to split the trust between them and apply time-based or conditional
 re-encryption policies.
 In this case we use the AFGH scheme~\cite{AFGH}.
@@ -269,7 +269,7 @@ Many PRE schemes are not anonymous from the re-encryption point of view ~\cite{B
 
 Finally, as for any cryptosystem, notions of CPA-security~\cite{wiki:cpa} (security against chosen-plaintext attacks)
 and CCA-security~\cite{wiki:cca} (security against chosen-ciphertext attacks) are applicable to proxy re-encryption.
-All of the algorithms we have mentioned so far are only CPA-secure, except ECIES re-encryption and LWE which are also CCA-secure~\cite{lwe-reencryption}.
+All of the algorithms we have mentioned so far are only CPA-secure, except ECIES re-encryption and LWE, which are also CCA-secure~\cite{lwe-reencryption}.
 % XXX check
 
 \subsection{Signing encrypted messages}
@@ -359,7 +359,7 @@ This prevents them from knowing which re-encryption keys to perform collusion at
 is infeasible when the network is decentralized).
 But pseudo-anonymity of re-encryption keys also enables us to run a challenge protocol (Sec.~\ref{sec:challenge-protocol}).
 
-We leave designing an anonymous protocol for re-encryption to the future work.
+We leave designing an anonymous protocol for re-encryption as future improvements.
 However, we point out the following properties it should (and should not) possess.
 Firstly, the re-encryption scheme should be key-private~\cite{Ateniese-key-private,lwe-reencryption}.
 Otherwise, it would be possible to determine the ownership of the key by iterating over pairs of all the known public keys.
@@ -539,12 +539,12 @@ recipient:
 \subsection{Encrypting bulk data}
 
 When we have a per-file symmetric encryption key, it is possible for a malicious recipient to download all the encrypted symmetric keys and decrypt them
-while he has access without the necessity to download overly too much data.
-He can use these symmetric keys later on to decrypt bulk of the data.
-This is something called ``key scraping attack''.
+while he has access without the necessity of downloading overly too much data.
+He can use these symmetric keys later on to decrypt the bulk of the data.
+This is called a ``key scraping attack''.
 
-In the applications where this is a problem, we can use an approach of applying all-or-nothing transformation to the data, so that one has to download all the
-file in order to be able to decrypt it.
+In the applications where this is a problem, we can use the approach of applying all-or-nothing transformation to the data, so that one has to download all of the
+file in order to decrypt it.
 This approach was published~\cite{aont-bulk} and is readily available to be used in our key management system.
 One thing to keep in mind is that it could imply that the actual bulk of the data should pass through re-encryption nodes, not just encrypted symmetric
 keys.
