@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\title{[Draft 3] \kms: Decentralized key management system}
+\title{[Draft 4] \kms: Decentralized key management system}
 
 \author{Michael Egorov}
 \email{michael@nucypher.com}
@@ -635,6 +635,17 @@ So, a portion of nodes (for example, $\sqrt{N}$ of nodes closest to the current 
 in the current round.
 If nodes are found to be not healthy, they're punished by losing the average amount of block rewards they've obtained since the last health check.
 
+It is possible to do checks for real re-encryption keys deployed by participants.
+In order to do that, the owner of the data can prepare a ``challenge pack'' - the data which doesn't correspond to any sensitive data, but will be used to
+challenge the nodes which have re-encryption keys later on.
+The ``challenge pack'' consists of the input ciphertexts and expected outputs.
+Although, this method works only for proxy re-encryption algorithms which do not have probabilistic outputs.
+The recipient of the data can decrypt the challenge pack and demonstrate inability of a re-encryption node to re-encrypt data when it starts happening.
+
+The nodes which challenge other re-encryption nodes are essentially voting which nodes are misbehaving and betting on the result of this vote.
+They should be unable to figure out what the results of votes of others are before everyone committed the vote.
+Thus, they first commit the vote by demonstrating hashes of salted votes, later proving that they have the actual vote and salt to produce those hashes.
+
 \section{Token economics}
 \label{sec:token}
 
@@ -649,7 +660,8 @@ Vitally, the token also incentivizes correctness of computation and security of 
 
 \subsection{Token distribution}
 
-All the NKMS Tokens exist from the time of creation of the system on mainnet.
+It is important to incentivize re-encryption operations early on, when there are not many users in the system.
+That's why we'll introduce a rewards schedule where some rewards are ``mined'', asymptotically switching to no inflation as the time goes.
 
 Miners can hold a number of re-encryption keys proportional to the number of tokens they hold as a collateral deposit, locked by a smart contract.
 The miners are paid both for providing re-encryption services and making themselves available to re-encrypt data.
