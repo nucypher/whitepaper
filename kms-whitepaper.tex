@@ -70,6 +70,17 @@ applications.
 A KMS includes the backend functionality for key generation, distribution, and rotation as well as the client functionality for
 injecting, storing, and managing keys on devices~\cite{wiki:kms}.
 
+\begin{figure}
+    \centering
+    \subfloat[Centralized KMS]{\includegraphics[width=0.4\columnwidth]{pdf/centralized-kms.pdf}}
+    \qquad
+    \qquad
+    \subfloat[PRE-based KMS]{\includegraphics[width=0.4\columnwidth]{pdf/pre-kms.pdf}}
+    \caption{Difference between a centralized key management system (KMS) and the one which uses proxy re-encryption (PRE)}
+    \label{fig:kms}
+\end{figure}
+
+
 As the root of trust, it's critical that a KMS is appropriately configured, managed, and protected.
 Historically, this has meant deploying a KMS on-premises in hardware security modules (HSM)~\cite{wiki:hsm} or using tools like
 HashiCorp's Vault~\cite{web:hashicorp-vault}.
