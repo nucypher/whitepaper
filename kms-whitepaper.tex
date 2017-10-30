@@ -61,7 +61,7 @@
 
 \kms~is a decentralized key management system (KMS), encryption, and access control service.
 It enables private data sharing between arbitrary numbers of participants in public consensus networks,
-using proxy re-encryption to delegate decryption rights in a way that cannot be achieved by traditional symmetric or public-key encryption schemes. 
+using proxy re-encryption to delegate decryption rights in a way that cannot be achieved by traditional symmetric or public-key encryption schemes.
 Native tokens are used to incentivize network participants to perform key management and access delegation/revocation operations.
 
 \subsection{Background}
@@ -99,6 +99,9 @@ enforcing access management rules.
 
 \kms~ uses a decentralized network to remove the reliance on central service providers, proxy re-encryption for cryptographic
 access control, and a token incentive mechanism to ensure reliability, availability, and correctness.
+Because of the use of proxy re-encryption, an unencrypted symmetric key (which gives the ability to decrypt private data) is never exposed
+server-side~(\figref{fig:kms}), and there is no single point of security failure.
+Even if compromised, hackers would only get re-encryption keys but access to the file is still protected.
 
 \section{Architecture}
 
@@ -215,6 +218,9 @@ The decryption by the receiver will then look like:
     m &= \text{decrypt}_{pke}(sk_e, c_e);\\
 %    d &= \text{decrypt}_{sym}(dek, c).
 \end{align}
+
+This approach was mentioned beforehand by Ateniese et al.~\cite{AFGH}, and also beyond proxy re-encryption work.
+The scheme is not considered to be ``key-optimal'', however, in our case, has a very competitive performance.
 
 \subsection{A brief review of re-encryption schemes}
 
