@@ -413,8 +413,8 @@ The system should also intentionally produce a number of ``wrong re-encryptions'
 Truebit~\cite{truebit}.
 
 Designing a challenge protocol is a complex problem related to ``fair exchange'' protocols~\cite{BitcoinMPC2016,Bentov2014,AccountableStorage}.
-It requires a lot of careful design and testing, Ethereum Proof-of-Stake (Casper) protocol is facing this complexity now.
-It could be very possible to just check correctness on the level of the encryption algorithm~\cite{Zhou2002}.
+It requires careful design and testing, and Ethereum's Proof-of-Stake (Casper) protocol is facing this complexity now.
+It may be possible to just check correctness on the level of the encryption algorithm~\cite{Zhou2002}.
 
 Special consideration should be given to protecting re-encryption keys from leaking.
 The following challenge protocol is proposed.
@@ -577,7 +577,7 @@ The principle is simple: each block of data in the stream is encrypted with a ra
 However, it takes time to make a roundtrip with \kms.
 Therefore, it makes sense to also include an EDEK of the next block of data together with the previous block.
 
-Also, for the use case of streaming media content, key scraping attack should be especially problematic.
+Also, for the use case of streaming media content, key scraping attack are especially problematic.
 Thus, we should consider blocks of movies as bulk data and encrypt accordingly~\cite{aont-bulk}.
 
 As usual, consumers of the stream have their own key pairs and ask miner nodes to make EDEKs decryptable by the consumers.
@@ -699,7 +699,7 @@ If miners cheat and provide wrong re-encryptions, they lose a fraction of their 
 We can disincentivize miners from leaking re-encryption keys.
 Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral
 valued in NKMS.
-It is possible to make re-encryption keys linked to particular proxies in order to identify them quickly once they're leaked on the encryption
+It is possible to make re-encryption keys linked to particular proxies in order to identify them quickly if they're leaked on the encryption
 level~\cite{Libert2008}.
 
 An interesting property of \kms~is that security improves as the number of network participants grows. As additional re-encryption
