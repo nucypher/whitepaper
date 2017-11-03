@@ -412,6 +412,10 @@ produce a different re-encryption result, and the miner's collateral deposit can
 The system should also intentionally produce a number of ``wrong re-encryptions'', in order to incentivize challengers to operate, as pointed out by
 Truebit~\cite{truebit}.
 
+Designing a challenge protocol is a complex problem related to ``fair exchange'' protocols~\cite{BitcoinMPC2016,Bentov2014,AccountableStorage}.
+It requires a lot of careful design and testing, Ethereum Proof-of-Stake (Casper) protocol is facing this complexity now.
+It could be very possible to just check correctness on the level of the encryption algorithm~\cite{Zhou2002}.
+
 Special consideration should be given to protecting re-encryption keys from leaking.
 The following challenge protocol is proposed.
 
@@ -466,7 +470,7 @@ Anonymization appears to be an important part of making such attacks infeasible.
 
 If miners misbehave, they risk losing their collateral deposit.
 However, rather than purposeful ill-intent, miner nodes could be the victim of a third-party attack.
-In order for miners to prevent their nodes from being compromised, they can use commonly accessible secure hardware,
+In order for miners to prevent their nodes from being compromised, they can use trusted computing on commonly accessible secure hardware~\cite{Yang2011},
 such as the latest generation of Intel CPUs (Skylake+) which support SGX, or NVidia GPUs.
 
 Intel SGX technology~\cite{wiki:sgx} promises to run \emph{any} computations in a secure environment.
@@ -563,8 +567,6 @@ This is called a ``key scraping attack''.
 In the applications where this is a problem, we can use the approach of applying all-or-nothing transformation to the data, so that one has to download all of the
 file in order to decrypt it.
 This approach was published~\cite{aont-bulk} and is readily available to be used in our key management system.
-One thing to keep in mind is that it could imply that the actual bulk of the data should pass through re-encryption nodes, not just encrypted symmetric
-keys.
 
 \subsection{Sharing encrypted streams}
 
@@ -574,6 +576,9 @@ aren't permitted to see the content.
 The principle is simple: each block of data in the stream is encrypted with a random DEK, and EDEK is produced using a per-channel public key.
 However, it takes time to make a roundtrip with \kms.
 Therefore, it makes sense to also include an EDEK of the next block of data together with the previous block.
+
+Also, for the use case of streaming media content, key scraping attack should be especially problematic.
+Thus, we should consider blocks of movies as bulk data and encrypt accordingly~\cite{aont-bulk}.
 
 As usual, consumers of the stream have their own key pairs and ask miner nodes to make EDEKs decryptable by the consumers.
 Miners can also ensure the consumer actually paid for the subscription and refuse to re-encrypt if they did not.
@@ -694,6 +699,8 @@ If miners cheat and provide wrong re-encryptions, they lose a fraction of their 
 We can disincentivize miners from leaking re-encryption keys.
 Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral
 valued in NKMS.
+It is possible to make re-encryption keys linked to particular proxies in order to identify them quickly once they're leaked on the encryption
+level~\cite{Libert2008}.
 
 An interesting property of \kms~is that security improves as the number of network participants grows. As additional re-encryption
 nodes enter the network, the lower the chance of collusion.
