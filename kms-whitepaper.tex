@@ -384,6 +384,7 @@ Secondly, the re-encryption node and the recipient of the data should not have t
 This rules out a simple way of storing a re-encryption key in a key-value store while the recipient can come up with the key.
 
 \subsection{Split-key re-encryption}
+\label{sec:split-key}
 
 Imagine that a re-encryption node decides to re-encrypt data immediately rather than to apply conditional policies as instructed.
 A split-key proxy re-encryption scheme can be used to solve this problem.
@@ -607,27 +608,61 @@ For this operation, no collusion risks exist since the ``sender'' and ``receiver
 
 \section{Designing a smart contract}
 \label{sec:smart-contract}
+In order to provide re-encryption services, a node needs to send its deposit to a smart contract (while specifying the lock time).
+After the time expires, the node can withdraw the stake from it.
+The objective is to have rewards minted to staking nodes if they correctly provide re-encryption services.
 
 For the initial release, we will ensure that the nodes are staying online and correctly re-encrypting the data without requiring
-anonymization~(Sec.~\ref{sec:anonymity})..
+anonymization~(Sec.~\ref{sec:anonymity}).
 We expect the nodes to become professionalized and invest heavily in their security, similar to what's happened in other networks.
 Thus, we will have a minimum stake requirement of $s_{\min}$ for nodes to provide re-encryption services.
 This also naturally limits the number of nodes, similar to the mechanism for staking master nodes in the DASH cryptocurrency~\cite{dash:whitepaper}.
 
 The amount of stake is public, so clients of the network can decide for themselves whether to deploy re-encryption keys with a node or not.
-The software will automatically deploy a re-encryption key at the node which will be available by quotas, meaning:
-\begin{equation}
-    n_{\text{rekeys}} < (1 + \alpha) \frac{\text{stake}}{\text{total\_stake}},
-\end{equation}
-where $\alpha$ is a small value (for example, $\alpha=0.1$.
-If the condition above is satisfied, the ``closest'' hash of the node's pubkey (the smallest Hamming distance) to the hash of the policy is chosen,
-out of the remaining available nodes.
-If the client decides to ignore the quotas, he risks compromising the security of his own policy (but not anyone else's), so this quota doesn't have
-to be enforced by a smart contract.
+The client (Alice) is responsible for distributing re-encryption keys randomly.
+We don't enforce randomness of Alice's choice on blockchain.
 
-In order to provide re-encryption services, a node needs to send its deposit to a smart contract (while specifying the lock time).
-After the time expires, the node can withdraw the stake from it.
-The objective is to have rewards minted to staking nodes if they correctly provide re-encryption services.
+Let's call an active (locked) deposit of $i$-th miner $d_i$.
+The total amount of the deposits locked is:
+\begin{equation}
+    D = \sum_1^k d_i,
+\end{equation}
+where $k$ is total number of miners.
+The probability of $i$-th miner to get a re-encryption key from one policy is:
+\begin{equation}
+    p_i = n\frac{d_i}{D},\qquad\text{in the limit}\quad \forall i: n p_i \ll 1,
+\end{equation}
+where $n$ is number of fractions into which we split re-encryption key~(Sec.~\ref{sec:split-key}).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\textwidth]{pdf/miners-ruler.pdf}
+    \caption{Selecting random nodes according to proof of stake.
+             Stake of each node $d_i$ is represented as a line segment.
+             The segments are stacked together into a larger segment with the length $D$.
+             Random nodes are selected by random points distributed from $x=0$ to $x=D$.}
+    \label{fig:random-nodes}
+\end{figure}
+
+Selecting random nodes to handle re-encryption keys happens in the following manner~(\figref{fig:random-nodes}).
+All the nodes are ordered randomly, and placed on a line segment with the length $D$ starting from coordinate $x=0$.
+Thus, coordinate of $i$-th node will be:
+\begin{equation}
+    x_i = \sum_{j=1}^{i-1} d_j.
+\end{equation}
+
+When deploying a policy, Alice selects $n$ random numbers:
+\begin{equation}
+    \forall j=1..n: r_j \in [0, D).
+\end{equation}
+Without the loss of generality, the numbers $r_j$ are assumed sorted.
+Then, indexes of selected miners $i_j$ are just indexes of miners who the chosen line segments correspond to:
+\begin{equation}
+    \forall i_j: x_{i_j} \le r_j, x_{i_j + 1} > r_j.
+\end{equation}
+Some numbers might fall on line segments corresponding to the same miner.
+In this case, Alice removes repetitions of $i_j$ and generates more chosen miner indexes $i_j$ in the same manner, until the desired number of miners ($n$) is
+selected.
 
 Let's call the suite of possible tests a generalized ``ping''.
 This includes:
