@@ -724,16 +724,13 @@ Vitally, the token also incentivizes correctness of computation and security of 
 
 \subsection{Token distribution}
 
-It is important to incentivize re-encryption operations early on, when there are not many users in the system.
-That's why we'll introduce a rewards schedule where some rewards are ``mined'', asymptotically approaching zero inflation as time passes.
-
 Miners can hold a number of re-encryption keys proportional to the number of tokens they hold as a collateral deposit, locked by a smart contract.
 The miners are paid both for providing re-encryption services and making themselves available to re-encrypt data.
 The miners can be paid either by the owner of the data, or by users of the data.
 The latter is more relevant for usecases where DAOs distribute content under decentralized DRM.
-In addition, the miners have ``availability rewards'' generated if they stay online and ready to provide their services, proof of which is checked with the help of
-smart contract~(Sec.~\ref{sec:smart-contract}).
 
+In addition, the miners may have ``availability rewards'' generated if they stay online and ready to provide their services, proof of which is checked with the help of
+smart contract~(Sec.~\ref{sec:smart-contract}).
 If miners become unavailable, they lose their ``availability'' compensation for the time period.
 
 If miners cheat and provide wrong re-encryptions, they lose a fraction of their security deposit (Sec.~\ref{sec:challenge-protocol}).
@@ -743,6 +740,25 @@ Anyone can challenge a miner with a hash of a re-encryption key and, if the re-e
 valued in NKMS.
 It is possible to make re-encryption keys linked to particular proxies in order to identify them quickly if they're leaked on the encryption
 level~\cite{Libert2008}.
+
+It is important to incentivize re-encryption operations early on, when there are not many users in the system.
+That's why we'll introduce a rewards schedule where some rewards are ``mined'', asymptotically approaching zero inflation as time passes.
+The reward $r_i$ which a miner $i$ is getting can be expressed as:
+\begin{equation}
+    r_i = \frac{d_i \cdot s}{\sum_{i=1}^k d_i} + f_i,
+\end{equation}
+where $s$ is the current reward rate, $d_i$ is the deposit of $i$-th miner, and $f_i$ is total transaction fees for this miner.
+The reward rate is exponentially decreasing in such a way that it reaches equilibrium at infinite time, switching to fee-only rewards:
+\begin{equation}
+    s = s_0 e^{-t/T},
+\end{equation}
+where $T$ is time after which the reward falls by factor of $e$, and $s_0$ is initial reward rate.
+This exponential can be conveniently obtained in a smart contract without expensive floating point calculation as a solution of a differential equation:
+\begin{equation}
+    s = \frac{dS}{dt}= s_0 \frac{S_{\max} - S}{S_{\max} - S(t=0)},
+\end{equation}
+where $S_{\max}$ is maximum supply of coins at $t=\infty$, $S(t=0)$ is initial supply of coins.
+The time $t$ is expressed in mining periods rather than seconds.
 
 An interesting property of \kms~is that security improves as the number of network participants grows. As additional re-encryption
 nodes enter the network, the lower the chance of collusion.
