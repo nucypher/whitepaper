@@ -8,12 +8,6 @@
 \usepackage[margin=5pt]{subfig}
 \usepackage[usenames]{color}
 
-\usepackage{soul}
-\usepackage{tcolorbox}
-\newtcbox{\thl}[1][yellow]{on line, arc=7pt,colback=#1!10!white,colframe=#1!50!black,
-  before upper={\rule[-3pt]{0pt}{10pt}},boxrule=1pt, boxsep=0pt,left=6pt,
-  right=6pt,top=2pt,bottom=2pt}
-
 \renewcommand{\baselinestretch}{1.4}
 \setlength{\parskip}{1em}
 \definecolor{darkgreen}{rgb}{0.00,0.50,0.25}
@@ -165,9 +159,9 @@ from one public key to another, without learning anything about the underlying m
     \label{fig:pre}
 \end{figure}
 
-In a typical proxy re-encryption scenario, there are several actors. 
-Alice, the data owner, has public key $pk_A$. Any entity that knows this key can produce encrypted data that only she can decrypt, using her secret key $sk_A$. 
-Suppose that a data producer encrypts a message $m$, with Alice's public key $pk_A$, 
+In a typical proxy re-encryption scenario, there are several actors.
+Alice, the data owner, has public key $pk_A$. Any entity that knows this key can produce encrypted data that only she can decrypt, using her secret key $sk_A$.
+Suppose that a data producer encrypts a message $m$, with Alice's public key $pk_A$,
 resulting in ciphertext $c_A$.
 Alice decides to delegate access to message $m$ to Bob, who has the key pair $(pk_B, sk_B)$.
 To do so, Alice creates a re-encryption key:
@@ -216,7 +210,7 @@ The re-encryption node uses $rk_{A\rightarrow e}$ to re-encrypt any ciphertext $
 \end{align}
 
 %The re-encryption node also needs to tell the receiver his ephemeral key.
-%So, in addition to $rk_{A\rightarrow e}$, the receiver will get $sk_e^{\prime}$, which will be stored by a re-encryption node along with the re-encryption key. 
+%So, in addition to $rk_{A\rightarrow e}$, the receiver will get $sk_e^{\prime}$, which will be stored by a re-encryption node along with the re-encryption key.
 
 The decryption by the receiver will then look like:
 \begin{align}
@@ -246,7 +240,7 @@ One of the important properties to consider is whether an algorithm is interacti
 Examples of interactive algorithms are: BBS98~\cite{BBS98}, our ECIES re-encryption (based on BBS98), and LWE-based re-encryption~\cite{lwe-reencryption}.
 An example of a ``non-interactive'' algorithm is AFGH~\cite{AFGH}.
 Even though it initially seems that we would only be interested in non-interactive algorithms,
-we can tweak interactive algorithms on the protocol level to share with a public rather than a private key by 
+we can tweak interactive algorithms on the protocol level to share with a public rather than a private key by
 using ephemeral keys (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
 
 Another interesting property is whether an algorithm is uni-directional or bi-directional.
@@ -276,13 +270,13 @@ Examples of multi-hop algorithms include BBS98~\cite{BBS98} and the LWE-based al
 The AFGH algorithm~\cite{AFGH} is single-hop.
 
 Another seemingly important property is collusion resistance.
-Informally, collusion resistance means that having just $re_{ab}$ and $sk_b$ it is impossible to derive $sk_a$. 
+Informally, collusion resistance means that having just $re_{ab}$ and $sk_b$ it is impossible to derive $sk_a$.
 Conversely, a lack of collusion resistance makes it possible to obtain $sk_a$ from $re_{ab}$ and $sk_b$.
 At first glance this seems to be very desirable for security.
-However, even with collusion resistant algorithms, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable of re-encrypting and reading any data that, originally, is decryptable by $sk_a$. 
-Thus, collusion resistance only becomes important when the same keypair is used for other purposes (e.g., signing, key derivation, etc). Nonetheless, it is good practice to use separate key pairs for both functions. 
+However, even with collusion resistant algorithms, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable of re-encrypting and reading any data that, originally, is decryptable by $sk_a$.
+Thus, collusion resistance only becomes important when the same keypair is used for other purposes (e.g., signing, key derivation, etc). Nonetheless, it is good practice to use separate key pairs for both functions.
 %However, if any other key is derived from $sk_a$, then a collusion resistant algorithm should be used.
-For our purposes, collusion resistance appears not a priority because we don't have another uses for the delegator's keypair apart from encryption. %, such as deriving any subkeys or signing. 
+For our purposes, collusion resistance appears not a priority because we don't have another uses for the delegator's keypair apart from encryption. %, such as deriving any subkeys or signing.
 Collusion resistant algorithms include AFGH~\cite{AFGH} and LWE-based re-encryption~\cite{lwe-reencryption}.
 Non-collusion resistant algorithms are BBS98~\cite{BBS98} and ECIES re-encryption.
 
