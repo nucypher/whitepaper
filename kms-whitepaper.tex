@@ -1,4 +1,6 @@
 \documentclass[longbibliography,nofootinbib]{revtex4-1}
+\usepackage[utf8]{inputenc}
+\usepackage{CJKutf8}
 
 \newcommand{\kms}{NuCypher KMS}
 
@@ -12,21 +14,16 @@
 \setlength{\parskip}{1em}
 \definecolor{darkgreen}{rgb}{0.00,0.50,0.25}
 \definecolor{darkblue}{rgb}{0.00,0.00,0.67}
-\newcommand{\figref}[1]{Fig.~\ref{#1}}
-\usepackage[breaklinks,pdftitle={NuCypher KMS: decentralized key management system}, pdfauthor={Michael Egorov},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
+\usepackage[breaklinks,pdftitle={NuCypher KMS: decentralized key management system (Chinese translation)}, pdfauthor={Michael Egorov},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
 \graphicspath{{pdf/}}
 
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\lstset{
-    basicstyle=\ttfamily,
-    basewidth={0.5em, 0.5em},
-    columns=fullflexible,
-}
-
 \begin{document}
+\begin{CJK*}{UTF8}{gbsn}
+\renewcommand{\tocname}{内容}
+\renewcommand{\figurename}{图}
+\newcommand{\figref}[1]{图\ref{#1}}
 
-\title{\kms: Decentralized key management system}
+\title{\kms: 分布式密钥管理系统}
 
 \author{Michael Egorov}
 \email{michael@nucypher.com}
@@ -36,163 +33,140 @@
 
 \author{David Nu{\~n}ez}
 \email{dnunez@lcc.uma.es}
-\affiliation{NICS Lab, Universidad de M{\'a}laga, Spain}
+\affiliation{NICS 实验室, 马拉加大学, 西班牙}
+
+\author{翻译：tobeaj2mer01}
 
 \begin{abstract}
-    \kms~is a decentralized Key Management System (KMS) that addresses the limitations of using consensus
-    networks to securely store and manipulate private, encrypted data~\cite{cryptoeprint:2017:201}.
-    It provides encryption and cryptographic access control, performed by a decentralized network,
-    leveraging proxy re-encryption~\cite{wiki:pre}.
-    Unlike centralized KMS as a service solutions, it doesn't require trusting a service provider.
-    \kms~enables sharing of sensitive data for both decentralized and centralized applications,
-    providing security infrastructure for applications from healthcare to identity management to decentralized content marketplaces.
-    \kms~will be an essential part of decentralized applications,
-    just as SSL/TLS is an essential part of every secure web application.
+    \kms是一个分布式密钥管理系统(KMS)，它解决了使用共识网络安全存储，操作私有加密数据的痛点\cite{cryptoeprint:2017:201}。
+    它利用代理重加密技术，使用分布式网络，提供基于加密和密码学的权限控制\cite{wiki:pre}。
+    不像中心化的KMS提供的服务，它不需要信任服务提供商。
+    \kms使共享敏感数据给去中心化和中性化的应用程序成为可能，为从医疗到ID管理到分布式内容市场的众多应用程序提供安全架构。
+    \kms会成为分布式应用程序必要的一部分，就像SSL/TLS是每个安全的网络应用程序必要的一部分一样。
 \end{abstract}
 
-\date{\today}
 \maketitle
 
 \tableofcontents
 
 \newpage
 
-\section{Introduction}
+\section{摘要}
 
-\kms~is a decentralized key management system (KMS), encryption, and access control service.
-It enables private data sharing between arbitrary numbers of participants in public consensus networks,
-using proxy re-encryption to delegate decryption rights in a way that cannot be achieved by traditional symmetric or public-key encryption schemes.
-Native tokens are used to incentivize network participants to perform key management and access delegation/revocation operations.
+\kms~是一个分布式密钥管理系统(KMS)，提供加密和权限控制服务。
+它能够在公共网络上在任意数量的参与者之间共享私有数据，使用代理重加密技术来代理解密权限，这是传统对称加密和公钥加密方案不能实现的。
+内生代币用来激励网络参与者执行密钥管理和权限代理/回收的操作。
 
-\subsection{Background}
-A key management system (KMS) is an integrated approach for generating, distributing, and managing cryptographic keys for devices and
-applications~(\figref{fig:kms}).
-A KMS includes the backend functionality for key generation, distribution, and rotation as well as the client functionality for
-injecting, storing, and managing keys on devices~\cite{wiki:kms}.
+\subsection{背景}
+权限管理系统(KMS)是在设备和应用程序中生成，分发和管理密钥的集成方案（\figref{fig:kms}）。
+KMS包含在设备上生成，分发和流转密钥的后台功能以及注入，存储和管理密钥的客户端功能\cite{wiki:kms}。
 
 \begin{figure}
     \centering
-    \subfloat[Centralized KMS]{\includegraphics[width=0.4\columnwidth]{pdf/centralized-kms.pdf}}
+    \subfloat[中心化KMS]{\includegraphics[width=0.4\columnwidth]{pdf/centralized-kms.pdf}}
     \qquad
     \qquad
-    \subfloat[PRE-based KMS]{\includegraphics[width=0.4\columnwidth]{pdf/pre-kms.pdf}}
-    \caption{Difference between a centralized key management system (KMS) and the one which uses proxy re-encryption (PRE)}
+    \subfloat[代理重加密KMS]{\includegraphics[width=0.4\columnwidth]{pdf/pre-kms.pdf}}
+    \caption{中心化密钥管理系统（KMS）和代理重加密（PRE）密钥管理系统的区别}
     \label{fig:kms}
 \end{figure}
 
+作为信任的根源，适当配置，管理和保护KMS很关键。
+传统上，这意味着把KMS预置到硬件安全模块(HSM)\cite{wiki:hsm} 或者使用诸如HashiCorp’s Vault\cite{web:hashicorp-vault}这样的工具。
+然而这需要很高等级的技术复杂性和前期资本投资，为了降低技术负担和提供有竞争力的价格，像亚马逊云HSM\cite{web:aws-cloudhsm}，
+谷歌云KMS\cite{web:google-cloud-kms}，微软Azure Key Vault\cite{web:azure-key-vault}和TrueVault\cite{web:truevault} 开始提供KMS服务。
+然而，KMS作为服务产品需要在服务提供商中设置不适当的信任级别，这对于安全至关重要的应用程序来说可能不合适。
 
-As the root of trust, it's critical that a KMS is appropriately configured, managed, and protected.
-Historically, this has meant deploying a KMS on-premises in hardware security modules (HSM)~\cite{wiki:hsm} or using tools like
-HashiCorp's Vault~\cite{web:hashicorp-vault}.
-However, this requires a high degree of technical sophistication as well as upfront capital investment.
-To ease the technical burden and provide more competitive pricing, vendors like Amazon CloudHSM~\cite{web:aws-cloudhsm},
-Google Cloud KMS~\cite{web:google-cloud-kms}, Azure Key Vault~\cite{web:azure-key-vault} and TrueVault~\cite{web:truevault}
-have begun offering KMS as a service.
-However, KMS as a service offerings necessitate placing an undue level of trust in the service provider, which may
-be inappropriate for security-critical applications.
+公众共识网络比如比特币和以太坊，在解决这种中心化的难题方面很有前途。但是，在公众共识网络上执行涉及私密数据操作的局限性是确定的\cite{cryptoeprint:2017:201}。
+共识网络采用一个志愿者节点网络，在可用性和强制访问管理规则方面，这种网络经常发生中断，而不像中央基础设施那样可靠。
 
-Public consensus networks, such as Bitcoin and Ethereum, are a promising solution to this centralization problem.
-But the limitations of public consensus networks in performing cryptographic operations that involve the manipulation of secret
-data are well-established~\cite{cryptoeprint:2017:201}. Consensus networks employ a volunteer network of nodes,
-which is subject to constant churn and not as reliable as central infrastructure when it comes to availability and
-enforcing access management rules.
+\kms使用分布式网络移除对中心化服务提供商的信任，使用代理重加密提供密码访问控制，使用代币激励机制保证可靠性，可用性和正确性。
+由于使用代理重新加密，未加密的对称密钥（能够解密私有数据）绝不会暴露在服务器端（\figref{fig:kms}），并且没有单点安全失败。
+即使被攻破，黑客也只能得到重新加密的密钥，并且对文件的访问仍然受到保护。
 
-\kms~ uses a decentralized network to remove the reliance on central service providers, proxy re-encryption for cryptographic
-access control, and a token incentive mechanism to ensure reliability, availability, and correctness.
-Because of the use of proxy re-encryption, an unencrypted symmetric key (which gives the ability to decrypt private data) is never exposed
-server-side~(\figref{fig:kms}), and there is no single point of security failure.
-Even if compromised, hackers would only get re-encryption keys but access to the file is still protected.
+\section{架构}
 
-\section{Architecture}
+\subsection{加密原语}
 
-\subsection{Cryptographic primitives}
+\subsubsection{对称加密}
 
-\subsubsection{Symmetric encryption}
+对称或私钥加密要求用户知道一个共公秘密密钥。
+为了方便起见，我们将这个公共密钥称为DEK（数据加密密钥）。
 
-Symmetric or secret key encryption requires users to know a common secret key.
-For convenience, we refer to this common secret key as DEK (data encryption key).
-
-Two operations are defined for symmetric ciphers:
+对称加密定义了两个操作：
 \begin{align}
     c &= \text{encrypt}_{sym}(dek, d);\\
     d &= \text{decrypt}_{sym}(dek, c);
 \end{align}
-where $d$ is plaintext data, and $c$ is ciphertext (encrypted data).
+$d$是明文，$c$是密文（加密数据）。
 
-The most useful symmetric key encryption algorithms for our purposes are AES (because it's normally hardware-accelerated)~\cite{wiki:aes}
-and Salsa20~\cite{wiki:salsa20}.
+对于我们来说，最有用的对称密钥加密算法是AES（因为它通常是硬件加速的）\cite{wiki:aes}和Salsa20 \cite{wiki:salsa20}。
 
-Symmetric block ciphers can operate in different modes.
-We use modes of operation that yield probabilistic encryption (such as GCM for AES), to guarantee strong semantic security.
-For simplicity, we omit details about the particular modes of operations, treating the value of \emph{nonce} related to the mode of operation as part of the
-ciphertext $c$.
+对称分组密码可以在不同的模式下运行。
+我们使用概率加密的操作模式（如用于AES的GCM）来保证强大的语义安全性。
+为了简单起见，我们省略了关于特定操作模式的细节，将与操作模式有关的随机数值视为密文的一部分$c$。
 
-\subsubsection{Public-key encryption}
+\subsubsection{公钥加密}
 
-Public-key encryption (PKE) is a type of encryption where two parties (a sender and a receiver) exchange information without any required common secret.
-Every participant has a key pair (a public key $pk$ and a secret/private key $sk$).
-If the sender has a key pair $sk_s/pk_s$ and the receiver has a key pair $sk_r/pk_r$, the sender can encrypt a message with the receiver's public key,
-and the receiver can decrypt with his secret key.
+公钥加密（PKE）是双方（发送方和接收方）交换信息而不需要任何公钥的一种加密方式。
+每个参与者都有一个密钥对（一个公钥$pk$和一个密钥/私钥$sk$）。
+如果发送者有一个密钥对$sk_s/pk_s$，并且接收者有一个密钥对$sk_r/pk_r$，发送者可以使用接收者的公钥对消息进行加密，接收者可以用他的密钥进行解密。
 
-Hybrid cryptosystems can be created that combine the efficiency of symmetric encryption with the convenience of PKE.
-A hybrid cryptosytem encryption flow defines the functions:
+可以创建混合密码系统，将对称加密的效率与PKE的便利性相结合。
+混合密码体制加密流程定义了以下功能：
 \begin{align}
     dek &= \text{random}();\\
     c &= \text{encrypt}_{sym}(dek, d);\\
     edek &= \text{encrypt}_{pke}(dek, pk_r).
 \end{align}
-The pair $(edek, c)$ is used to transform the encrypted data.
-The associated decryption by the receiver defines the functions:
+该对$(edek,c)$用于转换加密的数据。
+接收器的相关解密定义了以下功能：
 \begin{align}
     dek &= \text{decrypt}_{pke}(edek, sk_r);\\
     d &= \text{decrypt}_{sym}(dek, c).
 \end{align}
 
-\subsubsection{Proxy re-encryption}
-Proxy re-encryption (PRE)~\cite{wiki:pre,nunez2017proxy} is a type of public-key encryption (PKE) that allows a proxy entity to transform ciphertexts
-from one public key to another, without learning anything about the underlying message~(\figref{fig:pre}).
+\subsubsection{代理重加密}
+代理重新加密（PRE）\cite{wiki:pre,nunez2017proxy}是一种公钥加密（PKE），它允许代理实体将密文从一个公钥转换到另一个公钥，而不需要知道任何关于底层消息的信息（\figref{fig:pre}）。
 
 \begin{figure}
 \centering
     \includegraphics[width=0.6\columnwidth]{pdf/pre.pdf}
-    \caption{Main actors and interactions in a PRE environment}
+    \caption{代理重加密环境中的主要参与者和交互}
     \label{fig:pre}
 \end{figure}
 
-In a typical proxy re-encryption scenario, there are several actors.
-Alice, the data owner, has public key $pk_A$. Any entity that knows this key can produce encrypted data that only she can decrypt, using her secret key $sk_A$.
-Suppose that a data producer encrypts a message $m$, with Alice's public key $pk_A$,
-resulting in ciphertext $c_A$.
-Alice decides to delegate access to message $m$ to Bob, who has the key pair $(pk_B, sk_B)$.
-To do so, Alice creates a re-encryption key:
+在典型的代理重新加密的情况下，有几个角色。
+数据拥有者Alice拥有公钥$pk_A$。
+知道这个密钥的任何实体都可以使用她的密钥$sk_A$产生只有她可以解密的加密数据。
+假设数据生产者用Alice的公钥$pk_A$加密消息$m$，得到密文$c_A$.
+Alice决定把对m消息的访问权委托给拥有密钥对$(pk_B, sk_B)$的Bob。
+为此，Alice创建一个重密密钥：
 \begin{equation}
     rk_{A\rightarrow B} = \text{rekey}(sk_A, pk_B).
 \end{equation}
-Importantly, in single-use, uni-directional proxy re-encryption schemes, this re-encryption function is one way, and $rk_{A\rightarrow B}$ cannot be decomposed into its component parts
-(at least, without also knowing $sk_A$ or $sk_B$).
-All it can do is re-encrypt $c_A$ such that it is transformed into $c_B$:
+重要的是，在单次使用的单向代理重新加密方案中，这种重新加密功能是一种方式，并且$rk_{A\rightarrow B}$不能被分解成其组成部分（至少在不知道$sk_A$或$sk_B$的情况下）。
+它所能做的就是对$c_A$进行重新加密，以便将其转换为$c_B$：
 \begin{equation}
     c_B = \text{reencrypt}(rk_{A\rightarrow B}, c_{A}).
 \end{equation}
-Bob can then decrypt $c_{B}$ using his secret key $sk_{B}$.
+Bob然后可以用他的秘密密钥$sk_B$解密$c_B$。
 
-Compared to existing PKE protocols which are ideal for 1-to-1 communication, PRE is more scalable for N-to-N communication
-with arbitrary numbers of data producers and consumers.
-It doesn't require knowing the recipient of a message in advance, as the re-encryption token can be created and applied at any point.
-This makes it well-suited for distributed systems such as blockchain, IoT, and big data~\cite{web:nucypher-hadoop}.
+现有的PKE协议是1对1通信的理想选择，与现有的PKE协议相比，代理重加密在任意数量的数据生产者和消费者的N对N通信时，更具可扩展性。
+它不需要事先知道消息的接收者，因为重新加密令牌可以在任何时候被创建和应用。
+这使得它非常适合分布式系统，如区块链，物联网和大数据~\cite{web:nucypher-hadoop}。
 
-There are many proxy re-encryption algorithms with different properties.
-For the first version of \kms~we choose ECIES for which we created a proxy re-encryption algorithm~\cite{umbral-spec}.
-It is very similar to the most simple (and performant) algorithm,~--- BBS98~\cite{BBS98}, but provides better security guarantees.
-However, sometimes we want to delegate re-encryption to multiple nodes, in order to split the trust between them and apply time-based or conditional
-re-encryption policies.
-In this case we use the AFGH scheme~\cite{AFGH}.
-Quantum-resistant NTRU may also be used if the need arises~\cite{wiki:ntru,ntrureencrypt}.
+有许多具有不同属性的代理重加密算法。
+对于\kms的第一个版本，我们选择了ECIES，我们为其创建了代理重加密算法\cite{umbral-spec}。
+它与最简单的（和高性能的）算法BBS98~\cite{BBS98}非常相似，但提供了更好的安全保证。
+然而，有时我们想要将重加密委托给多个节点，以便拆分它们之间的信任并应用基于时间的或有条件的重新加密策略。
+在这种情况下，我们使用AFGH方案\cite{AFGH}。
+抗量子的NTRU也可以在需要时使用\cite{wiki:ntru,ntrureencrypt}。
 
-Just like BBS98, our proxy re-encryption for ECIES creates a re-encryption key out of two secret keys, rather than a secret+public key.
-However, we don't want the sender to know the receiver's secret key.
-To get around this problem, we randomly generate an ephemeral key pair $sk_e/pk_e$.
-Then, access delegation looks like:
+就像BBS98一样，我们对ECIES的代理重加密算法是创建一个重加密密钥，而不是一个秘密+公共密钥。
+但是，我们不希望发送者知道接收者的密钥。
+为了解决这个问题，我们随机生成一个临时密钥对$sk_e/pk_e$。
+然后，访问委派看起来像这样：
 \begin{align}
     \label{eq:ephemeral-trick}
     sk_e &= \text{random}();\\
@@ -202,264 +176,158 @@ Then, access delegation looks like:
     rk_{A\rightarrow B} &= (rk_{A\rightarrow e}, sk_e^{\prime});
 \end{align}
 
-The re-encryption node uses $rk_{A\rightarrow e}$ to re-encrypt any ciphertext $c_A$ (whose underlying message is $m$) so it can be decrypted by $sk_e$. Since the receiver needs $sk_e^{\prime}$ to decrypt the re-encrypted ciphertext, this is attached to the re-encryption result. Therefore, the re-encryption process is as follows:
-
+重新加密节点使用$rk_{A\rightarrow e}$重新加密任何密文$c_A$（其基础消息为$m$），以便可以通过$sk_e$解密。
+由于接收方需要使用$sk_e^{\prime}$对重新加密的密文进行解密，因此将其附加到重新加密的结果上。
+因此，重新加密的过程如下：
 \begin{align}
     c_e = \text{reencrypt}(rk_{A\rightarrow e}, c_{A});\\
     c_B = (c_e, sk_e^{\prime});\\
 \end{align}
 
-%The re-encryption node also needs to tell the receiver his ephemeral key.
-%So, in addition to $rk_{A\rightarrow e}$, the receiver will get $sk_e^{\prime}$, which will be stored by a re-encryption node along with the re-encryption key.
-
-The decryption by the receiver will then look like:
+接收方的解密将如下所示：
 \begin{align}
     sk_e &= \text{decrypt}_{pke}(sk_B, sk_e^{\prime});\\
     m &= \text{decrypt}_{pke}(sk_e, c_e);\\
 %    d &= \text{decrypt}_{sym}(dek, c).
 \end{align}
 
-This approach was mentioned beforehand by Ateniese et al.~\cite{AFGH}, and also beyond proxy re-encryption work.
-The scheme is not considered to be ``key-optimal'', however, in our case, has a very competitive performance.
+Ateniese等人\cite{AFGH}事先提到了这种方法。
+这也超出了代理重新加密的范围。
+该方案不被认为是“关键优化”的，但在我们的用例中，却有一个非常有竞争力的性能。
 
-\subsection{A brief review of re-encryption schemes}
+\subsection{重新加密方案的简要回顾}
 
-There are different properties which re-encryption schemes may enjoy.
-In this subsection, we consider several of them relevant to our use cases.
-A full survey with consideration of all the known proxy re-encryption algorithms and their properties was published recently~\cite{nunez2017proxy}.
+重加密方案有不同的属性。 在本小节中，我们考虑其中的几个与我们的用例有关的。 一个关于所有已知的代理重新加密算法及其属性的全面调查最近发布~\cite{nunez2017proxy}.
 
-One of the important properties to consider is whether an algorithm is interactive or not.
-``Interactive'' means that a re-encryption key is computed out of two secret keys:
+要考虑的重要属性之一是算法是否是交互式的。 “交互式”意味着重加密密钥是由两个密钥计算出来的：
 \begin{equation}
     re_{ab} = \text{rekey}(sk_a, sk_b).
 \end{equation}
-``Non-interactive'' means that one needs to know only the owner's private key and the delegatee's public key:
+“非交互”意味着需要知道所有者的私钥和被授权者的公钥：
 \begin{equation}
     re_{ab} = \text{rekey}(sk_a, pk_b).
 \end{equation}
-Examples of interactive algorithms are: BBS98~\cite{BBS98}, our ECIES re-encryption (based on BBS98), and LWE-based re-encryption~\cite{lwe-reencryption}.
-An example of a ``non-interactive'' algorithm is AFGH~\cite{AFGH}.
-Even though it initially seems that we would only be interested in non-interactive algorithms,
-we can tweak interactive algorithms on the protocol level to share with a public rather than a private key by
-using ephemeral keys (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
 
-Another interesting property is whether an algorithm is uni-directional or bi-directional.
-Bi-directionality means that it is possible to compute $re_{ba}$ from just $re_{ab}$.
-In uni-directional algorithms that is impossible.
-Bi-directional algorithms are effectively uni-directional when using ephemeral keys
-(Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}).
-Nevertheless, in Sec.~\ref{sec:hierarchical-data} we show that uni-directionality can be very convenient for making complex hierarchical data shareable in a
-scalable way.
-An example of a bi-directional algorithm is BBS98~\cite{BBS98}.
+交互算法的例子有：BBS98~\cite{BBS98}，我们的ECIES重加密算法（基于BBS98）和基于LWE的重加密算法~\cite{lwe-reencryption}。一个“非交互式”算法的例子是AFGH~\cite{AFGH}。 尽管最初似乎我们只对非交互式算法感兴趣，但我们可以通过使用短暂密钥（方程~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}）在协议级别调整交互式算法，以便与公钥而不是私钥共享。
 
-Proxy re-encryption algorithms can also be single-hop or multi-hop.
-``Multi-hop'' means that if we have $re_{ab}$ and $re_{bc}$, these two re-encryption keys can be applied in series to convert ciphertext $c_a$ to a ciphertext
-$c_c$ without the participation of $b$:
+另一个有趣的特性是算法是单向的还是双向的。 双向性意味着可以从$re_{ab}$计算$re_{ba}$。这在单向算法中是不可能的。 但是当使用临时密钥时，双向算法是有效的单向算法（方程~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}）。尽管如此，我们在Sec.VC中展示单向性可以非常方便地以可扩展的方式共享复杂的分层数据。 一个双向算法的例子是BBS98~\cite{BBS98}。
+
+    代理重加密算法也可以是单跳或多跳的。 “多跳”是指如果我们有了$re_{ab}$和$re_{bc}$，那么这两个重新加密的密钥可以串联使用，将密文$c_a$转换成密文$c_c$ ，而不需要$b$：
+
 \begin{equation}
     c_c = \text{reencrypt}(re_{bc}, \text{reencrypt}(re_{ab}, c_a)).
 \end{equation}
-Sometimes, it is even possible to compute $re_{ac}$, which for BBS98 is:
+有时甚至可以计算$re_{ac}$，对于BBS98是这样的：:
 \begin{equation}
     re_{ac} = re_{ab} \cdot re_{bc}.
 \end{equation}
-``Single-hop'' means that if $c_b$ is obtained via re-encryption, it is impossible to re-encrypt it further.
-Multi-hop schemes are useful for key rotation (Sec.~\ref{sec:key-rotation}) and for our hierarchical data sharing scheme (Sec.~\ref{sec:hierarchical-data}).
-The ephemeral key trick (Eqs.~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}) is, effectively, single-hop
-(although key rotation is still possible because ephemeral keys are only created when data is shared with other parties).
-Examples of multi-hop algorithms include BBS98~\cite{BBS98} and the LWE-based algorithm~\cite{lwe-reencryption}.
-The AFGH algorithm~\cite{AFGH} is single-hop.
 
-Another seemingly important property is collusion resistance.
-Informally, collusion resistance means that having just $re_{ab}$ and $sk_b$ it is impossible to derive $sk_a$.
-Conversely, a lack of collusion resistance makes it possible to obtain $sk_a$ from $re_{ab}$ and $sk_b$.
-At first glance this seems to be very desirable for security.
-However, even with collusion resistant algorithms, if an attacker has both $re_{ab}$ and $sk_b$, he is quite capable of re-encrypting and reading any data that, originally, is decryptable by $sk_a$.
-Thus, collusion resistance only becomes important when the same keypair is used for other purposes (e.g., signing, key derivation, etc). Nonetheless, it is good practice to use separate key pairs for both functions.
-%However, if any other key is derived from $sk_a$, then a collusion resistant algorithm should be used.
-For our purposes, collusion resistance appears not a priority because we don't have another uses for the delegator's keypair apart from encryption. %, such as deriving any subkeys or signing.
-Collusion resistant algorithms include AFGH~\cite{AFGH} and LWE-based re-encryption~\cite{lwe-reencryption}.
-Non-collusion resistant algorithms are BBS98~\cite{BBS98} and ECIES re-encryption.
+“单跳”是指如果通过重加密获得$c_b$，则不可能进一步对其进行重新加密。多跳方案对于密钥轮换（Sec.~\ref{sec:key-rotation}）和我们的分层数据共享方案（Sec.~\ref{sec:hierarchical-data}）是有用的。关键技巧（方程~\ref{eq:ephemeral-trick}-\ref{eq:ephemeral-trick-end}）是临时单跳（只有当数据与其他方共享时才会创建临时密钥，因此密钥轮换是可能的）。 多跳算法的例子包括BBS98~\cite{BBS98} 和基于LWE的算法~\cite{lwe-reencryption}。 AFGH算法~\cite{AFGH}是单跳的。
 
-We may need to make it impossible to identify producers and/or consumers of the data from re-encryption keys~(Sec.~\ref{sec:anonymity}).
-Often, a proxy who knows all public keys in the system is able to deduce this information. 
-Many PRE schemes are not anonymous from the re-encryption point of view ~\cite{BBS98,AFGH}. However, the LWE-based re-encryption scheme ~\cite{lwe-reencryption} enjoys the property of anonymity.
+另一个看似重要的属性是抗合谋。非正式地说，抗合谋意味着只获得$re_ab$和$sk_b$是不可能派生出$sk_a$的。相反，缺乏抗合谋使得可以从$re_{ab}$和$sk_b$获得$sk_a$。 乍一看，这似乎是非常安全的。 然而，即使使用抗合谋算法，如果攻击者同时拥有reab和skb，他也能够重新加密和读取任何原本只能由ska解密的数据。因此，只有当相同的密钥对用于其他目的（例如签名，密钥推导等）时，抗合谋性才变得很重要。尽管如此，为两个功能使用单独的密钥对是一种好的做法。 就我们的目的而言，抗合谋似乎并不是一个优先事项，因为除了加密之外，我们没有另外使用委托人的密钥对的地方。 抗合谋算法包括AFGH~\cite{AFGH} 和基于LWE的重加密算法~\cite{lwe-reencryption}。 非抗合谋算法是BBS98~\cite{BBS98}和ECIES。
 
-Finally, as for any cryptosystem, notions of CPA-security~\cite{wiki:cpa} (security against chosen-plaintext attacks)
-and CCA-security~\cite{wiki:cca} (security against chosen-ciphertext attacks) are applicable to proxy re-encryption.
-All of the algorithms we have mentioned so far are only CPA-secure, except ECIES re-encryption and LWE, which are also CCA-secure~\cite{lwe-reencryption}.
+
+我们可能需要使得重加密密钥中的数据的生产者和/或消费者无法被识别（第~\ref{sec:anonymity}节）。 通常，知道系统中所有公钥的代理能够推断出这些信息。 从重加密的角度来看，许多PRE方案并不是匿名的~\cite{BBS98,AFGH}。 然而，基于LWE的重加密方案 ~\cite{lwe-reencryption}享有匿名性。
+
+最后，对于任何密码系统，CPA安全性~\cite{wiki:cpa}（选择明文攻击安全性）和CCA安全性~\cite{wiki:cca}（针对选择密文攻击的安全性）的概念适用于代理重新加密。 到目前为止我们提到的所有算法都只有CPA安全，除了ECIES重加密和LWE，它们也都是CCA安全的~\cite{lwe-reencryption}。
+
 % XXX check
 
-\subsection{Signing encrypted messages}
+\subsection{签署加密的消息}
 
-In public-key encryption algorithms, anyone can encrypt using $pub_a$.
-While this is useful, it also allows for malicious users of the network to encrypt data as if they were $A$.
-So the data has to be signed in order to prove the identity of the sender to the recipient.
+    在公钥加密算法中，任何人都可以使用$pub_a$进行加密。 虽然这很有用，但是它也允许网络的恶意用户加密数据，就好像它们是$A$.因此，数据必须被签名以便向接收者证明发送者的身份。
+    
+    但是，我们希望使协议匿名化（第IIIA节）成为可能，因为验证数据所有者的公共数字签名也提高了重新加密节点尝试向所有者索取钱财的可能性。 因此，这是有道理的：
 
-However, we want to make it possible to anonymize the protocol~(Sec.~\ref{sec:anonymity}) because
-a public digital signature that authenticates the owner of the data also raises the possibility of a re-encryption node attempting to extort money from the owner.
-As such, it makes sense to:
 \begin{itemize}
-    \item include a digital signature as part of the plain text, so that it is impossible to verify the signature until the ciphertext is decrypted,
-    \item use different key pairs for signing and for encryption (especially considering the lack of collusion resistance of some re-encryption
-        cryptosystems).
+    \item 包含一个数字签名作为明文的一部分，这样在密文解密之前不可能验证签名，,
+    \item 使用不同的密钥对进行签名和加密（特别是考虑到某些重加密密码系统缺乏合谋阻力）
 \end{itemize}
 
-\subsection{Re-encryption nodes}
+\subsection{重加密节点}
 
-When the data is stored in a cloud or decentralized storage, it is encrypted with the data owner's (\emph{sender}) key $pk_s$~(\figref{fig:arch-encrypt}).
-The data itself is encrypted with a random symmetric key $dek$, with one key per file.
-The $dek$, encrypted with $pk_s$ is attached to the encrypted data.
-This combination $(edek, c)$ can be stored anywhere - in IPFS, Swarm, S3, or any kind of decentralized or centralized storage.
+当数据存储在云或分布式存储系统中时，使用数据所有者（发送者）的密钥$pk_s$(\figref{fig:arch-encrypt}) 对其进行加密。 数据本身用随机对称密钥加密，每个文件一个密钥。 用$pk_s$加密的$dek$被附加到加密的数据上。 这个组合 $(edek，c)$ 可以存储在任何地方 - IPFS，Swarm，S3或者任何类型的分布式或集中存储系统中。
+
 \begin{figure}
 \centering
     \includegraphics[width=0.4\columnwidth]{pdf/encrypt.pdf}
-    \caption{Architecture: encryption}
+    \caption{架构：加密}
     \label{fig:arch-encrypt}
 \end{figure}
 
-When storing the data, the user to whom we delegate access is not necessarily known in advance.
-First, the receiver should show the sender his public key~(\figref{fig:arch-delegate}).
-It often makes sense for the public key to correspond to an address in the Ethereum network (to prove a payment has been made from that
-address for a digital content subscription, for example).
-The sender generates a re-encryption key $re_{s\rightarrow r}$ (including an encrypted random ephemeral key when needed) and sends it to a random re-encryption
-node, selected according to proof-of-stake out of the active nodes in a decentralized network.
-The case where multiple nodes are selected for redundancy or security will be discussed later.
-The nodes which have shared data of user \emph{sender} with a user \emph{receiver} register this information in the network.
+当存储数据时，我们委派访问的用户不一定是事先知道的。 首先，接收者应该向发送者显示他的公钥 ~(\figref{fig:arch-delegate})。 公钥对应于以太坊网络中的地址通常是有意义的（例如，证明已经从用于数字内容订阅的该地址进行了支付）。 发送方生成一个重加密密钥（在需要的时候包括一个加密的随机短周期密钥），并将其发送到一个随机重新加密节点，根据PoS在分布式网络中选择活动结点。 稍后将讨论为了冗余或安全而选择多个节点的情况。 与用户接收器共享用户发送者数据的节点将该信息登记在网络中。
+
+当接收者想要解密与他共享的数据时，他首先从存储器或加密流中下载该数据~(\figref{fig:arch-decrypt})。 他将$edek$从消息中分离出来并将$edek$发送到重加密节点的网络，并找到可以与接收者（具有重加密密钥的那些）共享发送者的数据的活动重新加密节点。接收者请求具有重新加密密钥的节点将$edek$转换为$edek^{\prime}$并使用他自己的密钥skr对其进行解密并获得$DEK$。 现在，他可以使用DEK来解密大部分数据。
+
 \begin{figure}
 \centering
     \includegraphics[width=0.4\columnwidth]{pdf/delegate.pdf}
-    \caption{Architecture: access delegation}
+    \caption{架构：访问委派}
     \label{fig:arch-delegate}
 \end{figure}
 
-When the receiver wants to decrypt data shared with him, he first downloads that data from storage or an encrypted stream~(\figref{fig:arch-decrypt}).
-He separates out $edek$ from the message and sends $edek$ to the network of re-encryption nodes and finds active re-encryption nodes which can share the data
-of the sender with the receiver (those which have re-encryption key(s) $re_{s\rightarrow r}$).
-The receiver asks the node(s) that has the re-encryption key to transform $edek$ to $edek^{\prime}$ and uses his own secret key $sk_r$ to decrypt it and
-obtain DEK.
-Now, he can use DEK to decrypt the bulk of the data.
 \begin{figure}
 \centering
     \includegraphics[width=0.6\columnwidth]{pdf/decrypt.pdf}
-    \caption{Architecture: decryption}
+    \caption{架构：解密}
     \label{fig:arch-decrypt}
 \end{figure}
 
-\section{Network security}
+\section{网络安全}
 
-In the network, there are multiple re-encryption nodes which apply access management policies.
+在网络中，有多个应用访问管理策略的重新加密节点。
 
-Proxy re-encryption allows \kms~to split the trust between access management and decryption rights,
-without introducing an always-online always-trusted entity (such as a traditional key management system).
-Miners never see plaintext data, or anything which allows them to decrypt the data.
-They are solely responsible for storing re-encryption keys and applying re-encryption functions.
+    代理重新加密允许NuCypher KMS在访问管理和解密权限之间拆分信任，而无需引入始终在线的始终可信的实体（如传统的密钥管理系统）。 矿工始终不能看到明文数据，或者任何能够解密数据的东西。 他们只是负责存储重新加密密钥并应用重新加密功能。
+    
+    这种模式的第一个风险是矿工和数据读者之间的共谋。 如果矿工给数据读取器提供数据的重新加密密钥，数据可以在任何时候由数据读取器解密，避开任何有条件或基于时间的约束。我们以多种方式抵制这种威胁：重加密密钥的伪匿名，分割密钥代理重加密和挑战协议。 另外，我们运用经济激励措施，在第~\ref{sec:token}章中有详细描述。
 
-The first risk of this model is collusion between a miner and a reader of the data.
-If the miner gives the reader re-encryption keys for the data,
-the data can be decrypted at any time by the data reader, circumventing any conditional or time-based constraints.
-We counteract this threat in multiple ways: pseudo-anonymity of re-encryption keys, split-key proxy re-encryption, and a challenge protocol.
-In addition, we apply economic incentives for fair operation, described in Sec.~\ref{sec:token}.
+第二个风险是节点发生故障（返回假数据而不是执行重新加密）。 我们使用挑战协议解决这个问题。
 
-The second risk is nodes malfunctioning (returning fake data instead of performing re-encryptions).
-We solve this problem using a challenge protocol.
+第三个风险是节点相互勾结，进行50％的攻击。 这种风险对于多方计算通常是致命的~\cite{vitalik-secret-dao}（如Enigma~\cite{enigma}）。 但是，在我们的情况下，攻击者只能获得错误应用重新加密策略的能力，而不是解密数据，也不允许访问尚未被授权访问数据的用户。 理想情况下，系统应尽可能分散，然而50％的攻击不会危及数据的机密性，就像应用工作量证明机制的加密货币中50％的攻击不会给攻击者移动资金的能力。
 
-The third risk is nodes colluding with each other to perform 50\% attacks.
-This risk is usually deadly for multi-party computations~\cite{vitalik-secret-dao} (such as Enigma~\cite{enigma}). However, in our case the attacker only gains the ability to wrongfully apply re-encryption policies, not to decrypt data nor to grant access to a user who hasn't been granted access to the data.
-Ideally, the system should be as decentralized as possible, however 50\% attacks don't compromise the confidentiality of the data, just like 50\% attacks in
-proof-of-work cryptocurrencies don't give an attacker the ability to move funds.
-
-\subsection{Pseudo-anonymity}
+\subsection{伪匿名}
 \label{sec:anonymity}
 
-It is highly beneficial for the security of the system that re-encryption nodes do not know what it is they are re-encrypting.
-This prevents them from knowing which re-encryption keys to perform collusion attacks on (and trying to collude with all the network participants
-is infeasible when the network is decentralized).
-But pseudo-anonymity of re-encryption keys also enables us to run a challenge protocol (Sec.~\ref{sec:challenge-protocol}).
+重加密节点不知道他们正在重新加密的是什么对于系统的安全性是非常有益的。 这样可以防止他们知道重加密密钥以应对共谋攻击（并且在分布式网络中试图与所有网络参与者共谋是不可行的）。 而且，重加密密钥的伪匿名也使我们能够运行挑战协议（章节.~\ref{sec:challenge-protocol})
 
-We leave designing an anonymous protocol for re-encryption as future improvements.
-However, we point out the following properties it should (and should not) possess.
-Firstly, the re-encryption scheme should be key-private~\cite{Ateniese-key-private,lwe-reencryption}.
-Otherwise, it would be possible to determine the ownership of the key by iterating over pairs of all the known public keys.
-Secondly, the re-encryption node and the recipient of the data should not have the same identifier for the same re-encryption key.
-This rules out a simple way of storing a re-encryption key in a key-value store while the recipient can come up with the key.
+我们把设计一个匿名重加密协议作为未来的改进。 但是，我们指出它应该（不应该）拥有的下列属性。首先，重加密方案应该是密钥私有的~\cite{Ateniese-key-private,lwe-reencryption}。否则，可以通过遍历所有已知的公钥对来确定密钥的所有权。 其次，重加密节点和数据的接收者对于相同的重加密密钥不应该具有相同的标识符。 这就排除了将重加密密钥存储在密钥-值对存储中的简单方法，而接收者可以拿出密钥。
 
-\subsection{Split-key re-encryption}
+\subsection{分割密钥重新加密}
 \label{sec:split-key}
 
-Imagine that a re-encryption node decides to re-encrypt data immediately rather than to apply conditional policies as instructed.
-A split-key proxy re-encryption scheme can be used to solve this problem.
+有一种情况，重新加密的节点决定立即重新加密数据，而不是根据设置好的的策略。 分割密钥代理重新加密方案可以用来解决这个问题。
+    相对于一个重加密密钥，m-m重加密密钥可以用来产生“重加密共享”。这些共享可以在客户端结合。AFGH~\cite{AFGH}加密使用m-m方案，这里的共谋攻击将需要$m$个矿工和数据的读取者。
+    
+    我们与马拉加大学的NICS实验室共同开发的基于阈值的m-n方案（Umbral）似乎更适合于这项任务。 该方案还可以允许第三方验证重新加密的正确性，这对于保持节点诚实是重要的。
 
-Instead of one re-encryption key, m-of-m re-encryption keys can be used to produce ``re-encryption shares.''
-These shares can be combined client-side.
-An m-of-m scheme exists for AFGH~\cite{AFGH} encryption.
-A collusion attack here would require $m$ miners \emph{and} the reader of the data.
-
-A threshold-based m-of-n scheme (Umbral) which we develop together with NICS Labs from University of M{\'a}laga appears to be even more appropriate for this task.
-This scheme also can allow a third party to verify correctness of re-encryption, which is important for keeping the nodes honest.
-
-\subsection{Challenge protocol}
+\subsection{挑战协议}
 \label{sec:challenge-protocol}
 
-There is a risk of miners returning random numbers instead of correctly re-encrypting data.
-Since the data is private, users of the system cannot publish this data and their key as proof that the miner has cheated.
+矿工有返回随机数的风险，而不是正确地重加密数据。 由于数据是私密的，所以系统的用户不能公布这些数据和他们的密钥来证明矿工已经作弊。
 
-It is impossible for a miner to distinguish between a ``true re-encryption'' and a re-encryption of random data.
-So, we can produce a number of ``fake'' re-encryption keys which are designed specifically to challenge the miners.
-If a miner cheats, the data and the key for this challenge aren't associated with any private data.
+    矿工不可能区分“真正的重加密”和随机数据的重加密。 所以，我们可以生产一些专门为挑战矿工而设计的“假”重加密密钥。 如果矿工作弊，这个挑战的数据和密钥不与任何私人数据相关联。
+    
+    矿工在把重加密数据发到网络之前和之后应该显示数据的哈希值。 如果这种重加密数据是挑战协议数据，而且矿工已经作弊，那么挑战者可以提出一个证据，证明与这个挑战相关的非敏感密钥实际上应该产生不同的重加密结果，并且没收矿工的抵押存款授予挑战者。
+    
+    正如Truebit~\cite{truebit}所指出的那样，系统还应该有意地产生一些“错误的重加密数据”，以激励挑战者进行挑战。
 
-The miners should show the hashes of data before and after re-encryption to the network.
-If this re-encryption was a challenge and the miner has cheated, challengers can present a proof that non-sensitive keys related to this challenge should actually
-produce a different re-encryption result, and the miner's collateral deposit can be awarded to the challenger.
+	设计一个挑战协议是一个与“公平交换”协议有关的复杂问题~\cite{BitcoinMPC2016,Bentov2014,AccountableStorage}。 这需要仔细的设计和测试，而以太坊的权益证明（Casper）协议现在也面临着这样的复杂性。 只检查加密算法的正确性是可能的~\cite{Zhou2002}。
+    
+    应该特别考虑保护重加密密钥免于泄漏。建议以下挑战协议。
+    
+    当接受重加密密钥的责任时，矿工希望随着时间$T$获得费用$f$，因此数据的所有者需要存储$f$个币。 矿工还应该提供抵押品$c$，如果泄漏重加密密钥，将被没收。
 
-The system should also intentionally produce a number of ``wrong re-encryptions'', in order to incentivize challengers to operate, as pointed out by
-Truebit~\cite{truebit}.
+	如果一个挑战者证明矿工已经泄漏了一个重加密密钥，挑战者应该得到奖励。 然而，数据所有者可能会挑战矿工，以欺诈方式获得挑战奖励。我们使这个“自我挑战”是不可行的。 如果挑战发生在时间$t$之后，挑战者将获得 $\alpha f t/T$ 硬币，其中$\alpha < 1$。在这种情况下，数据拥有者获得  $(1 - t/T) f$  个币。抵押品和剩余费用被分给网络的其他参与者，总金额为 $c + (1 - \alpha) t/T$。
 
-Designing a challenge protocol is a complex problem related to ``fair exchange'' protocols~\cite{BitcoinMPC2016,Bentov2014,AccountableStorage}.
-It requires careful design and testing, and Ethereum's Proof-of-Stake (Casper) protocol is facing this complexity now.
-It may be possible to just check correctness on the level of the encryption algorithm~\cite{Zhou2002}.
+    数据的拥有者也不应该被激励伪造数据挑战矿工，应该使用撤销策略。 因此，在一个“正确的”撤销中，数据的所有者获得$(1 - t/T) f$个币和矿工得到 $c + ft/T$个币，其中$c$是被押的抵押品。
 
-Special consideration should be given to protecting re-encryption keys from leaking.
-The following challenge protocol is proposed.
-
-When accepting responsibility for a re-encryption key, a miner expects to get a fee $f$ over time $T$, so the owner of the data deposits $f$ coins.
-The miner should also put up collateral $c$ which will be forfeit if leaks the re-encryption key is leaked.
-
-If a challenger proves that the miner has leaked a re-encryption key, the challenger should be rewarded.
-However, the data owner may challenge the miner in order to fraudulently collect the challenge reward.
-We make this ``self-challenge'' infeasible.
-If the challenge has happened after time $t$, the challenger will get
-$\alpha f t/T$ coins, where $\alpha < 1$.
-The data owner in this case gets $(1 - t/T) f$ coins returned.
-The collateral and the rest of the fee gets seized for the benefit of the other participants of the network, with the total amount of $c + (1 - \alpha) t/T$.
-
-There also should be no incentive for the owner of the data to fake-challenge the miner instead of revoking the policy.
-So, in a ``correct'' revocation, the owner of the data gets $(1 - t/T) f$ coins back, and the miner gets $c + ft/T$ coins, where $c$ is the collateral which
-was staked.
-
-
-\subsection{Relevancy of possible threats to different use cases}
+\subsection{不同用例可能威胁的相关性}
 
 % Mobile Device Management
-In a mobile device management use case~(Sec.~\ref{sec:mdm}),
-the most important thing is to revoke access from a lost or stolen device before the data is compromised.
-Imagine a possible attack where someone steals the device and colludes with the relevant miners.
-As such, there must be no way for miners to identify a user, and vice versa.
-Another possible attack is a group of miners revoking access and demanding additional payment to re-encrypt.
-However, there is no incentive to do so since the owner of the data can easily re-grant access to that mobile device.
-Another possible threat is a mining node keeping re-encryption keys for a long time beyond the life of the policy,
-waiting for someone to attack the end-user device and collude with the mining node.
-In order to prevent this threat, it is important that the mining node cannot figure out if the data is valuable or not,
-and a good way to do this is to anonymize the data owner and the data itself.
-In other words, we prevent the mining node from discovering which data the $edek$ corresponds to.
 
-% Decentralized DRM
-Decentralized DRM~(Sec.~\ref{sec:drm}) assumes that once content (a file or a piece of video) is decrypted, it has been purchased,
-so access revokation is not really an issue.
-However, if a node knows that the content is very expensive, they may attempt to approach the buyer and solicit a cheaper price for the
-content, cutting out the original seller.
-To prevent this, we should anonymize the recipient of the data.
-It would also help to hide the exact pricing information from the mining node while still allowing it to verify the necessary amount was paid using
-zk-SNARKs~\cite{consensys-snarks}.
+    在移动设备管理使用案例（第~\ref{sec:mdm}节）中，最重要的是在数据泄露之前从丢失或被盗的设备中回收权限。想象一下，有人可能会偷窃设备，并与相关矿工勾结。因此，矿工不能识别用户，反之亦然。另一个可能的攻击是一组矿工回收权限并要求额外付款重新加密。但是，由于数据所有者可以轻松地重新授予访问该移动设备的权利，所以没有这样做的动机。另一个可能的威胁是挖矿节点在策略生命周期之后长时间保持重加密密钥，等待某人攻击最终用户设备并与挖矿节点勾结。 为了防止这种威胁，挖矿节点不能确定数据是否有价值是很重要的，一个好的方法是匿名化数据所有者和数据本身。 换句话说，我们阻止挖矿节点发现$edek$对应的数据。
+    
+    分布式DRM（Sec.~\ref{sec:drm}）假定一旦内容（一个文件或一段视频）被解密，就已经被购买，所以权限回收不是真正的问题。但是，如果一个节点知道内容非常昂贵，他们可能试图接近买方，并就内容提出更便宜的价格，从而切断原卖方。 为了防止这种情况，我们应该匿名数据的接收者。这需要使用zk-SNARKs~\cite{consensys-snarks}，对挖矿结点隐藏确切的价格信息但又能使挖矿结点验证相关交易。
 
 % Access control for shared files
 When \kms~is used to secure access to files~(Sec.~\ref{sec:files}) or messages, both granting and revocation of access are important.
@@ -468,38 +336,32 @@ Possible attacks include recipients of the data bribing miners to continue havin
 miners extorting fees from the owner when it is critical to revoke access.
 Anonymization appears to be an important part of making such attacks infeasible.
 
-\subsection{Hardware-enforced security}
+\subsection{硬件强制的安全性}
 
-If miners misbehave, they risk losing their collateral deposit.
-However, rather than purposeful ill-intent, miner nodes could be the victim of a third-party attack.
-In order for miners to prevent their nodes from being compromised, they can use trusted computing on commonly accessible secure hardware~\cite{Yang2011},
-such as the latest generation of Intel CPUs (Skylake+) which support SGX, or NVidia GPUs.
+	如果矿工行为不当，他们有失去抵押物的风险。 然而，矿工节点可能是第三方攻击的受害者，而不是恶意为止。为了让矿工们防止他们的节点受到攻击，他们可以在通用的安全硬件~\cite{Yang2011}上使用可信计算，例如支持SGX的最新一代英特尔CPU（Skylake +），或NVidia GPU。
+    
+    英特尔SGX技术~\cite{wiki:sgx}承诺在安全环境中运行任何计算。之前提出建立一个分布式网络来管理依赖于SGX技术的密钥，而不是依靠矿工的公平性或重加密~\cite{sgx-blockchain-encryption}
+    
+    另外，持有和应用重加密密钥可以在GPU内完成。 结果表明，GPU可以作为功能有限的可信平台模块（尽管它们可以执行重加密）~\cite{gpu-trusted}。
 
-Intel SGX technology~\cite{wiki:sgx} promises to run \emph{any} computations in a secure environment.
-It was previously proposed to have a decentralized network for managing secrets relying on the SGX technology rather than fairness of
-miners or re-encryption~\cite{sgx-blockchain-encryption}.
 
-Alternatively, holding and applying re-encryption keys can be done inside GPUs.
-It was shown that GPUs can serve as trusted platform modules with limited capabilities (although they can certainly execute
-re-encryption)~\cite{gpu-trusted}.
+\section{性能考虑}
 
-\section{Performance considerations}
+\section{功能}
 
-\section{Functionality}
+\subsection{本地加密库和守护进程}
 
-\subsection{Local encryption library and daemon}
+NuCypher KMS可以对接传统的集中式应用程序。 在Python中，在IPFS中共享文件看起来像这样：
 
-\kms~can be interfaced from a traditional, centralized application.
-In Python, sharing a file in IPFS would look like:
 \begin{lstlisting}[frame=single,language=Python]
 import nkms
 nkms.connect()  # Using default config
 path = 'ipfs://QmTkzDw.../to_the_moon.avi'
 nkms.share('0xab12...', path, time=86400)
 \end{lstlisting}
-If there is no library client available, there could be a local API server, similar to how geth is used to interact with the Ethereum network.
 
-Reading this file would be:
+如果没有可用的库客户端，则可能有一个本地API服务器，类似于如何使用geth来与以太网网络进行交互。 读这个文件将是：
+
 \begin{lstlisting}[frame=single,language=Python]
 import nkms
 client = ipfsapi.Client(...)
@@ -509,342 +371,238 @@ edata = client.cat(path)
 data = nkms.decrypt(edata, path)
 print(data)
 \end{lstlisting}
-The ``decrypt'' function splits edata into $edek$ and the actual encrypted data,
-requests the kms network to transform $edek$ into $edek^{\prime}$,
-decrypts $edek^{\prime}$ with the receiver's private key and
-decrypts data with the obtained $dek$.
 
-The preliminary version of the API will include the following functions:
+“解密”功能把edata分成edek和实际的加密数据，请求KMS网络把$edek$转换成$edek^{\prime}$，用接收者的私钥解密$edek^{\prime}$，并用获得的dek解密数据。
+  API的初步版本将包括以下功能：
+
 \begin{itemize}
-    \item connect~--- connect to the decentralized network,
-        taking configuration from arguments or a config file;
-    \item write~--- encrypt data with a public key corresponding to the owner of the file and save in a storage backend;
-    \item read~--- download data from the storage backend, ask the decentralized network to re-encrypt, and decrypt with our private key;
-    \item delete~--- delete file and re-encryption keys associated with it;
-    \item decrypt~--- decrypt data which we've already read;
-    \item split-edek~--- low level function to separate out encrypted symmetric encryption key from the data;
-    \item share/renew/revoke~--- create a permission to read all the data we own, or a subset of it, based on file path or policy.
-        The policy can include time limits and other conditions;
-    \item read-policies/update-policies/delete-policies~--- read and change all the access policies we've created.
+    \item 连接 - 连接到分布式网络，从参数或配置文件获得配置;
+    \item 写入 - 使用与文件所有者相对应的公钥加密数据并保存在后端存储;
+    \item 读取 - 从后端存储下载数据，请分布式网络重新加密，然后解密;
+    \item 删除 - 删除与其关联的文件和重加密密钥;
+    \item 解密 - 解密我们已经读取的数据;
+    \item split-edek - 低级函数，用于从数据中分离出加密的对称加密密钥;
+    \item 共享/更新/撤销 - 根据文件路径或策略创建读取我们拥有的所有数据或其子集的权限。 策略可以包括时间限制和其他条件;
+    \item 读取策略 / 更新策略 / 删除策略 - 读取并更改我们创建的所有访问策略。
 \end{itemize}
 
-\subsection{Sharing short secrets}
+\subsection{分享短密钥}
 
-Low-level functionality allows encrypting and delegating access to binary secrets (such as database credentials) or groups of these secrets without
-storing them in individual files.
-A possible backend for storing simple secrets like these could be a hierarchical config file (in YAML or JSON format) stored in IPFS,
-or even simply in the same instance image.
-Client-side software can parse this file and ask to re-encrypt only the secrets it needs.
-There could be per-field and per-subfield re-encryption keys for granular permissions.
+低级功能允许加密和委派对二进制密钥（如数据库凭证）或这些密钥组的访问，而不将它们存储在单个文件中。用于存储这些简单密钥的可能的后端可能是存储在IPFS中的分层配置文件（以YAML或JSON格式），甚至可能只是在同一个实例中。 客户端软件可以解析这个文件，并要求重新加密它需要的密钥。 可以有每个字段和每个子字段的重加密密钥的粒度权限。
 
-\subsection{Sharing files and hierarchical data}
+\subsection{共享文件和分层数据}
 \label{sec:hierarchical-data}
 
-When working with files, each file and each directory is encrypted under its secret key.
-Each file has its DEK stored encrypted by its secret key, the directory's secret key, and so on, up to the root folder of the user.
-When a directory is shared, a re-encryption key is created only for the shared directories.
+	处理文件时，每个文件和每个目录都使用其密钥进行加密。 每个文件都有用文件私钥或者目录私钥等加密存储的DEK，直到用户的根文件夹。 当共享目录时，仅为共享目录创建重新加密密钥。
+    
+    上面的方法需要存储与树结构中的级别一样多的EDEK。 如果我们使用多跳单向算法（LWE~\cite{lwe-reencryption}是唯一的算法），我们就可以有底层到顶层的重加密密钥~(\figref{fig:hierarchical-pre}）。当对一个目录授予访问权限时，其所有文件和子目录都有一个路径在目录密钥下重加密，然后为接收方重加密：
 
-The method above requires storing as many EDEKs as there are levels in the tree structure.
-If we use a multi-hop, uni-directional algorithm (LWE being the only one~\cite{lwe-reencryption}), we can have re-encryption keys from the bottom levels to
-the top levels~(\figref{fig:hierarchical-pre}).
-When access is granted to a directory, all its files and sub-directories have a path to be re-encrypted under the directory key, and then re-encrypted for the
-recipient:
 \begin{equation}
     edek_b = \text{reencrypt}(re_{xb}, \text{reencrypt}(re_{1x}, edek_1)).
 \end{equation}
 \begin{figure}
 \centering
     \includegraphics[width=0.45\columnwidth]{pdf/hierarchical.pdf}
-    \caption{Sharing hierarchical structures (such as files and folders)}
+    \caption{共享分层结构（如文件和文件夹）}
     \label{fig:hierarchical-pre}
 \end{figure}
 
-\subsection{Encrypting bulk data}
+\subsection{批量加密数据}
 
-When we have a per-file symmetric encryption key, it is possible for a malicious recipient to download all the encrypted symmetric keys and decrypt them
-while he has access without the necessity of downloading overly too much data.
-He can use these symmetric keys later on to decrypt the bulk of the data.
-This is called a ``key scraping attack''.
+	当我们拥有每个文件的对称加密密钥时，恶意接收者有可能下载所有加密的对称密钥，并在访问时解密，而无需下载过多的数据。 他可以稍后使用这些对称密钥来解密大量数据。 这被称为“密钥抓取攻击”。
+    
+    在出现这种问题的应用程序中，我们可以使用对数据进行全有或全无转换的方法，只有下载所有文件才能解密数据。 这种方法已经发表~\cite{aont-bulk}，可以在我们的密钥管理系统中使用。
 
-In the applications where this is a problem, we can use the approach of applying all-or-nothing transformation to the data, so that one has to download all of the
-file in order to decrypt it.
-This approach was published~\cite{aont-bulk} and is readily available to be used in our key management system.
+\subsection{共享加密的流}
 
-\subsection{Sharing encrypted streams}
+与多个用户共享加密流对像Netflix这样的分布式应用程序是理想方法，因为第三方路由流量不允许看到的内容。
 
-Sharing encrypted streams with multiple users is ideal for applications such as a decentralized Netflix, where third parties routing traffic
-aren't permitted to see the content.
+    原理很简单：数据流中的每个数据块用随机的DEK加密，EDEK使用每个频道的公钥生成。但是，与\kms进行往返需要花费时间。 因此，将下一个数据块的EDEK与前一个块一起包括在内是明智的。
+    
+    而且，对于流媒体内容的用例来说，密钥抓取攻击尤其成问题。 因此，我们应该将电影块视为批量数据并进行相应的加密~\cite{aont-bulk}。
+    
+    像往常一样，流的消费者拥有自己的密钥对，并要求矿工节点使EDEK可以被消费者解密。 矿工还可以确保消费者实际支付订阅费用，如果没有，则拒绝重新加密。
 
-The principle is simple: each block of data in the stream is encrypted with a random DEK, and EDEK is produced using a per-channel public key.
-However, it takes time to make a roundtrip with \kms.
-Therefore, it makes sense to also include an EDEK of the next block of data together with the previous block.
 
-Also, for the use case of streaming media content, key scraping attack are especially problematic.
-Thus, we should consider blocks of movies as bulk data and encrypt accordingly~\cite{aont-bulk}.
+\subsection{基于时间和基于条件的策略}
 
-As usual, consumers of the stream have their own key pairs and ask miner nodes to make EDEKs decryptable by the consumers.
-Miners can also ensure the consumer actually paid for the subscription and refuse to re-encrypt if they did not.
+    尽管我们不信任处理加密数据或密钥的矿工，但我们仍然相信他们能够控制存储重加密密钥的时间。最简单的策略是基于时间的：只有在规定的时间间隔内才允许重新加密，如果将来不需要重新加密，则应该删除重加密密钥。
+    
+    可以创建更复杂的策略。 比如重加密基于以下条件 -待完成某个交易。 这允许像按内容付费的DRM或作为金融交易托管这样的应用程序。
 
-\subsection{Time-based and condition-based policies}
 
-While we don't trust miners with encrypted data or keys, we still trust them to control the duration of storing a re-encryption key.
-The simplest policy is time-based: re-encryption is allowed only during the specified time interval and, if there is no time in the future when
-re-encryption is allowed, the re-encryption key should be removed.
-
-More complex policies can be created.
-Re-encryption can be allowed on a condition~--- for example, pending the completion of a certain transaction.
-This allows applications like pay-per-content DRM, or storing secret data as an escrow for financial transactions.
-
-\subsection{Key rotation}
+\subsection{密钥轮换}
 \label{sec:key-rotation}
 
-Many proxy re-encryption algorithms can be applied multiple times, BBS98~\cite{BBS98} included.
-Thus, proxy re-encryption can be used for key rotation.
-Key rotation allows all the EDEKs encrypted with an old key to become encrypted with a new key.
+    许多代理重加密算法可以应用多次，包括BBS98~\cite{BBS98}。 因此，代理重加密可以用于密钥轮换。 密钥轮换允许用旧密钥加密的所有EDEK再用新密钥加密。
+    
+    数据所有者需要在两个版本的密钥之间生成重加密密钥$re_{v1\rightarrow v2}$，本质上与未来的自我共享数据。 现在，重加密节点（假设加密存储是公开的，例如IPFS）将下载EDEKs并应用转换。 对于这个操作，由于数据的“发送者”和“接收者”本质上是同一个人，所以不存在串通风险。
 
-The owner of the data needs to produce re-encryption keys $re_{v1\rightarrow v2}$ between two versions of secret keys, essentially
-sharing data with her future self.
-Now, re-encryption nodes (assuming the encrypted storage is public, such as IPFS) will download EDEKs and apply the transformation.
-For this operation, no collusion risks exist since the ``sender'' and ``receiver'' of the data are, essentially, the same person.
-
-\section{Designing a smart contract}
+\section{设计智能合约}
 \label{sec:smart-contract}
-In order to provide re-encryption services, a node needs to send its deposit to a smart contract (while specifying the lock time).
-After the time expires, the node can withdraw the stake from it.
-The objective is to have rewards minted to staking nodes if they correctly provide re-encryption services.
 
-For the initial release, we will ensure that the nodes are staying online and correctly re-encrypting the data without requiring
-anonymization~(Sec.~\ref{sec:anonymity}).
-We expect the nodes to become professionalized and invest heavily in their security, similar to what's happened in other networks.
-Thus, we will have a minimum stake requirement of $s_{\min}$ for nodes to provide re-encryption services.
-This also naturally limits the number of nodes, similar to the mechanism for staking master nodes in the DASH cryptocurrency~\cite{dash:whitepaper}.
+为了提供重加密服务，节点需要将币发送到智能合约（同时指定锁定时间）。在时间到期之后，节点可以从中收回代币。目的是如果他们正确地提供重加密服务，就奖励铸造节点。
 
-The amount of stake is public, so clients of the network can decide for themselves whether to deploy re-encryption keys with a node or not.
-The client (Alice) is responsible for distributing re-encryption keys randomly.
-We don't enforce randomness of Alice's choice on blockchain.
+    在最初的版本实现中，我们将确保节点保持在线状态并正确地重新加密数据，而不需要匿名（第~\ref{sec:anonymity}节）。 我们希望节点能够变得专业化，并在其安全性方面进行大量的投入，类似于其他网络中发生的情况。 因此，我们对提供重新加密服务的结点有最小持币数要求 – $s_{\min}$。 这也自然地限制了节点的数量，类似于在DASH加密货币~\cite{dash:whitepaper}中设置主节点的机制。
+    
+    币的数量是公开的，所以网络的客户端可以自己决定是否配置一个节点的重加密密钥。 客户端（Alice）负责随机分发重加密的密钥。 我们不强制Alice在区块链上选择的随机性。
+    
+    我们将第$i$个矿工称之为$d_i$。 锁定的币总额为：
 
-Let's call an active (locked) deposit of $i$-th miner $d_i$.
-The total amount of the deposits locked is:
 \begin{equation}
     D = \sum_1^k d_i,
 \end{equation}
-where $k$ is total number of miners.
-The probability of $i$-th miner to get a re-encryption key from one policy is:
+
+其中$k$是矿工总数。 第$i$位矿工从一个策略获得重加密密钥的概率是：
+
 \begin{equation}
     p_i = n\frac{d_i}{D},\qquad\text{in the limit}\quad \forall i: n p_i \ll 1,
 \end{equation}
-where $n$ is number of fractions into which we split re-encryption key~(Sec.~\ref{sec:split-key}).
 
+	其中$n$是我们分割重加密密钥的分数（第~\ref{sec:split-key}章）。
+
+    选择随机节点来处理重加密密钥的方式如下~(\figref{fig:random-nodes})。 所有的节点都是随机排列的，并且放置在从坐标$x=0$开始长度为$D$的坐标上。因此，第$i$个节点的坐标将是：
+    
 \begin{figure}
     \centering
     \includegraphics[width=0.6\textwidth]{pdf/miners-ruler.pdf}
-    \caption{Selecting random nodes according to proof of stake.
-             Stake of each node $d_i$ is represented as a line segment.
-             The segments are stacked together into a larger segment with the length $D$.
-             Random nodes are selected by random points distributed from $x=0$ to $x=D$.}
+    \caption{根据PoS选择随机节点。 每个节点$d_i$的权重被表示为线段。 这些线段连接在一起，形成一根长度为$D$的较大线段。随机选择随机节点}
     \label{fig:random-nodes}
 \end{figure}
-
-Selecting random nodes to handle re-encryption keys happens in the following manner~(\figref{fig:random-nodes}).
-All the nodes are ordered randomly, and placed on a line segment with the length $D$ starting from coordinate $x=0$.
-Thus, coordinate of $i$-th node will be:
 \begin{equation}
     x_i = \sum_{j=1}^{i-1} d_j.
 \end{equation}
 
-When deploying a policy, Alice selects $n$ random numbers:
+	在部署策略时，Alice选择$n$个随机数字：
+    
 \begin{equation}
     \forall j=1..n: r_j \in [0, D).
 \end{equation}
-Without the loss of generality, the numbers $r_j$ are assumed sorted.
-Then, indexes of selected miners $i_j$ are just indexes of miners who the chosen line segments correspond to:
+
+	在不失一般性的情况下，假设数$r_j$被排序。 那么选定的矿工$i_j$的索引就是所选坐标对应的矿工的索引：
+
 \begin{equation}
     \forall i_j: x_{i_j} \le r_j, x_{i_j + 1} > r_j.
 \end{equation}
-Some numbers might fall on line segments corresponding to the same miner.
-In this case, Alice removes repetitions of $i_j$ and generates more chosen miner indexes $i_j$ in the same manner, until the desired number of miners ($n$) is
-selected.
 
-Let's call the suite of possible tests a generalized ``ping''.
-This includes:
+	有些数字可能会落在对应同一矿工的线段上。在这种情况下，Alice删除重复的$i_j$ ，并以相同的方式生成更多矿工索引$i_j$ ，直到选择了所需数量的矿工（$n$）。
+
+	我们将可能的测试套件称之为是一个普遍的“ping”。这包括：
 \begin{itemize}
-    \item the actual ping (is the node still showing in the network?);
-    \item check if an old but active re-encryption policy still works;
-    \item check if a create-reencrypt-revoke sequence works;
-    \item check if the re-encryption policies above work if requested by a different address, not related to the mining node.
+    \item 实际的ping（是网络中仍然显示的节点？）;
+    \item 检查旧的但仍有效的重加密策略是否仍然有效;
+    \item 检查创建-重加密-回收序列是否有效;
+    \item 如果从不同地址发出请求，检查上面的重加密策略是否工作，而不是与挖掘节点相关。
 \end{itemize}
-When performing this ``ping'', one can choose to do only the tests required to determine availability.
-For example, if a node goes offline, the (very lightweight) actual ping will be enough to determine the node's status.
+	当执行这个“ping”时，可以选择只做必要测试来确定可用性。 例如，如果一个节点脱机，那么（非常轻量的）实际的ping就足以确定节点的状态。
+    
+    
+    现在，我们要设计一个节点系统，每隔h个块进行自我检查（例如，$h=10$）。 这个想法是，节点打赌哪个节点行为不当，挖矿奖励取决于他们的猜测是否正确。“正确的”猜测被认为是多数结点投票显示的那个，这是由智能合约从所有节点的投票中计算得出
+    
+    如果每$h$个块我们检查每个节点，协议将不能很好地与系统$N$中的节点总数成比例。 因此，只有一部分节点（例如$k=\sqrt{N}$）将被检查。 例如，如果有$100,000$个节点在线并且以太坊块时间是$24$秒（当前值），则每$21$个小时将检查每个节点的健康状况。 要验证的节点的选择可以由当前的验证节点交换随机的离线字节并计算这些随机字节排序和加入的散列来完成。 不参与验证的节点将无法区分是否受到挑战或接收到真实的客户端请求。
 
-Now, we want to design a system of nodes which does a self-check every $h$ blocks (where $h=10$, for example).
-The idea is that nodes are betting on which nodes are misbehaving, and mine rewards depending on whether their guess is correct or not.
-The ``correct'' guess is considered to be the one shown by the stake majority of the nodes, as calculated by the smart contract from votes of all the nodes.
+    所有节点执行健康检查也是不可行的。 因此，一部分节点（例如，按照汉明距离离当前块散列最近的节点的$\sqrt{N}$）将能够在当前轮中获得健康检查的奖励。 如果发现节点不健康，则会受到惩罚，失去自上次健康检查以来获得的平均奖励而。
 
-The protocol wouldn't scale well with the total number of nodes in the system $N$ if we check every single node each $h$ blocks.
-So, only a portion of the nodes (for example, $k=\sqrt{N}$ of them) will be checked.
-For example, if $100,000$ nodes are online and Ethereum block time is $24$~s (current value), the health of every node will be checked approximately every $21$
-hours.
-The selection of the nodes to be validated can be done by the current validating nodes exchanging random bytes off-chain and calculating a hash of these
-random bytes ordered and joined.
-Nodes which don't participate in the validation won't be able to distinguish whether they are being challenged or receiving a real client request.
+    可以检查节点的输出是否正确重加密。为了做到这一点，数据的拥有者可以准备一个“挑战包” - 这个数据不对应任何敏感数据，但专门用来挑战重加密节点。“挑战包”由输入密文和期望的重加密的输出组成（这种方法仅适用于没有概率输出的代理重加密算法）。数据的接收者可以解密挑战包，并演示重新加密节点失败或无法正确地重加密数据。
 
-It is also not feasible for all the nodes to perform the health check.
-So, a portion of nodes (for example, $\sqrt{N}$ of nodes closest to the current block hash by Hamming distance) will be able to get rewards for health checking
-in the current round.
-If nodes are found to be not healthy, they're punished by losing the average amount of block rewards they've obtained since the last health check.
+    挑战其他重密节点的节点本质上是投票哪个节点行为不当，并对投票结果打赌。 在每个人进行投票之前，挑战者节点应该无法弄清别人的投票。 因此，他们首先通过展示加盐票的哈希来投票，随后证明他们有实际的投票和盐（$n$个随机数)来产生这些哈希。
 
-It is possible to check a node's output for correctness of re-encryption.
-In order to do that, the owner of the data can prepare a ``challenge pack'' - data which doesn't correspond to any sensitive data, but is used specifically to
-challenge re-encryption nodes.
-The ``challenge pack'' consists of input ciphertexts and expected re-encrypted outputs
-(this method works only for proxy re-encryption algorithms which do not have probabilistic outputs).
-The recipient of the data can decrypt the challenge pack and demonstrate a re-encryption node is failing or unable to properly re-encrypt data.
-
-The nodes which challenge other re-encryption nodes are essentially voting on which nodes are misbehaving and betting on the result of this vote.
-Challenger nodes should be unable to figure out the votes of others prior to everyone committing their vote.
-Thus, they first commit the vote by demonstrating hashes of salted votes, later proving that they have the actual vote and salt to produce those hashes.
-
-\section{Token economics}
+\section{代币经济}
 \label{sec:token}
 
-Protocol economies consist of a network of miners that contributes work to provide a scarce resource and that is
-rewarded when said resource is consumed.
-In \kms, miners are re-encryption nodes.
-Anyone can become a miner and their rewards are differentiated based on the amount of re-encryption operations provided.
-Access to the scarce re-encryption services must be controlled and allocated to the highest value uses.
-The mechanism by which we achieve this is \kms~Token (NKMS).
-NKMS is both the reward miners get for contributing work and the price consumers (owners of the data) pay for access to re-encryption services.
-Vitally, the token also incentivizes correctness of computation and security of the system.
+协议经济由矿工网络组成，矿工网络提供稀缺资源，并在消耗资源时得到回报。 在\kms中，矿工是重加密节点。任何人都可以成为矿工，根据提供的重加密操作的数量来区分他们的奖励。 获得稀缺的重加密服务必须加以控制并分配给最高价值的用途。 我们实现这一目标的机制是\kms代币（NKMS）。 NKMS既是对矿工贡献工作的奖励，也是消费者（数据所有者）为获得重加密服务而付出的代价。 最重要的是，代币也激励了系统正确计算和保证系统安全。
 
-\subsection{Token distribution}
+\subsection{代币分发}
 
-Miners can hold a number of re-encryption keys proportional to the number of tokens they hold as a collateral deposit, locked by a smart contract.
-The miners are paid both for providing re-encryption services and making themselves available to re-encrypt data.
-The miners can be paid either by the owner of the data, or by users of the data.
-The latter is more relevant for usecases where DAOs distribute content under decentralized DRM.
-
-In addition, the miners may have ``availability rewards'' generated if they stay online and ready to provide their services, proof of which is checked with the help of
-smart contract~(Sec.~\ref{sec:smart-contract}).
-If miners become unavailable, they lose their ``availability'' compensation for the time period.
-
-If miners cheat and provide wrong re-encryptions, they lose a fraction of their security deposit (Sec.~\ref{sec:challenge-protocol}).
-
-We can disincentivize miners from leaking re-encryption keys.
-Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral
-valued in NKMS.
-It is possible to make re-encryption keys linked to particular proxies in order to identify them quickly if they're leaked on the encryption
-level~\cite{Libert2008}.
-
-It is important to incentivize re-encryption operations early on, when there are not many users in the system.
-That's why we'll introduce a rewards schedule where some rewards are ``mined'', asymptotically approaching zero inflation as time passes.
-The reward $r_i$ which a miner $i$ is getting can be expressed as:
+	矿工可以持有一定数量的重加密密钥，与他们作为抵押存款所持有的代币数量成比例，由智能合约锁定。 矿工们既可以提供重加密服务，又可以重新加密数据。矿工费既可以由数据所有者支付，也可以由数据使用者支付。后者与DAO在分布式DRM下分发内容的用例更相关。
+    
+	此外，如果矿工在线并准备好提供服务，矿工可能会获得“可用性奖励”，在智能合约（第~\ref{sec:smart-contract}节）的帮助下可以证明这一点。如果矿工离线，他们将在这段时间内丧失“可用性”补偿。
+    
+	如果矿工作弊并提供错误的重加密服务，他们将损失一部分保证金（第~\ref{sec:challenge-protocol}节）。
+    
+    我们可以阻止矿工泄漏重加密的密钥。任何人都可以使用重加密密钥的哈希来挑战矿工，如果证实重加密密钥已经泄露，矿工作为担保的NKMS将被罚没。把重密密钥链接到特定的代理是可能的，以便在加密级别泄露时快速识别它们~\cite{Libert2008}。
+    
+    在早期当系统中用户不多时，激励重加密操作非常重要。 这就是为什么我们要引入一个奖励时间表，其中一些奖励是“挖矿”，随着时间的推移，逐渐接近零通货膨胀。 矿工$i$得到的报酬$r_i$可以表示为：
+    
 \begin{equation}
     r_i = \frac{d_i \cdot s}{\sum_{i=1}^k d_i} + f_i,
 \end{equation}
-where $s$ is the current reward rate, $d_i$ is the deposit of $i$-th miner, and $f_i$ is total transaction fees for this miner.
-The reward rate is exponentially decreasing in such a way that it reaches equilibrium at infinite time, switching to fee-only rewards:
+
+	其中$s$是当前的回报率，$d_i$是第i个矿工的存款，$f_i$是该矿工的交易总费用。 奖励率呈指数级下降，直到随时间达到平衡，最后奖励只来源于交易费：
+    
 \begin{equation}
     s = s_0 e^{-t/T},
 \end{equation}
-where $T$ is time after which the reward falls by factor of $e$, and $s_0$ is initial reward rate.
-This exponential can be conveniently obtained in a smart contract without expensive floating point calculation as a solution of a differential equation:
+
+	其中在时间$T$之后，奖励根据影响因素$e$下降，$s_0$是初始奖励率。这个指数可以方便地在智能合约中获得，而不需要昂贵的浮点运算得出微分方程的解：
+    
 \begin{equation}
     s = \frac{dS}{dt}= s_0 \frac{S_{\max} - S}{S_{\max} - S(t=0)},
 \end{equation}
-where $S_{\max}$ is maximum supply of coins at $t=\infty$, $S(t=0)$ is initial supply of coins.
-The time $t$ is expressed in mining periods rather than seconds.
 
-An interesting property of \kms~is that security improves as the number of network participants grows. As additional re-encryption
-nodes enter the network, the lower the chance of collusion.
-This improves both the security and censorship-resistance of the system, providing powerful network effects and meaningful first mover advantages.
+	在$t=\infty$时$S_{\max}$是代币的最大供应量，$S(t=0)$是代币的初始供应量。时间$t$用挖矿期间而不是秒表示。
 
-Finally, in order to test the security of the network, we can put bounty secrets~--- private keys for wallets with
-some crypto-currency.
-Anyone is free to hack the system and take the bounty.
-The fact of the bounty being taken would be proof of compromised security.
-This same mechanism can be used to warn of a potential data leak by individual users of the network, by signalling that they may have exposed
-their key to the data.
+	\kms~的一个有趣属性是安全性随着网络参与者数量的增长而提高。随着越来越多的重加密节点进入网络，合谋的可能性就越小。这提高了系统的安全性和抗审查性，提供强大的网络效应和先发优势。
+    
+    最后，为了测试网络的安全性，我们可以设置赏金密钥 - 一些代币的钱包私钥。任何人都可以自由地破解系统，并获得赏金。赏金被拿走就证明系统已经不安全了。同样的机制可以用来警告网络个人用户潜在的数据泄漏，通过发信号通知他们可能暴露了他们的数据私钥。
 
-\section{Use cases}
-\kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
-functionality. The ability to condition decryption operations on public actions on the consensus network, such as the publication
-of certain messages, payments made between specific parties, and other events, enables a range of applications including:
 
-\subsection{Sharing encrypted files (``Decentralized Dropbox'')}
+\section{用例}
+
+	作为基本功能，\kms~为需要共享敏感数据的各种应用程序提供基础架构。 具有对共识网络上的公共行为进行解密操作的能力，例如发布某些消息，在特定方之间进行支付以及其他事件，可以实现一系列应用，包括：
+
+\subsection{共享加密文件（“分布式Dropbox”）}
 \label{sec:files}
-Files can be encrypted client-side and stored in decentralized filesystems like Swarm~\cite{swarm}, IPFS~\cite{whitepaper:ipfs}, Sia~\cite{web:sia}, or Storj~\cite{web:storj}, or centralized ones like S3.
-The files can be easily shared with approved third-parties by providing a re-encryption token based on the third-party's
-public key.
-The third-party's access permission can be easily revoked by removing the re-encryption token from the network.
 
-\subsection{End-to-end encrypted group chat (``Encrypted Slack'')}
-PRE is an ideal primitive for end-to-end encrypted group messaging, in which multiple participants require read and write
-access to a channel. Members can easily be added or removed to the chat by issuing or revoking a re-encryption token.
-This avoids the overhead of encrypting and sending messages multiple times, individually for each participant.
+	文件可以在客户端加密，并存储在像Swarm~\cite{swarm}，IPFS~\cite{whitepaper:ipfs}，Sia~\cite{web:sia}或Storj ~\cite{web:storj}这样的分布式文件系统中，或者像S3一样集中的文件系统中。通过提供基于第三方公钥的重加密令牌，可以轻松地与授权的第三方共享文件。 通过从网络中删除重加密的令牌，可以很容易地撤销第三方的访问权限。
 
-\subsection{Patient-controlled electronic health records (EHR)}
-A patient-controlled EHR can be created in which the patient owns their data and encryption keys, as opposed to centralized
-systems like Epic.
-Again, the data can be stored centrally or in a decentralized backend.
-When the patient wants to share their encrypted data with a hospital or insurance company, they issue a re-encryption token,
-which grants temporary access to the third-party.
+\subsection{端到端加密群聊（“加密Slack”）}
 
-\subsection{Decentralized digital rights management (DDRM)}
+    代理重加密是端到端加密群组消息的理想原语，群聊需要多个参与者在频道中读取和写入消息。通过发出或撤消重加密令牌，可以轻松地里将在群聊中添加或删除会员。 这避免了多次加密和发送消息的开销，每人只需一次。
+
+\subsection{患者控制的电子健康记录（EHR）}
+
+    可以创建患者控制的EHR，患者拥有自己的数据和密钥，这和Epic这样的集中式系统不一样。而且，数据可以集中存储或分布式存储。 当病人想要与医院或保险公司分享他们的加密数据时，他们会发出一个重加密令牌，授予第三方临时访问权限。
+
+\subsection{分布式数字版权管理（DDRM）}
 \label{sec:drm}
-Cryptographic access control can act as a decentralized DRM.
-Access controls can be embedded into the encryption itself so that they follow the data wherever it goes.
-Conditional re-encryption tokens can be controlled by a smart contract and released only upon payment.
-Services like a decentralized Netflix or an encrypted marketplace selling software, apps, photos, and other digital content
-can now be built using \kms.
 
-\subsection{Blind identity management}
-A blind identity management service can be constructed using \kms. Identities can be encrypted client-side and stored with the
-identity management provider. Users can create re-encryption keys for approved applications. The service re-encrypts identity
-credentials for said third-party applications, without the identity provider ever having access.
+	加密访问控制可以用于分布式DRM。访问控制可以嵌入到加密本身中，以便随时随地访问数据。有条件的重加密令牌可以通过智能合约来控制，以便在付款后才能被释放。现在可以使用\kms~来构建分布式Netflix服务或销售软件，应用程序，照片和其他数字内容的加密市场。
 
-\subsection{Secret credentials management for scripts and backend applications}
-\kms~is ideal for the storage of any secrets, such as sensitive environment variables, database credentials, and API keys.
-For scripts, a re-encryption token can be generated for the duration of a script, then revoked.
-For example, developers can safely store encrypted database credentials on GitHub, giving temporary access to these credentials
-once an instance is deployed.
-Even if the GitHub repository is public, the credentials cannot be used by an unauthorized person.
+\subsection{盲身份管理}
 
-\subsection{Shared credentials and enterprise password management}
-\kms~can manage shared credentials that employees use to access web services.
-An audit log can be built to monitor who accesses what secrets.
-When an employee leaves, it is easy to revoke access or even roll keys.
+    使用\kms~可以构建一个盲身份管理服务。ID可以在客户端进行加密，并与身份管理提供商一起存储。用户可以为批准的应用程序创建重加密密钥。该服务为所述第三方应用程序重加密身份证书，而身份提供者不具有访问权限。
 
-\subsection{Mandatory access logging}
-In some corporate and enterprise settings, clients must publish access logs for sensitive files.
-This requires that each file access be recorded and conditional re-encryption can be used to mandate these logging rules.
+\subsection{脚本和后端应用程序的秘密凭证管理}
 
-\subsection{Mobile device management (MDM) and revocation}
+	\kms~是存储任何秘密的理想选择，例如敏感环境变量，数据库凭证和API密钥。对于脚本而言，可以在脚本的生存时间内生成重加密令牌，然后撤销。例如，开发人员可以在GitHub上安全地存储加密的数据库凭证，并在部署实例后临时访问这些凭证。即使GitHub存储库是公开的，证书也不能被未经授权的人使用。
+
+\subsection{共享凭证和企业密码管理}
+	\kms~可以管理员工用来访问Web服务的共享凭证。可以建立审计日志来监视谁访问了什么秘密。员工离职时，很容易撤销访问甚至滚动密钥。
+
+\subsection{强制访问日志}
+
+	在某些公司和企业设置中，客户端必须发布敏感文件的访问日志。这要求记录每个文件的访问权限，并且可以使用条件重加密来强制执行这些记录规则。
+
+\subsection{移动设备管理（MDM）和撤销}
 \label{sec:mdm}
-In an enterprise MDM setting, re-encryption tokens can be created for valid devices. When a device is lost or retired,
-or an employee leaves the organization, the re-encryption token can be deleted to revoke the device's access. This avoids the
-problem of re-organizing hierarchical key trees.
 
-\subsection{Private use of \kms}
-In order to benefit traditional enterprises (financial, healthcare, government or IoT companies), \kms~can be deployed privately.
-It can use private (or consortium) blockchains,
-be federated (where miners are replaced with pre-selected nodes controlled by a constortium of enterprises)
-or even centralized (where one party controls all the re-encryption keys).
-These uses will still enjoy security benefits of proxy re-encryption, however censorship resistance will be not as effective.
+    在企业MDM设置中，可为有效设备创建重加密令牌。当设备丢失或退休或员工离职时，可以删除重加密令牌以撤销对设备的访问权限。这避免了重新组织分级密钥树的问题。
 
-\section{Summary}
-\kms~is a decentralized key management service and cryptographic access control layer for the blockchain and
-decentralized applications.
-Developers and enterprises alike can leverage it to create highly-secure applications in healthcare,
-financial services, and more.
-By bringing private data sharing and computation to the public blockchain, \kms~enables everything from encrypted
-content marketplaces to secret credentials management to patient-controlled electronic health records.
+\subsection{\kms~的私有使用}
 
-\section{Acknowledgements}
-We would like to thank Giuseppe Ateniese from Stevens Institute of Technology and Isaac Agudo Ruiz from University of M{\'a}laga
-for their help with proxy re-encryption algorithms.
-We also thank Dave Evans at the University of Virginia for advising our company throughout its lifetime
-and his help with regards to the current state of the art in multi-party computation.
-And Stefano Bernardi, Tom Ding, and many others for their help on token economics.
+	为了使传统企业（金融，医疗，政府或物联网公司）受益，\kms~可以被私有部署。 它可以部署成私有，联盟（矿工由企业联盟控制的预先选定的节点替代），甚至中心化（一个组织控制所有重加密的密钥）区块链。这些使用仍然可以享受代理重加密的安全优势，但是抗审查能力不同。
+
+\section{概要}
+	
+    \kms~是分布式密钥管理服务和密码访问控制层，用于区块链和分布式应用程序。开发人员和企业都可以利用它来创建高度安全的应用程序比如医疗保健，金融服务等等。通过将私人数据共享和计算带入公有链，\kms~可以实现从加密内容市场到秘密凭证管理到病人控制的电子健康记录。
+
+
+\section{概观}
+
+	我们要感谢来着斯蒂文斯理工学院的Giuseppe Ateniese和马拉加大学的Isaac Agudo Ruiz对代理重加密算法的帮助。我们也感谢弗吉尼亚大学的戴夫·埃文斯（Dave Evans）为我们公司在整个生命周期中提供咨询服务，并感谢他在多方计算方面的最新进展。 还有Stefano Bernardi，Tom Ding和其他许多人在代币记经济学的帮助。
+    
+\end{CJK*}
 
 \bibliography{kms-whitepaper}
 
