@@ -1,7 +1,5 @@
 \documentclass[longbibliography,nofootinbib]{revtex4-1}
-\usepackage[utf8]{inputenc}
-\usepackage{CJKutf8}
-
+\usepackage{xeCJK}
 \newcommand{\kms}{NuCypher KMS}
 
 \usepackage{listings}
@@ -10,20 +8,22 @@
 \usepackage[margin=5pt]{subfig}
 \usepackage[usenames]{color}
 
+
 \renewcommand{\baselinestretch}{1.4}
 \setlength{\parskip}{1em}
+\setlength{\parindent}{20pt}
 \definecolor{darkgreen}{rgb}{0.00,0.50,0.25}
 \definecolor{darkblue}{rgb}{0.00,0.00,0.67}
 \usepackage[breaklinks,pdftitle={NuCypher KMS: decentralized key management system (Chinese translation)}, pdfauthor={Michael Egorov},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
 \graphicspath{{pdf/}}
+\def\andname{和}
 
 \begin{document}
-\begin{CJK*}{UTF8}{gbsn}
 \renewcommand{\tocname}{内容}
 \renewcommand{\figurename}{图}
 \newcommand{\figref}[1]{图\ref{#1}}
 
-\title{\kms: 分布式密钥管理系统}
+\title{\kms : 分布式密钥管理系统}
 
 \author{Michael Egorov}
 \email{michael@nucypher.com}
@@ -34,15 +34,16 @@
 \author{David Nu{\~n}ez}
 \email{dnunez@lcc.uma.es}
 \affiliation{NICS 实验室, 马拉加大学, 西班牙}
+\date{一月四号, 2018}
 
 \author{翻译：tobeaj2mer01}
 
 \begin{abstract}
-    \kms是一个分布式密钥管理系统(KMS)，它解决了使用共识网络安全存储，操作私有加密数据的痛点\cite{cryptoeprint:2017:201}。
+    \kms 是一个分布式密钥管理系统(KMS)，它解决了使用共识网络安全存储，操作私有加密数据的痛点\cite{cryptoeprint:2017:201}。
     它利用代理重加密技术，使用分布式网络，提供基于加密和密码学的权限控制\cite{wiki:pre}。
     不像中心化的KMS提供的服务，它不需要信任服务提供商。
-    \kms使共享敏感数据给去中心化和中性化的应用程序成为可能，为从医疗到ID管理到分布式内容市场的众多应用程序提供安全架构。
-    \kms会成为分布式应用程序必要的一部分，就像SSL/TLS是每个安全的网络应用程序必要的一部分一样。
+    \kms 使共享敏感数据给去中心化和中性化的应用程序成为可能，为从医疗到ID管理到分布式内容市场的众多应用程序提供安全架构。
+    \kms 会成为分布式应用程序必要的一部分，就像SSL/TLS是每个安全的网络应用程序必要的一部分一样。
 \end{abstract}
 
 \maketitle
@@ -53,7 +54,7 @@
 
 \section{摘要}
 
-\kms~是一个分布式密钥管理系统(KMS)，提供加密和权限控制服务。
+\kms 是一个分布式密钥管理系统(KMS)，提供加密和权限控制服务。
 它能够在公共网络上在任意数量的参与者之间共享私有数据，使用代理重加密技术来代理解密权限，这是传统对称加密和公钥加密方案不能实现的。
 内生代币用来激励网络参与者执行密钥管理和权限代理/回收的操作。
 
@@ -80,7 +81,7 @@ KMS包含在设备上生成，分发和流转密钥的后台功能以及注入�
 公众共识网络比如比特币和以太坊，在解决这种中心化的难题方面很有前途。但是，在公众共识网络上执行涉及私密数据操作的局限性是确定的\cite{cryptoeprint:2017:201}。
 共识网络采用一个志愿者节点网络，在可用性和强制访问管理规则方面，这种网络经常发生中断，而不像中央基础设施那样可靠。
 
-\kms使用分布式网络移除对中心化服务提供商的信任，使用代理重加密提供密码访问控制，使用代币激励机制保证可靠性，可用性和正确性。
+\kms 使用分布式网络移除对中心化服务提供商的信任，使用代理重加密提供密码访问控制，使用代币激励机制保证可靠性，可用性和正确性。
 由于使用代理重新加密，未加密的对称密钥（能够解密私有数据）绝不会暴露在服务器端（\figref{fig:kms}），并且没有单点安全失败。
 即使被攻破，黑客也只能得到重新加密的密钥，并且对文件的访问仍然受到保护。
 
@@ -157,7 +158,7 @@ Bob然后可以用他的秘密密钥$sk_B$解密$c_B$。
 这使得它非常适合分布式系统，如区块链，物联网和大数据~\cite{web:nucypher-hadoop}。
 
 有许多具有不同属性的代理重加密算法。
-对于\kms的第一个版本，我们选择了ECIES，我们为其创建了代理重加密算法\cite{umbral-spec}。
+对于\kms 的第一个版本，我们选择了ECIES，我们为其创建了代理重加密算法\cite{umbral-spec}。
 它与最简单的（和高性能的）算法BBS98~\cite{BBS98}非常相似，但提供了更好的安全保证。
 然而，有时我们想要将重加密委托给多个节点，以便拆分它们之间的信任并应用基于时间的或有条件的重新加密策略。
 在这种情况下，我们使用AFGH方案\cite{AFGH}。
@@ -320,7 +321,6 @@ Ateniese等人\cite{AFGH}事先提到了这种方法。
 	如果一个挑战者证明矿工已经泄漏了一个重加密密钥，挑战者应该得到奖励。 然而，数据所有者可能会挑战矿工，以欺诈方式获得挑战奖励。我们使这个“自我挑战”是不可行的。 如果挑战发生在时间$t$之后，挑战者将获得 $\alpha f t/T$ 硬币，其中$\alpha < 1$。在这种情况下，数据拥有者获得  $(1 - t/T) f$  个币。抵押品和剩余费用被分给网络的其他参与者，总金额为 $c + (1 - \alpha) t/T$。
 
     数据的拥有者也不应该被激励伪造数据挑战矿工，应该使用撤销策略。 因此，在一个“正确的”撤销中，数据的所有者获得$(1 - t/T) f$个币和矿工得到 $c + ft/T$个币，其中$c$是被押的抵押品。
-
 \subsection{不同用例可能威胁的相关性}
 
 % Mobile Device Management
@@ -330,11 +330,9 @@ Ateniese等人\cite{AFGH}事先提到了这种方法。
     分布式DRM（Sec.~\ref{sec:drm}）假定一旦内容（一个文件或一段视频）被解密，就已经被购买，所以权限回收不是真正的问题。但是，如果一个节点知道内容非常昂贵，他们可能试图接近买方，并就内容提出更便宜的价格，从而切断原卖方。 为了防止这种情况，我们应该匿名数据的接收者。这需要使用zk-SNARKs~\cite{consensys-snarks}，对挖矿结点隐藏确切的价格信息但又能使挖矿结点验证相关交易。
 
 % Access control for shared files
-When \kms~is used to secure access to files~(Sec.~\ref{sec:files}) or messages, both granting and revocation of access are important.
-So full anonymization is highly desirable.
-Possible attacks include recipients of the data bribing miners to continue having access after it should have been revoked and
-miners extorting fees from the owner when it is critical to revoke access.
-Anonymization appears to be an important part of making such attacks infeasible.
+
+    当\kms 用于保护对文件（章节~\ref{sec:files}）或消息的访问时，授予和撤销访问都是很重要的。 所以完全匿名是非常需要的。可能发生的攻击包括收受贿赂矿工的数据的接收者在权限被回收后能够继续访问数据，矿工在回收权限的关键时刻向数据接收者勒索费用。匿名化在防止这些攻击中重扮演重要角色。
+
 
 \subsection{硬件强制的安全性}
 
@@ -417,7 +415,7 @@ print(data)
 
 与多个用户共享加密流对像Netflix这样的分布式应用程序是理想方法，因为第三方路由流量不允许看到的内容。
 
-    原理很简单：数据流中的每个数据块用随机的DEK加密，EDEK使用每个频道的公钥生成。但是，与\kms进行往返需要花费时间。 因此，将下一个数据块的EDEK与前一个块一起包括在内是明智的。
+    原理很简单：数据流中的每个数据块用随机的DEK加密，EDEK使用每个频道的公钥生成。但是，与\kms 进行往返需要花费时间。 因此，将下一个数据块的EDEK与前一个块一起包括在内是明智的。
     
     而且，对于流媒体内容的用例来说，密钥抓取攻击尤其成问题。 因此，我们应该将电影块视为批量数据并进行相应的加密~\cite{aont-bulk}。
     
@@ -466,7 +464,7 @@ print(data)
 \begin{figure}
     \centering
     \includegraphics[width=0.6\textwidth]{pdf/miners-ruler.pdf}
-    \caption{根据PoS选择随机节点。 每个节点$d_i$的权重被表示为线段。 这些线段连接在一起，形成一根长度为$D$的较大线段。随机选择随机节点}
+    \caption{根据PoS选择随机节点。 每个节点$d_i$的权重被表示为线段。 这些线段连接在一起，形成一根长度为$D$的较大线段。随机节点由从x = 0到x = D分布的随机点中选择}
     \label{fig:random-nodes}
 \end{figure}
 \begin{equation}
@@ -510,7 +508,7 @@ print(data)
 \section{代币经济}
 \label{sec:token}
 
-协议经济由矿工网络组成，矿工网络提供稀缺资源，并在消耗资源时得到回报。 在\kms中，矿工是重加密节点。任何人都可以成为矿工，根据提供的重加密操作的数量来区分他们的奖励。 获得稀缺的重加密服务必须加以控制并分配给最高价值的用途。 我们实现这一目标的机制是\kms代币（NKMS）。 NKMS既是对矿工贡献工作的奖励，也是消费者（数据所有者）为获得重加密服务而付出的代价。 最重要的是，代币也激励了系统正确计算和保证系统安全。
+协议经济由矿工网络组成，矿工网络提供稀缺资源，并在消耗资源时得到回报。 在\kms 中，矿工是重加密节点。任何人都可以成为矿工，根据提供的重加密操作的数量来区分他们的奖励。 获得稀缺的重加密服务必须加以控制并分配给最高价值的用途。 我们实现这一目标的机制是\kms 代币（NKMS）。 NKMS既是对矿工贡献工作的奖励，也是消费者（数据所有者）为获得重加密服务而付出的代价。 最重要的是，代币也激励了系统正确计算和保证系统安全。
 
 \subsection{代币分发}
 
@@ -542,14 +540,14 @@ print(data)
 
 	在$t=\infty$时$S_{\max}$是代币的最大供应量，$S(t=0)$是代币的初始供应量。时间$t$用挖矿期间而不是秒表示。
 
-	\kms~的一个有趣属性是安全性随着网络参与者数量的增长而提高。随着越来越多的重加密节点进入网络，合谋的可能性就越小。这提高了系统的安全性和抗审查性，提供强大的网络效应和先发优势。
+	\kms 的一个有趣属性是安全性随着网络参与者数量的增长而提高。随着越来越多的重加密节点进入网络，合谋的可能性就越小。这提高了系统的安全性和抗审查性，提供强大的网络效应和先发优势。
     
     最后，为了测试网络的安全性，我们可以设置赏金密钥 - 一些代币的钱包私钥。任何人都可以自由地破解系统，并获得赏金。赏金被拿走就证明系统已经不安全了。同样的机制可以用来警告网络个人用户潜在的数据泄漏，通过发信号通知他们可能暴露了他们的数据私钥。
 
 
 \section{用例}
 
-	作为基本功能，\kms~为需要共享敏感数据的各种应用程序提供基础架构。 具有对共识网络上的公共行为进行解密操作的能力，例如发布某些消息，在特定方之间进行支付以及其他事件，可以实现一系列应用，包括：
+	作为基本功能，\kms 为需要共享敏感数据的各种应用程序提供基础架构。 具有对共识网络上的公共行为进行解密操作的能力，例如发布某些消息，在特定方之间进行支付以及其他事件，可以实现一系列应用，包括：
 
 \subsection{共享加密文件（“分布式Dropbox”）}
 \label{sec:files}
@@ -598,11 +596,10 @@ print(data)
     \kms~是分布式密钥管理服务和密码访问控制层，用于区块链和分布式应用程序。开发人员和企业都可以利用它来创建高度安全的应用程序比如医疗保健，金融服务等等。通过将私人数据共享和计算带入公有链，\kms~可以实现从加密内容市场到秘密凭证管理到病人控制的电子健康记录。
 
 
-\section{概观}
+\section{致谢}
 
 	我们要感谢来着斯蒂文斯理工学院的Giuseppe Ateniese和马拉加大学的Isaac Agudo Ruiz对代理重加密算法的帮助。我们也感谢弗吉尼亚大学的戴夫·埃文斯（Dave Evans）为我们公司在整个生命周期中提供咨询服务，并感谢他在多方计算方面的最新进展。 还有Stefano Bernardi，Tom Ding和其他许多人在代币记经济学的帮助。
     
-\end{CJK*}
 
 \bibliography{kms-whitepaper}
 
