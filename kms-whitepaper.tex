@@ -716,6 +716,34 @@ The mechanism by which we achieve this is \kms~Token (NKMS).
 NKMS is both the reward miners get for contributing work and the price consumers (owners of the data) pay for access to re-encryption services.
 Vitally, the token also incentivizes correctness of computation and security of the system.
 
+\subsection{Purpose of the token}
+
+The main purpose of the token is to distribute trust in the system.
+The amount of trust to each node is proportional to the amount of tokens that node locks up.
+It means the probability of a node to get a re-encryption key is equal to the ratio of the tokens that node locks up and the total number of tokens locked up.
+Also the node guarantees availability for the time it locks up the token for.
+
+The token can be considered as a part of mining equipment which reserves a certain quota of all jobs for the miner.
+The miner still has to provide enough computational resources to fulfil this quota.
+Importantly, the token should be hard to obtain, which means that no miner can get close to $50\%$ of trust, keeping good decentralization of the system.
+
+Also the token can be used as collateral against miner's misbehavior when working on a blockchain which supports smart contracts (such as Ethereum).
+
+\subsection{Why a special token, not just Ether}
+
+In principle, it would've been possible to lock Ethers instead of NKMS token.
+However, that would open a possibility of the following attack.
+
+An attacker could borrow enough money to buy more ETH than currently locked.
+This attacker then can stake those Ethers, and then he has more than $50\%$ of trust.
+This, of course, signals that the system is less secure, and its value drops.
+But it doesn't affect the value of attackers Ethers, and after performing an attack he can easily sell ethers for the same price as he bought for and return
+the money borrowed.
+
+If NKMS tokens are used for staking, an attack like that would reduce the value of the tokens together with the value of the KMS system dropping.
+So, if the attacker sells his stake after performing the attack, he gets sufficiently less proceeds from that and cannot pay back the loan he took to perform
+the attack.
+
 \subsection{Token distribution}
 
 Miners can hold a number of re-encryption keys proportional to the number of tokens they hold as a collateral deposit, locked by a smart contract.
