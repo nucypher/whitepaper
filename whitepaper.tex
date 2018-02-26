@@ -355,7 +355,10 @@ They are solely responsible for storing re-encryption keys and applying re-encry
 The first risk of this model is collusion between a miner and a reader of the data.
 If the miner gives the reader re-encryption keys for the data,
 the data can be decrypted at any time by the data reader, circumventing any conditional or time-based constraints.
-We counteract this threat in multiple ways: pseudo-anonymity of re-encryption keys, split-key proxy re-encryption, and a challenge protocol.
+We counteract this threat in multiple ways:
+using split-key threshold re-encryption scheme Umbral~\cite{umbral-spec} to decentralize trust between multiple miners,
+allowing recipients of the data to prove correctness or incorrectness of re-encryption to the other network by including verification protocol into Umbral,
+making the protocol reasonably pseudo-anonymous.
 In addition, we apply economic incentives for fair operation, described in Sec.~\ref{sec:token}.
 
 The second risk is nodes malfunctioning (returning fake data instead of performing re-encryptions).
