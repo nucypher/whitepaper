@@ -369,21 +369,6 @@ This risk is usually deadly for multi-party computations~\cite{vitalik-secret-da
 Ideally, the system should be as decentralized as possible, however 50\% attacks don't compromise the confidentiality of the data, just like 50\% attacks in
 proof-of-work cryptocurrencies don't give an attacker the ability to move funds.
 
-\subsection{Pseudo-anonymity}
-\label{sec:anonymity}
-
-It is highly beneficial for the security of the system that re-encryption nodes do not know what it is they are re-encrypting.
-This prevents them from knowing which re-encryption keys to perform collusion attacks on (and trying to collude with all the network participants
-is infeasible when the network is decentralized).
-But pseudo-anonymity of re-encryption keys also enables us to run a challenge protocol (Sec.~\ref{sec:challenge-protocol}).
-
-We leave designing an anonymous protocol for re-encryption as future improvements.
-However, we point out the following properties it should (and should not) possess.
-Firstly, the re-encryption scheme should be key-private~\cite{Ateniese-key-private,lwe-reencryption}.
-Otherwise, it would be possible to determine the ownership of the key by iterating over pairs of all the known public keys.
-Secondly, the re-encryption node and the recipient of the data should not have the same identifier for the same re-encryption key.
-This rules out a simple way of storing a re-encryption key in a key-value store while the recipient can come up with the key.
-
 \subsection{Split-key re-encryption}
 \label{sec:split-key}
 
@@ -394,9 +379,28 @@ Instead of one re-encryption key, m-of-m re-encryption keys can be used to produ
 These shares can be combined client-side.
 An m-of-m scheme exists for AFGH~\cite{AFGH} encryption.
 A collusion attack here would require $m$ miners \emph{and} the reader of the data.
+However, AFGH-based scheme is vulnerable to denial of service attack because of being m-of-m.
 
-A threshold-based m-of-n scheme (Umbral) which we develop together with NICS Labs from University of M{\'a}laga appears to be even more appropriate for this task.
+A threshold-based m-of-n scheme (Umbral) which we develop together with NICS Labs from University of M{\'a}laga appears to be even more appropriate for this
+task~\cite{umbral-spec}.
 This scheme also can allow a third party to verify correctness of re-encryption, which is important for keeping the nodes honest.
+The values of $m$ and $n$ can be selected based on performance vs security trade-offs by the client while re-encryption nodes do not enforce any particular
+values of $m$ and $n$.
+
+\subsection{Pseudo-anonymity}
+\label{sec:anonymity}
+
+It is highly beneficial for the security of the system that re-encryption nodes do not know what it is they are re-encrypting.
+This prevents them from knowing which re-encryption keys to perform collusion attacks on (and trying to collude with all the network participants
+is infeasible when the network is decentralized).
+
+Our protocol is initially pseudo-anonymous, e.g. doesn't store identities of any participant.
+We leave designing a fully anonymous protocol for re-encryption as future improvements.
+However, we point out the following properties it should (and should not) possess.
+Firstly, the re-encryption scheme should be key-private~\cite{Ateniese-key-private,lwe-reencryption}.
+Otherwise, it would be possible to determine the ownership of the key by iterating over pairs of all the known public keys.
+Secondly, the re-encryption node and the recipient of the data should not have the same identifier for the same re-encryption key.
+This rules out a simple way of storing a re-encryption key in a key-value store while the recipient can come up with the key.
 
 \subsection{Challenge protocol}
 \label{sec:challenge-protocol}
