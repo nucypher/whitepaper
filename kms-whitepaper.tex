@@ -30,13 +30,11 @@
 
 \author{Michael Egorov}
 \email{michael@nucypher.com}
+\author{David Nu{\~n}ez}
+\email{david@nucypher.com}
 \author{MacLane Wilkison}
 \email{maclane@nucypher.com}
 \affiliation{NuCypher}
-
-\author{David Nu{\~n}ez}
-\email{dnunez@lcc.uma.es}
-\affiliation{NICS Lab, Universidad de M{\'a}laga, Spain}
 
 \begin{abstract}
     \kms~is a decentralized Key Management System (KMS) that addresses the limitations of using consensus
@@ -712,8 +710,8 @@ rewarded when said resource is consumed.
 In \kms, miners are re-encryption nodes.
 Anyone can become a miner and their rewards are differentiated based on the amount of re-encryption operations provided.
 Access to the scarce re-encryption services must be controlled and allocated to the highest value uses.
-The mechanism by which we achieve this is \kms~Token (NKMS).
-NKMS is both the reward miners get for contributing work and the price consumers (owners of the data) pay for access to re-encryption services.
+The mechanism by which we achieve this is \kms~Token (NU).
+NU is both the reward miners get for contributing work and the price consumers (owners of the data) pay for access to re-encryption services.
 Vitally, the token also incentivizes correctness of computation and security of the system.
 
 \subsection{Purpose of the token}
@@ -731,7 +729,7 @@ Also the token can be used as collateral against miner's misbehavior when workin
 
 \subsection{Why a special token, not just Ether}
 
-In principle, it would've been possible to lock Ethers instead of NKMS token.
+In principle, it would've been possible to lock Ethers instead of NU token.
 However, that would open a possibility of the following attack.
 
 An attacker could borrow enough money to buy more ETH than currently locked.
@@ -740,7 +738,7 @@ This, of course, signals that the system is less secure, and its value drops.
 But it doesn't affect the value of attackers Ethers, and after performing an attack he can easily sell ethers for the same price as he bought for and return
 the money borrowed.
 
-If NKMS tokens are used for staking, an attack like that would reduce the value of the tokens together with the value of the KMS system dropping.
+If NU tokens are used for staking, an attack like that would reduce the value of the tokens together with the value of the KMS system dropping.
 So, if the attacker sells his stake after performing the attack, he gets sufficiently less proceeds from that and cannot pay back the loan he took to perform
 the attack.
 
@@ -759,7 +757,7 @@ If miners cheat and provide wrong re-encryptions, they lose a fraction of their 
 
 We can disincentivize miners from leaking re-encryption keys.
 Anyone can challenge a miner with a hash of a re-encryption key and, if the re-encryption key is proven to have been leaked, the miner forfeits his collateral
-valued in NKMS.
+valued in NU.
 It is possible to make re-encryption keys linked to particular proxies in order to identify them quickly if they're leaked on the encryption
 level~\cite{Libert2008}.
 
