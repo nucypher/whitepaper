@@ -137,12 +137,12 @@ A hybrid cryptosytem encryption flow defines the functions:
 \begin{align}
     dek &= \text{random}();\\
     c &= \text{encrypt}_{sym}(dek, d);\\
-    edek &= \text{encrypt}_{pke}(dek, pk_r).
+    edek &= \text{encrypt}_{pke}(pk_r, dek).
 \end{align}
 The pair $(edek, c)$ is used to transform the encrypted data.
 The associated decryption by the receiver defines the functions:
 \begin{align}
-    dek &= \text{decrypt}_{pke}(edek, sk_r);\\
+    dek &= \text{decrypt}_{pke}(sk_r, edek);\\
     d &= \text{decrypt}_{sym}(dek, c).
 \end{align}
 
