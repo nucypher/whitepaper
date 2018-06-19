@@ -1,6 +1,6 @@
 \documentclass[longbibliography,nofootinbib]{revtex4-1}
 
-\newcommand{\kms}{NuCypher KMS}
+\newcommand{\kms}{NuCypher}
 
 \usepackage{listings}
 \usepackage{graphicx}
@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\title{\kms: Decentralized key management system}
+\title{\kms: A proxy re-encryption network to empower privacy in decentralized systems}
 
 \author{Michael Egorov}
 \email{michael@nucypher.com}
@@ -490,25 +490,25 @@ re-encryption)~\cite{gpu-trusted}.
 \kms~can be interfaced from a traditional, centralized application.
 In Python, sharing a file in IPFS would look like:
 \begin{lstlisting}[frame=single,language=Python]
-import nkms
-nkms.connect()  # Using default config
+import nucypher
+nucypher.connect()  # Using default config
 path = 'ipfs://QmTkzDw.../to_the_moon.avi'
-nkms.share('0xab12...', path, time=86400)
+nucypher.share('0xab12...', path, time=86400)
 \end{lstlisting}
 If there is no library client available, there could be a local API server, similar to how geth is used to interact with the Ethereum network.
 
 Reading this file would be:
 \begin{lstlisting}[frame=single,language=Python]
-import nkms
+import nucypher
 client = ipfsapi.Client(...)
-nkms.connect()  # Using default config
+nucypher.connect()  # Using default config
 path = 'ipfs://QmTkzDw.../to_the_moon.avi'
 edata = client.cat(path)
-data = nkms.decrypt(edata, path)
+data = nucypher.decrypt(edata, path)
 print(data)
 \end{lstlisting}
 The ``decrypt'' function splits edata into $edek$ and the actual encrypted data,
-requests the kms network to transform $edek$ into $edek^{\prime}$,
+requests the network to transform $edek$ into $edek^{\prime}$,
 decrypts $edek^{\prime}$ with the receiver's private key and
 decrypts data with the obtained $dek$.
 
@@ -738,7 +738,7 @@ This, of course, signals that the system is less secure, and its value drops.
 But it doesn't affect the value of attackers Ethers, and after performing an attack he can easily sell ethers for the same price as he bought for and return
 the money borrowed.
 
-If NU tokens are used for staking, an attack like that would reduce the value of the tokens together with the value of the KMS system dropping.
+If NU tokens are used for staking, an attack like that would reduce the value of the tokens together with the value of the network dropping.
 So, if the attacker sells his stake after performing the attack, he gets sufficiently less proceeds from that and cannot pay back the loan he took to perform
 the attack.
 
