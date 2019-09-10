@@ -1,6 +1,6 @@
 \documentclass[longbibliography,nofootinbib]{revtex4-1}
 
-\newcommand{\kms}{NuCypher}
+\newcommand{\network}{The NuCypher Network}
 
 \usepackage{listings}
 \usepackage{graphicx}
@@ -13,7 +13,7 @@
 \definecolor{darkgreen}{rgb}{0.00,0.50,0.25}
 \definecolor{darkblue}{rgb}{0.00,0.00,0.67}
 \newcommand{\figref}[1]{Fig.~\ref{#1}}
-\usepackage[breaklinks,pdftitle={NuCypher: a proxy re-encryption network to empower privacy in decentralized systems}, pdfauthor={Michael Egorov},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
+\usepackage[breaklinks,pdftitle={The NuCypher Network: A decentralized cryptological network offering accessible, intuitive, and extensible runtimes and interfaces for secrets management and dynamic access control}, pdfauthor={Michael Egorov},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
 \graphicspath{{pdf/}}
 
 \usepackage[T1]{fontenc}
@@ -26,7 +26,7 @@
 
 \begin{document}
 
-\title{\kms: A proxy re-encryption network to empower privacy in decentralized systems}
+\title{\network: A decentralized cryptological network offering accessible, intuitive, and extensible runtimes and interfaces for secrets management and dynamic access control}
 
 \author{Michael Egorov}
 \email{michael@nucypher.com}
@@ -37,15 +37,13 @@
 \affiliation{NuCypher}
 
 \begin{abstract}
-    \kms~is a decentralized Key Management System (KMS) that addresses the limitations of using consensus
-    networks to securely store and manipulate private, encrypted data~\cite{cryptoeprint:2017:201}.
-    It provides encryption and cryptographic access control, performed by a decentralized network,
-    leveraging proxy re-encryption~\cite{wiki:pre}.
-    Unlike centralized KMS as a service solutions, it doesn't require trusting a service provider.
-    \kms~enables sharing of sensitive data for both decentralized and centralized applications,
-    providing security infrastructure for applications from healthcare to identity management to decentralized content marketplaces.
-    \kms~will be an essential part of decentralized applications,
-    just as SSL/TLS is an essential part of every secure web application.
+    \network~provides accessible, intuitive, and extensible runtimes and interfaces for secrets management and dynamic access control.
+    It's accessible by virtue of being decentralized, permissionless, and censorship-resistant: there are no gate-keepers and anyone can use it.
+    It's intuitive thanks to the classic character-based narrative of Alice and Bob (with the introduction of additional cryptological characters
+    where appropriate), that permeates the code-base and helps developers write safe, misuse-resistant code.
+    It's extensible as it currently supports proxy re-encryption but can be extended to provide support other cryptographic primitives.
+
+    /network~enables developers to manage secrets and dynamically grant and revok access to sensitive data in public networks.
 \end{abstract}
 
 \date{\today}
@@ -57,10 +55,12 @@
 
 \section{Introduction}
 
-\kms~is a decentralized key management system (KMS), encryption, and access control service.
-It enables private data sharing between arbitrary numbers of participants in public consensus networks,
-using proxy re-encryption to delegate decryption rights in a way that cannot be achieved by traditional symmetric or public-key encryption schemes.
-Native tokens are used to incentivize network participants to perform key management and access delegation/revocation operations.
+\network~is a decentralized cryptological network offering accessible, intuitive, and extensible runtimes and interfaces for
+secrets management and dynamic access control.
+It introduces an extensible, character-based narrative wherein characters are granted cryptological powers.
+The first new character introduced, Ursula, uses proxy re-encryption to manage secrets and dynamically grant and revoke access to sensitive data
+in a way that cannot be achieved by traditional symmetric or public-key encryption schemes.
+Cryptographic tokens are used to coordinate network participants and provide Sybil-resistance.
 
 \subsection{Background}
 A key management system (KMS) is an integrated approach for generating, distributing, and managing cryptographic keys for devices and
@@ -74,7 +74,7 @@ injecting, storing, and managing keys on devices~\cite{wiki:kms}.
     \qquad
     \qquad
     \subfloat[PRE-based KMS]{\includegraphics[width=0.4\columnwidth]{pdf/pre-kms.pdf}}
-    \caption{Difference between a centralized key management system (KMS) and the one which uses proxy re-encryption (PRE)}
+    \caption{Difference between a centralized key management system (KMS) and one which uses proxy re-encryption (PRE)}
     \label{fig:kms}
 \end{figure}
 
@@ -95,7 +95,7 @@ data are well-established~\cite{cryptoeprint:2017:201}. Consensus networks emplo
 which is subject to constant churn and not as reliable as central infrastructure when it comes to availability and
 enforcing access management rules.
 
-\kms~ uses a decentralized network to remove the reliance on central service providers, proxy re-encryption for cryptographic
+\network~ uses a decentralized network to remove the reliance on central service providers, proxy re-encryption for cryptographic
 access control, and a token incentive mechanism to ensure reliability, availability, and correctness.
 Because of the use of proxy re-encryption, an unencrypted symmetric key (which gives the ability to decrypt private data) is never exposed
 server-side~(\figref{fig:kms}), and there is no single point of security failure.
@@ -180,7 +180,7 @@ It doesn't require knowing the recipient of a message in advance, as the re-encr
 This makes it well-suited for distributed systems such as blockchain, IoT, and big data~\cite{web:nucypher-hadoop}.
 
 There are many proxy re-encryption algorithms with different properties.
-For the first version of \kms~we choose ECIES for which we created a proxy re-encryption algorithm~\cite{umbral-spec}.
+For the first version of \network~we choose ECIES for which we created a proxy re-encryption algorithm~\cite{umbral-spec}.
 It is very similar to the most simple (and performant) algorithm,~--- BBS98~\cite{BBS98}, but provides better security guarantees.
 However, sometimes we want to delegate re-encryption to multiple nodes, in order to split the trust between them and apply time-based or conditional
 re-encryption policies.
@@ -347,7 +347,7 @@ Now, he can use DEK to decrypt the bulk of the data.
 
 In the network, there are multiple re-encryption nodes which apply access management policies.
 
-Proxy re-encryption allows \kms~to split the trust between access management and decryption rights,
+Proxy re-encryption allows \network~to split the trust between access management and decryption rights,
 without introducing an always-online always-trusted entity (such as a traditional key management system).
 Miners never see plaintext data, or anything which allows them to decrypt the data.
 They are solely responsible for storing re-encryption keys and applying re-encryption functions.
@@ -467,7 +467,7 @@ It would also help to hide the exact pricing information from the mining node wh
 zk-SNARKs~\cite{consensys-snarks}.
 
 % Access control for shared files
-When \kms~is used to secure access to files~(Sec.~\ref{sec:files}) or messages, both granting and revocation of access are important.
+When \network~is used to secure access to files~(Sec.~\ref{sec:files}) or messages, both granting and revocation of access are important.
 So full anonymization is highly desirable.
 Possible attacks include recipients of the data bribing miners to continue having access after it should have been revoked and
 miners extorting fees from the owner when it is critical to revoke access.
@@ -494,7 +494,7 @@ re-encryption)~\cite{gpu-trusted}.
 
 \subsection{Local encryption library and daemon}
 
-\kms~can be interfaced from a traditional, centralized application.
+\network~can be interfaced from a traditional, centralized application.
 In Python, sharing a file in IPFS would look like:
 \begin{lstlisting}[frame=single,language=Python]
 import nucypher
@@ -581,7 +581,7 @@ Sharing encrypted streams with multiple users is ideal for applications such as 
 aren't permitted to see the content.
 
 The principle is simple: each block of data in the stream is encrypted with a random DEK, and EDEK is produced using a per-channel public key.
-However, it takes time to make a roundtrip with \kms.
+However, it takes time to make a roundtrip with \network.
 Therefore, it makes sense to also include an EDEK of the next block of data together with the previous block.
 
 Also, for the use case of streaming media content, key scraping attack are especially problematic.
@@ -714,10 +714,10 @@ Thus, they first commit the vote by demonstrating hashes of salted votes, later 
 
 Protocol economies consist of a network of miners that contributes work to provide a scarce resource and that is
 rewarded when said resource is consumed.
-In \kms, miners are re-encryption nodes.
+In \network, miners are re-encryption nodes.
 Anyone can become a miner and their rewards are differentiated based on the amount of re-encryption operations provided.
 Access to the scarce re-encryption services must be controlled and allocated to the highest value uses.
-The mechanism by which we achieve this is \kms~Token (NU).
+The mechanism by which we achieve this is \network~Token (NU).
 NU is both the reward miners get for contributing work and the price consumers (owners of the data) pay for access to re-encryption services.
 Vitally, the token also incentivizes correctness of computation and security of the system.
 
@@ -787,7 +787,7 @@ This exponential can be conveniently obtained in a smart contract without expens
 where $S_{\max}$ is maximum supply of coins at $t=\infty$, $S(t=0)$ is initial supply of coins.
 The time $t$ is expressed in mining periods rather than seconds.
 
-An interesting property of \kms~is that security improves as the number of network participants grows. As additional re-encryption
+An interesting property of \network~is that security improves as the number of network participants grows. As additional re-encryption
 nodes enter the network, the lower the chance of collusion.
 This improves both the security and censorship-resistance of the system, providing powerful network effects and meaningful first mover advantages.
 
@@ -799,7 +799,7 @@ This same mechanism can be used to warn of a potential data leak by individual u
 their key to the data.
 
 \section{Use cases}
-\kms~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
+\network~provides the infrastructure for a variety of applications that require sharing of sensitive data as a basic
 functionality. The ability to condition decryption operations on public actions on the consensus network, such as the publication
 of certain messages, payments made between specific parties, and other events, enables a range of applications including:
 
@@ -828,22 +828,22 @@ Cryptographic access control can act as a decentralized DRM.
 Access controls can be embedded into the encryption itself so that they follow the data wherever it goes.
 Conditional re-encryption tokens can be controlled by a smart contract and released only upon payment.
 Services like a decentralized Netflix or an encrypted marketplace selling software, apps, photos, and other digital content
-can now be built using \kms.
+can now be built using \network.
 
 \subsection{Blind identity management}
-A blind identity management service can be constructed using \kms. Identities can be encrypted client-side and stored with the
+A blind identity management service can be constructed using \network. Identities can be encrypted client-side and stored with the
 identity management provider. Users can create re-encryption keys for approved applications. The service re-encrypts identity
 credentials for said third-party applications, without the identity provider ever having access.
 
 \subsection{Secret credentials management for scripts and backend applications}
-\kms~is ideal for the storage of any secrets, such as sensitive environment variables, database credentials, and API keys.
+\network~is ideal for the storage of any secrets, such as sensitive environment variables, database credentials, and API keys.
 For scripts, a re-encryption token can be generated for the duration of a script, then revoked.
 For example, developers can safely store encrypted database credentials on GitHub, giving temporary access to these credentials
 once an instance is deployed.
 Even if the GitHub repository is public, the credentials cannot be used by an unauthorized person.
 
 \subsection{Shared credentials and enterprise password management}
-\kms~can manage shared credentials that employees use to access web services.
+\network~can manage shared credentials that employees use to access web services.
 An audit log can be built to monitor who accesses what secrets.
 When an employee leaves, it is easy to revoke access or even roll keys.
 
@@ -857,19 +857,19 @@ In an enterprise MDM setting, re-encryption tokens can be created for valid devi
 or an employee leaves the organization, the re-encryption token can be deleted to revoke the device's access. This avoids the
 problem of re-organizing hierarchical key trees.
 
-\subsection{Private use of \kms}
-In order to benefit traditional enterprises (financial, healthcare, government or IoT companies), \kms~can be deployed privately.
+\subsection{Private use of \network}
+In order to benefit traditional enterprises (financial, healthcare, government or IoT companies), \network~can be deployed privately.
 It can use private (or consortium) blockchains,
 be federated (where miners are replaced with pre-selected nodes controlled by a constortium of enterprises)
 or even centralized (where one party controls all the re-encryption keys).
 These uses will still enjoy security benefits of proxy re-encryption, however censorship resistance will be not as effective.
 
 \section{Summary}
-\kms~is a decentralized key management service and cryptographic access control layer for the blockchain and
+\network~is a decentralized key management service and cryptographic access control layer for the blockchain and
 decentralized applications.
 Developers and enterprises alike can leverage it to create highly-secure applications in healthcare,
 financial services, and more.
-By bringing private data sharing and computation to the public blockchain, \kms~enables everything from encrypted
+By bringing private data sharing and computation to the public blockchain, \network~enables everything from encrypted
 content marketplaces to secret credentials management to patient-controlled electronic health records.
 
 \section{Acknowledgements}
