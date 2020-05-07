@@ -25,19 +25,17 @@ def P2plot(staker_kappa, f=None, **kw):
     subsidy = f(S, staker_kappa)
     plt.plot(t/365, subsidy*100, **kw)
 
-def label():
-    # plt.title('Sum of subsidies received')
-    plt.xlabel('Time after phase switch (Years)')
-    plt.ylabel('Cumulative subsidy earnings as percentage of stake (%)')
-
 if __name__ == '__main__':
     P2plot(staker_kappa=1.0, f=restake, color='blue', label='restaking, kappa = 1 year+')
     P2plot(staker_kappa=1.0, f=withdraw_subsidy, color='red', label='withdraw subsidy, kappa = 1 year+')
     P2plot(staker_kappa=0.5 * (1 + 1./12), f=restake, color='blue',
          linestyle='--', label='restaking, kappa = 1 month')
     P2plot(staker_kappa=0.5 * (1 + 1./12), f=withdraw_subsidy, color='red',
-         linestyle='dotted', label='take compensation, kappa = 1 month')
-    plt.title('Phase 2 cumulative subsidy earnings, various stake configurations | Staking rate: 70% | Kappa*: 0.77')
-    label()
-    plt.legend(loc='upper left')
+         linestyle='dotted', label='withdraw subsidy, kappa = 1 month')
+    plt.title('Phase 2 cumulative subsidy earnings, various stake configurations | Staking rate: 70% | Kappa*: 0.77', fontsize=14)
+    plt.xlabel('Time from phase switch in years', fontsize=14)
+    plt.ylabel('Cumulative subsidy earnings as % of stake', fontsize=14)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.legend(loc='center', fontsize=14)
     plt.savefig('SubsidyP2.pdf')
