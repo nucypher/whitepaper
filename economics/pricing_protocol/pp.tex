@@ -60,7 +60,7 @@ In other words, the NuCypher protocol includes features that efficaciously redis
 \\\\
 Hence, in evaluating characteristics of the NuCypher network as part of pricing development, one must account for these skews, consider the impact of positive (and negative) network externalities, and treat the NuCypher network as a variety of two-sided digital market. 
 
-\subsection{Independent Pricing (Free Market)}
+\subsection{Independent pricing (free market)}
 
 Given the permissionless, self-determining nature of service provision in decentralized networks, and the absence of profit maximization and marginal costs as formal objectives/attributes of the network itself, protocol designers may be tempted to leave the difficult task of pricing up to each individual service-provider. The consequences of mispricing will then fall on the shoulders of each independent operator – they’ll either adapt or die, but the network as a whole, boasting a diversity of prices and a replenishable array of service-providers, will survive. This is a reasonable assertion. Yet, a free market approach comes with a litany of issues: 
 \begin{itemize}
@@ -71,7 +71,7 @@ Given the permissionless, self-determining nature of service provision in decent
     \item \textbf{Lack of scope for price discrimination}. Although in theory a service-provider could engage in price discrimination based on the funds in a customer’s wallet, this strategy is unlikely to succeed given the near-zero information asymmetry and near-zero switching costs. There is also research asserting that price discrimination in two-sided markets weakens rather than bolsters competition \cite{discrim}. Permitting price discrimination is also unlikely to benefit the service.
 \end{itemize}
 
-\subsection{Quasi-universal Pricing} \label{qup}
+\subsection{Quasi-universal pricing} \label{qup}
 
 \textit{Universal pricing} – a single price point for a standardized service unit, dictated by the protocol and adhered to by both users and service-providers without exception – addresses the problems listed above. 
 \\\\
@@ -83,7 +83,7 @@ Secondly, by actively encouraging and enabling the regular modification of the g
 \\\\
 These two mitigating modifications to universal pricing harness some of the crowd wisdom of the free market, without succumbing to the disadvantages of fully independent pricing explored above. Tuning the width of the global fee range to account for this trade-off is an ongoing exercise for the community – see section 
 
-\subsection{Service Unit \& Payment}
+\subsection{Service unit \& payment}
 
 Regardless of the pricing structure, NuCypher’s base unit of service should be defined, standardized and universally followed. At network launch, a customer will pay for dynamic access control and secrets management with the following attributes, together comprising the minimum chargeable unit: 
 \begin{itemize}
@@ -185,44 +185,58 @@ An important variable we can now project is the number of total network users �
 
 \begin{equation}
      U_t = \frac{AR_{min} \cdot S_t \cdot n}{ACPU_{max}} = 250,000 
-\end{equation}
+\end{equation}. \\
 
 \section{Quasi-Universal Pricing}
 
-\subsection{Global Fee Range}
+\subsection{Global fee range}
 
 When service-providers join the network, they specify a \textit{minimum fee rate}, on a per sharing policy and per 24h period basis, that their machine(s) will accept at the point of engagement with a network user. If the user’s offered per period rate for a specified policy duration computes as equal to or greater than the minimum fee rate, the sharing policy will be accepted by the service-provider and the access control service will commence. They service the sharing policy by being online and answering access requests, at that unchanging per period fee rate, until the specified policy expiration date or an early revocation is instigated by the user.
 \\\\
 The \textit{global fee range} is a means of establishing quasi-universal pricing for the NuCypher service. \textbf{The minimum fee rate chosen by each service-provider must fall within the global fee range.} Hence, the global fee range is adhered to in identical fashion by all service-providers, regardless of their stake size or capacity. The fee range also applies to all sharing policies, irrespective of the volume of re-encryption requests or other distinguishing attributes. Finally, the global fee range applies consistently to all periods in the future, up until the period in which the global fee range’s parameters are adjusted or the range is removed via official governance processes. 
 \\\\
-Note that network users are technically free to offer and pay any fee rate they wish. However, users are able to discover all the fee rates available to them, by retrieving the list of active service-provider addresses, then querying the function `getMinFeeRate' in a public contract with each address. Hence, there is little information asymmetry that could be leveraged to overcharge users.  
+Note that network users are technically free to offer and pay any fee rate they wish. However, users are able to discover all the fee rates available to them, by retrieving the list of active service-provider addresses, then querying the function `getMinFeeRate' in a public contract. Hence, there is little information asymmetry that could be leveraged to overcharge users.  
 
-\subsection{Determining the width and position of the Global Fee Range}
+\subsection{Determining the width and position of the global fee range}
 
-In parametrizing the global fee range, there are at least two trade-offs to analyse and resolve. Firstly, the \textbf{width} of the range must balance the advantages and disadvantages of both more heterogeneous and homogeneous pricing – for example, the self-correcting power of greater price freedom versus the added friction for users. Secondly, with respect to the absolute price figures chosen as the range's upper and lower bound, a balance must be struck between the extremes of 1) unaffordability for early customers leading to low demand, and 2) unsustainability for service-providers leading to low participation. This second trade-off is covered in section \ref{dvss}. The protocol's subsidy mechanism is designed to steadily support service-providers for the first 5 to 8 years – providing an extended window to trial various fee range parameters until a balance is struck between the aforementioned extremes. 
+In parametrizing the global fee range, there are at least two trade-offs to analyse and resolve. Firstly, the \textbf{width} of the range must find the optima amongst the advantages and disadvantages of heterogeneous and homogeneous pricing. Greater price freedom brings greater self-correcting power of but also greater friction for network users. Secondly, with respect to the \textbf{absolute price figures} chosen as the range's upper and lower bound, a balance must be struck between the extremes of 1) unaffordability for early customers leading to low demand, and 2) unsustainability for service-providers leading to low participation. This second trade-off is formalized in section \ref{dvss}. 
+\\\\
+Notably, the protocol's subsidy mechanism is designed to steadily support service-providers for the first 5 to 8 years – conferring an extended window to trial various fee range parameters.
 
 \subsubsection{Case for a wider global fee range}
 
-Given limited insight into future customer budgets, willingness-to-pay and end-user behaviour (for example, how many sharing policies an adopting platform's end-users will create per month), the range's parameters are likely to be non-optimal at network launch. The corollary to this is further uncertainty surrounding characteristics of demand for the NuCypher service, including its volume, growth, retention, elasticity (with respect to price), to name but a few. A wider range allows greater scope for dynamic, individual correction without governance-driven, collective intervention.
+Given limited insight into future customer budgets, willingness-to-pay and end-user behaviour (for example, how many sharing policies an adopting platform's end-users will create per month), the range's parameters are likely to be non-optimal at network launch. The corollary to this is further uncertainty surrounding the characteristics of demand, including its volume, growth, retention and elasticity (with respect to price). A wider range allows greater scope for individual, quick correction instead of collective, slower intervention.
 \\\\
-However, regardless of the actual breakdown of future customer profiles, reducing the lower bound’s absolute value will capture a larger set of network use cases and customer segments, that otherwise are unable to afford the service. 
+However, regardless of the actual breakdown of future customer budgets and requirements, reducing the lower bound’s absolute value will capture a larger set of use cases and market segments, that otherwise are unable to afford the service. 
 
 \subsubsection{Case for a narrower global fee range}
 
-\begin{itemize}
-    \item Adopting the NuCypher service involves irretrievable integration costs, plus a time lag between making the decision to integrate and the commencement (and first payment for) network usage. Sensible customers need as strong a guarantee as possible that the available price quotes with which they decided to adopt the service do not rise unreasonably by the time integration is complete, rendering their usage of the network (and its unique attributes) unaffordable or undesirable. The wider the range, and the greater pricing freedom bestowed to service-providers, the less strategic certainty bestowed to prospective network users.
-    \item Aspects of NuCypher services necessitate concurrent work by multiple service-providers in order to be maximally secure and redundant. A wider price range, and consequently higher variance in acceptable price points amongst service-providers, increases engagement friction for customers. One option is to broadcast an inflated rate via the service-provider selection algorithm in order to guarantee acceptance of service, which means paying most service-providers more than their stated minimum rate. Alternatively, a customer might hand-pick service-providers they know are affordable – though their rates may have changed since last engagement. Finally, a customer might attempt to manually pay service-providers different rates – although this is not yet supported by the selection algorithm. The greater the variance in price points, the more difficult, more expensive, and higher-latency the engagement flow becomes, possibly requiring manual intervention by the customer following failed engagements.
-    \item A higher lower bound reduces the scope of undercutting strategies, which generally favor deeper-pocketed service-providers and could accelerate centralization trends. \item A tighter range increases the predictability/stability of the service to customers over the long-term. For example, a very low lower bound enables service-providers to offer prices that are operationally unsustainable below a given subsidy value, which almost inevitably necessitates price rises later. This risks irrevocable damage to the network if customers with large sunk costs and technical dependence on the service are suddenly, or even gradually, are unable to afford it. 
-\end{itemize}
+Adopting the NuCypher service involves irretrievable integration costs, plus a time lag between making the decision to integrate and the commencement (and first payment for) network usage. Sensible customers need as strong a guarantee as possible that the available price quotes with which they decided to adopt the service do not rise unreasonably by the time integration is complete, rendering their usage of the network (and its unique attributes) unaffordable or undesirable. The wider the range, and the greater pricing freedom bestowed to service-providers, the less strategic certainty bestowed to prospective network users.
+\\\\
+Aspects of NuCypher services necessitate concurrent work by multiple service-providers in order to be maximally secure and redundant. A wider price range, and consequently higher variance in acceptable price points amongst service-providers, increases engagement friction for customers. One option is to broadcast an inflated rate via the service-provider selection algorithm in order to guarantee acceptance of service, which means paying most service-providers more than their stated minimum rate. Alternatively, a customer might hand-pick service-providers they know are affordable – though their rates may have changed since last engagement. Finally, a customer might attempt to manually pay service-providers different rates – although this is not supported by the selection algorithm at the time of writing. The greater the variance in price points, the more difficult, more expensive, and higher-latency the engagement flow becomes, possibly requiring manual intervention by the customer following failed engagements.
+\\\\
+A tighter range increases the predictability/stability of the service to customers over the long-term. For example, a very low lower bound enables service-providers to offer prices that are operationally unsustainable below a given subsidy value, which almost inevitably necessitates price rises later. This risks irrevocable damage to the network if customers with large sunk costs and technical dependence on the service are suddenly, or even gradually, are unable to afford it. 
 
-\subsection{Pricing Strategies}
+
+\subsection{Pricing strategies}
 
 Setting a price point, even within a tight range, requires the evaluation and weighting of many factors against one another. Many of these considerations are unique to the staker, such as their ongoing operational costs, economy of scale (e.g. through participation in other networks) and participation timeframe. However, the most important factors to consider pertain to the holistic service from the perspective of network users – for example, the affordability, congruency, and stability, of all offered price points – i.e. how probable it is that prices remain affordable to a developer after they are irreversibly committed to integrating NuCypher access control into their application’s technology stack.
 
-\subsubsection{Divergent Pricing}
+\subsubsection{Divergent pricing}
 
-\subsubsection{Convergent Pricing}
+Service-providers may diverge from the dominant price point and offer lower prices in order to attract more business, in lieu of other options for a service-provider to differentiate themselves \footnote{One exception to the predominantly binary nature of NuCypher service quality is the latency with which request calls are answered. Thus an avenue for differentiation, besides price, may be the strategic placing of worker machines around the world paired with other optimisation (e.g. higher RAM). This will only be a fruitful differentiator if customers both need, and are optimising for, low-latency, and is a costly exercise if customers are not. This chicken-and-egg situation means latency differentiation of this sort will probably not occur in early epochs of the network.}. Customer perception of service ‘quality’ for a given engagement is relatively binary – a correct re-encryption or revocation is either delivered when expected, or it isn't. End-user tolerance of failed re-encryption on demand are likely to be near zero, hence customers may opt to simply blacklist unreliable service-providers rather than paying more for historically dependable service-providers. The pressure on service-providers to differentiate in some way is stronger in epochs of oversupply. Relatedly, service-providers may also attempt to undercut other service-providers and/or undermine their operational sustainability\footnote{Unlike in the traditional economy (particularly publicly traded companies), the finances and operational efficiency of other service-providers are highly opaque. Sacrificing revenue to put another service-provider out of business is an extraordinarily risky strategy, as they may have deeper pockets or other revenue streams that are unknowable).}.
+\\\\
+Service-providers may offer lower prices in order to serve a customer segment or addressable market that cannot currently afford to leverage the NuCypher service. Though this strategy may be motivated by the prospect of additional income on an individual level, widening the overall demand for the service is beneficial to the whole network. 
 
+\subsubsection{Convergent pricing}
+
+A key reason for service-providers to converge to the dominant or default price point is the serious lack of `relationship stickiness’ between customer and service-provider. Although some customers may configure their policies to persist for a long time (e.g. 1-2 years),  there is almost nothing preventing the customer switching to another service-provider once these policies have expired, if they need other policies prior to expiry, or even revoking the original policie if a cheaper service-provider emerges (and receiving a near-full refund). In other words there is zero customer `lock-in’, either contractually or in terms of time, effort or opportunity cost\footnote{For example, the costs associated with the time it takes a sales force to learn a new CRM interface}. This means that offering unsustainably low prices in an attempt to secure customer lock-in or loyalty is an irrational strategy.
+\\\\
+Undercutting strategies are difficult to acheive in practice because service-provider overheads are dominated by Ethereum gas costs, which are not malleable via economies of scale\footnote{If service-providers are allowed to mint their rewards with temporal flexibility, then there is greater scope for outperforming others by choosing the right moment for on-chain interactions (i.e. when gas prices are low). At the time of writing all service-providers must pay almost identical gas costs to receive subsidies, so greater operational efficiency is difficult to achieve.}. Thus, differentiation based on price can only go so far (i.e. as close as possible to the semi-universal minimum overheads) if it is to be sustainable. Price wars may involve service-providers running at a loss, which is very risky given the opacity of other service-provider balance sheets. 
+\\\\
+Service-providers may choose to maximise the predictability and stability of the service to customers. If many service-providers offer prices that imply unsustainable operations (below a given subsidy value), this inevitably necessitates future price rises, which risks irrevocable damage to the network. Customers with large sunk costs may suddenly, or even gradually, be unable to afford the service. Service-providers vested in the network's long-term success will seek to avoid this scenario, even the prospect of which could seriously hamper medium and long-term adoption.
+\\\\
+Finally, service-providers may converge simply because the majority of customers also do so. It is conceivable that application developers create a rule to only select service-providers at a lower-than-default price point, but this involves risk and proactivity and may be limited to a minority of sophisticated customers, especially in early epochs.
 
 
 \bibliography{pp}
