@@ -1,0 +1,245 @@
+\documentclass[longbibliography,nofootinbib]{revtex4-1}
+
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage[labelformat=parens,labelsep=quad, skip=3pt]{caption}
+\usepackage[usenames]{color}
+
+\usepackage{natbib}
+\bibliographystyle{unsrtnat}
+
+\renewcommand{\baselinestretch}{1.4}
+\setlength{\parskip}{1em}
+\definecolor{darkgreen}{rgb}{0.00,0.50,0.25}
+\definecolor{darkblue}{rgb}{0.00,0.00,0.67}
+\newcommand{\figref}[1]{Fig.~\ref{#1}}
+\usepackage[breaklinks,pdftitle={NuCypher Network: Pricing Protocol \& Economics}, pdfauthor={Arjun Hassard},colorlinks,urlcolor=blue,citecolor=darkgreen,linkcolor=darkblue]{hyperref}
+\graphicspath{{pdf/}}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\lstset{
+    basicstyle=\ttfamily,
+    basewidth={0.5em, 0.5em},
+    columns=fullflexible,
+}
+
+\begin{document}
+
+\title{NuCypher Network: Pricing Protocol \& Economics}
+
+\email{arjun@nucypher.com}
+\affiliation{NuCypher}
+
+\date{\today}
+\maketitle
+
+\section{Overview}
+\subsection{Motivation}
+
+The first products offered via the NuCypher network, dynamic access control and secrets management, are leveraged by developers to constitute a component of an application or information system’s underlying technology infrastructure. Through novel cryptography and a distributed network of independent service-providers, applications that have integrated NuCypher’s runtimes and interfaces may then support end-to-end encrypted data sharing between end-users and/or endpoints. These encrypted data sharing workflows are scalable, redundant, extensible, censorship-resistant, and verifiably protect the privacy of the application's end-users, a combination of value propositions that is unique in the digital service marketplace at the time of writing.
+\\\\
+Pricing the NuCypher service appropriately and expediently is not a straightforward exercise. Although end-to-end encryption has become so prevalent on mainstream digital platforms that in 2020 at least 4 billion user accounts are protected in this manner \cite{statista1}\cite{statista2}\cite{statista3}\cite{statista4}, it is not typically outsourced to a third-party in a commercial sense, and hence no well-known market price point or price structure for an ‘end-to-end encryption service’ exists. The products most similar to NuCypher’s access control and secrets management service, for which publicly available pricing exists, are cloud-based Key Management Systems (KMS), such as AWS KMS or Azure KeyVault. These provide a useful reference point for both the viability of certain price points and customer expectations or anchoring to certain price structures. Ultimately, cloud KMS products confer a quite different set of benefits to customers – they do not guarantee the protection of end-user privacy, nor resistance from censorship – and therefore competition-based pricing development is not a comprehensive strategy.
+\\\\
+Difficulties notwithstanding, appropriate pricing is critical for the network to flourish; to grow and retain the network’s user base, to support and sustain the network’s service-providers, and to maintain and improve the aforementioned value propositions. On the demand side, the service must be affordable to as many addressable customer segments as possible (or better, that price quotes match or improve upon their perceived value of the product). On the supplier side, the revenue generated for service-providers must sustain their operations at an achievable stage of network adoption (that is, a stage reached within a survivable timeframe). Thus, much of pricing development is evaluating these two primary requirements, and squaring the natural trade-off between them.
+
+\subsection{Network externalities \& two-sided market model}
+
+NuCypher’s pricing development must also account for the presence and evolution of network externalities. Customers benefit from increases to independent participation on the service-provider side, through, at the very least, gains in network security, redundancy and the geographical diversity of nodes (which can improve round-trip latency and choice of regulatory jurisdiction). Service-providers benefit from growth in the customer base, usage and the commensurate volume of fees paid into the network. Put simply, participation on one side of the network affects participation on the other – and hence we may model the network as a \textit{two-sided market}\footnote{A two-sided market is generally defined as one where the volume of transactions through the intermediary platform (or network) depend on the pricing \textit{decomposition} – i.e. the extent to which pricing and other economic levers are skewed to favor one side.}. This model enables the NuCypher community to draw insights from literature, and generate theoretical predictions of impact of certain pricing (and subsidy) structures. For example, Rochet \& Tirole's modification of the standard Lerner-index\footnote{Assuming an exchange of value between customers and service-providers by transacting through a platform, intermediary, digital market or decentralized protocol (hereafter referred to as the `intermediary'). In equation \ref{lerner}, $\eta^i$ is the elasticity of volume (demand) with respect to price on market-side $i$, $p^i$ is the per-transaction price charged to market-side $i$ by the intermediary, $p^j$ is the per-transaction price charged to market-side $j$ by the intermediary, and $c$ is the intermediary's marginal cost of facilitating the transaction. The intuition for this formula is that some non-trivial increase in the per-transaction price on side $i$ may result in the loss of at least one transaction. The extent of this loss, from the perspective of the intermediary, is fully captured with the \textit{opportunity cost} ($c - p^j$), which includes an additional loss of revenue that may have otherwise been extracted from side $j$ \cite{RTprogress}.} may be leveraged to optimally structure the network's pricing: 
+
+\begin{equation}
+\label{lerner}
+    \frac{p^i - (c - p^j)}{p^i} = \frac{1}{\eta^i}   
+\end{equation} \
+
+Unlike the commercial entities behind centralized two-sided markets (e.g. Uber, Microsoft/Xbox, Walmart.com), the NuCypher protocol does not extract a commission from service-providers or customers for transacting and exchanging value on the network. This means we cannot use off-the-shelf formulae that describe profit maximization of the intermediary platform itself, without some modification. Nonetheless, if any form of universal pricing is enforced by the NuCypher protocol, it is inevitable that the constraints will skew pricing to effectively favour one side of the market. Moreover, just like the aforementioned Uber, Microsoft and Walmart corporations, the NuCypher protocol heavily subsidizes service-provider operations. Subsidies are ‘paid for’ by a third group in NuCypher’s case, through the dilution of passive holders of the native token. Nonetheless, the subsidy mechanism still imposes an artificial economic influence and hence also skews the network’s effective pricing – though not necessarily in the same direction as universal pricing constraints (see section \ref{qup}).
+\\\\
+In other words, the NuCypher protocol includes features that efficaciously redistribute value from one side of the market to the other. Endogenous mechanisms of this sort, whether they arise from corporate strategy (in the case of a profit-maximizing digital platform) or governance-driven protocol updates (in the case of a minimally extractive decentralized network), are designed and implemented with the explicit intent of maximizing the volume of market transactions. Not only does the objective function of transaction volume maximization serve as a decent approximation of intermediary profit maximization, there are similar levers available to adjust the pricing decomposition (skew) – for example, lowering the maximum universal fee rate chargeable by all service-providers, thereby skewing the pricing towards favoring the customer side of the market. 
+\\\\
+Hence, in evaluating characteristics of the NuCypher network as part of pricing development, one must account for these skews, consider the impact of positive (and negative) network externalities, and treat the NuCypher network as a variety of two-sided digital market. 
+
+\subsection{Independent pricing (free market)} \label{fm}
+
+Given the permissionless, self-determining nature of service provision in decentralized networks, and the absence of profit maximization and marginal costs as formal objectives/attributes of the network itself, protocol designers may be tempted to leave the difficult task of pricing up to each individual service-provider. The consequences of mispricing will then fall on the shoulders of each independent operator – they’ll either adapt or die, but the network as a whole, boasting a diversity of prices and a replenishable array of service-providers, will survive. This is a reasonable assertion. Yet, a free market approach comes with a litany of issues: 
+\begin{itemize}
+    \item \textbf{Price instability}. The adoption of NuCypher by application developers necessitates irretrievable integration costs and a time lag between making the decision to integrate and commencing network usage. Adopters need a guarantee that the price quotes, on the basis of which they decide to leverage the service, do not change to such an extent by the time integration is complete that their application’s usage of the service is rendered unaffordable or undesirable. A free market, where service-providers can update their pricing whenever and however they want, does not provide this guarantee. 
+    \item \textbf{Multi-provider service coordination}. Typical usage of the NuCypher service necessitates concurrent work by multiple service-providers in order to be maximally secure and redundant. A free market, and higher variance in price points, increases procurement friction for customers and probabilistically increases the uniform fee they must pay to hire multiple service-providers. This feature of the NuCypher service also exacerbates the price stability problem, as it increases sensitivity to changes in pricing effectuated by some fraction of the service-provider population.
+    \item \textbf{Undercutting \& centralization}.  Fully independent pricing increases the scope of undercutting strategies, which generally favor deeper-pocketed or larger service-providers (through economies of scale and other advantaged) and therefore may cause or accelerate centralization trends. This problem is preempted by other decentralized networks, for example Ethereum; although gas pricing allows customers to expedite the execution of a transaction with a higher bid, the cost of computation and storage is fully standardised across opcodes (operations), which helps avoid further amplifying the advantage of more efficient, higher-resourced nodes \cite{ethgas}. 
+    \item \textbf{Lack of scope for product differentiation}. There is very little horizontal differentiation between the product offered by one service-provider running NuCypher software and the product offered by another\footnote{There may be some vertical differentiation through the geographical location of nodes and the associated latency and regulatory benefits. Whether this is a feature desired by network user remains to be empirically substantiated.}. Interoperability requirements between service-providers (essential for the multi-provider service mentioned above) mean there is limited scope and motivation to develop a differentiating feature that might be offered exclusively to users. This means that permitting price diversity is unlikely to benefit the network by fostering greater competition, raising service quality, or diversifying features. 
+    \item \textbf{Lack of scope for price discrimination}. Although in theory a service-provider could engage in price discrimination based on the funds in a customer’s wallet, this strategy is unlikely to succeed given the near-zero information asymmetry and near-zero switching costs. There is also research asserting that price discrimination in two-sided markets weakens rather than bolsters competition \cite{discrim}. Thus, permitting or encouraging the practice of price discrimination is unlikely to benefit the overall service.
+\end{itemize}
+
+\subsection{Quasi-universal pricing} \label{qup}
+
+\textit{Universal pricing} – a single price point for a standardized service unit, dictated by the protocol and adhered to by both users and service-providers without exception – addresses the problems listed in section \ref{fm}. 
+\\\\
+A major disadvantage of this approach is that the first few attempts to parametrize the price points will almost certainly be non-optimal. Prior to network launch there are major unknowns; including the value perception of the service and the prospective customers whose infrastructure budgets constrain their decision-making. Post-launch, this insight will slowly surface over time, anecdotally (e.g. customer integration announcements) and via network statistics (e.g. growth in daily transactions over time). Even so, unknowns about the \textit{next set} of would-be customer attributes will persist, which means a more robust solution is preferable: 
+\\\\
+Firstly, by instituting a global fee range (‘quasi-universal pricing’), within which all service-providers’ individually chosen minimum price points must fall. This broadens the protocol's corrective power. Service-providers holding diverse views on price optimality will reflect this in their individual parameters, and may rapidly toggle these price points in response to changing circumstances or new market information.
+\\\\
+Secondly, by actively encouraging and enabling the regular modification of the global fee range through governance channels – including widening, narrowing and changing the bounds of the range in absolute terms. This exercise of collectively setting price constraints confers service-providers a window into the operational efficiency of others, as well as their views on critical considerations for pricing – e.g. the maximum price a target customer segment will tolerate. This information will surface via provider-authored proposals, community debate and upgrade proposal (in)validation. 
+\\\\
+These two mitigating modifications to universal pricing harness some of the crowd wisdom of the free market, without succumbing to the disadvantages of fully independent pricing explored above. In particular, tuning the width of the global fee range to account for this trade-off must be a regular community activity – see section \ref{width} for an extensive introduction to this topic. 
+
+\subsection{Service unit \& payment} \label{su}
+
+In order for a global fee range to work in practice, NuCypher’s base unit of service must be defined, standardized and universally followed. At network launch, a customer will pay for dynamic access control and secrets management with the following attributes, together comprising the minimum chargeable unit: 
+\begin{itemize}
+    \item Per sharing policy
+    \begin{itemize}
+        \item Unique data controller (\textit{Alice})
+        \item Unique designated recipient (\textit{Bob})
+        \item Unique file directory address\footnote{No limit on the number or size of files stored at this address.} (\textit{label})
+    \end{itemize}
+    \item Per 24-hour period
+    \item Per service-provider
+    \begin{itemize}
+        \item Unique worker address (\textit{Ursula})
+    \end{itemize}
+\end{itemize}
+
+Note that this service unit does not include the number of access or re-encryption requests made to the service-providers managing the sharing policy whilst it is active, nor does it take into account the variation in the computational costs of re-encrypting. Although this service unit delineation is imperfect, the primary price-determining input for this service unit is rather simple: \textit{duration}. This input aligns with the primary cost-determining input for service-provider operations, in that the main overheads are infrastructural (e.g. hosting) and periodic chain interactions (i.e. gas costs), both of which are dependent on time. In other words, servicing a longer sharing policy costs more, and is compensated accordingly.
+
+\section{Reconciling demand-side \& service-side constraints} \label{dvss}
+
+Given our definition of the network's primary service unit in section \ref{su}, we may now derive expressions, constructed from an overlapping variable set, to describe and process key budgetary constraints for the demand-side (users/developers) and service-side (service-providers).
+\\\\
+On the demand-side, we describe the annual cost per user ($ACPU$). This is a critical balance sheet overhead for the developers of digital applications and information systems, which will likely comprise the bulk of NuCypher network adopters.
+
+\begin{equation}
+    ACPU = F_{pp} \cdot P_a \cdot P_d \cdot n  
+\end{equation} \
+
+$F_{pp}$ is the standardized cost of a single service unit – the fee users pay per sharing policy, per period, per worker\footnote{For this exercise we assume the fee parameter is a global invariant enforced by the network protocol.}.
+
+$P_a$ is the mean number of sharing policies generated by a single end-user of the application, annually.
+
+$P_d$ is the mean duration of all sharing policies created by all end-users of the application, in periods.|
+
+$n$ is the mean number of service-providers assigned to each sharing policy.
+\\\\
+If we wish to include the main third-party costs of using the service, then the $ACPU$ is modified to: 
+
+\begin{equation}
+    ACPU =  P_a \cdot \big((F_{pp} \cdot P_d \cdot n) + G\big)
+\end{equation} \
+
+$G$ is the cost in Ethereum gas of creating a single sharing policy (`granting'). This cost may be internalized into the transaction through a discounted fee rate\footnote{It must be noted that since gas costs are per policy, there are end-user behavior scenarios in which the cost of gas far exceeds the total fees generated by those end-users' sharing policies. In other words, fees may absorb some of the cost of granting, but only until a certain point (with respect to $P_a$). This hypothetical discount must also take into account fluctuations in average gas prices, and the acceptable maximum duration for the grant function to execute (i.e. the choice of gas price), which depends on the use case.}.
+\\\\
+On the service-side, we describe the annual revenue (AR) generated by serving the NuCypher network – a standard balance sheet metric for any commercial entity, and therefore all NuCypher service-providers. 
+
+\begin{equation}
+    AR = \frac{(ACPU - P_a \cdot G ) \cdot U_t}{S_t \cdot n} =  \frac{F_{pp} \cdot P_a \cdot P_d \cdot U_t}{S_t}
+\end{equation} \
+    
+$U_t$ is the total number of end-users, spread across all adopting applications and systems, using the NuCypher network at a given moment in time. We assume their behavior is perfectly uniform with respect to $P_a$ and $P_d$. $S_t$ is the total number of service-providers supporting the NuCypher network\footnote{It is assumed for the purposes of this exercise that all service-providers receive an equal cut of total work allocation and fee revenue. In reality work allocation is probabilistic and weighted by relative stake size.}.
+\\\\
+Using the variable $ACPU_{max}$ (the highest sum, per end-user, per year, an addressable customer segment is willing and able to pay), we now have an expression for the maximum chargeable fee from a demand-side perspective $F_{Dpp}$. 
+
+\begin{equation}
+\label{FDPP}
+    F_{Dpp} = \frac{ACPU_{max}}{P_a \cdot P_d \cdot n}
+\end{equation} \
+
+If fees are discounted to absorb the gas costs of creating a sharing policy, then the maximum fee would be modified to the following: 
+
+\begin{equation}
+    F_{Dpp} = \frac{ACPU_{max} - (P_a \cdot G)}{P_a \cdot P_d \cdot n}
+\end{equation} \
+
+Using the variable $AR_{min}$, the lowest sum of annual revenue a service-provider is willing or able to tolerate, we now have an expression for the minimum fee per service unit from a service side perspective $F_{Spp}$\footnote{Note that although $n$ cancels out in this expression, it still affects $F_{Dpp}$ above, which it is a determinant of the demand function (the uptake of the service at various prices), and therefore indirectly affects service-side revenue.}.
+
+\begin{equation}
+\label{FSPP}
+    F_{Spp} = \frac{AR_{min \cdot S_t}}{P_a \cdot P_d \cdot U_t}
+\end{equation} \ 
+
+To illustrate the utility of these expressions, we estimate fiat figures for $ACPU_{max}$ and $AR_{min}$, and test these with estimates for the other variables in equations \ref{FDPP} and \ref{FSPP}. The figures below are provisional and will change with further use case analysis, increasing insight into NuCypher customer priorities, behavior and budgets, service-providers' evolving operational efficiencies, and other network statistics available post-launch.
+\\
+
+$ACPU_{max}$: \$0.50 developer budget per end-user per year for the NuCypher service
+
+$AR_{min}$: \$1,500 earned per year by each NuCypher service-provider
+\\
+
+$S_t$: 50 total service-providers
+
+$U_t$: 100,000 total users
+
+$P_a$: 52 policies per year (mean)
+
+$P_d$: 90 periods per policy (mean)
+
+$n$: 5 service-providers per policy (mean)
+\\\\
+These estimates yield a demand-driven $F_{Dpp}$ of \$2.14E-05 (67 GWEI) and a service-side $F_{Spp}$ of \$1.60E-04 (504 GWEI)\footnote{Note that the GWEI conversions are based on the 100-day rolling average of the ETHUSD exchange rate of \$318, as of October 14th, 2020.}. If we were to use $F_{Dpp}$ as our universal price point, ceteris paribus, service-providers would earn approximately \$200 annually. If we were to use $F_{Spp}$ the average cost imposed on developers (per user, per year) would be approximately \$3.75. 
+\\\\
+Though we have computed potential fee rates with very rough projections, this framework can be utilized to understand and reconcile the trade-off between $ACPU_{max}$ and $AR_{min}$. Therefore, the respective `extremes' of $F_{Dpp}$ and $F_{Spp}$ are a natural starting point for the global fee range. As the true values of $ACPU_{max}$ and $AR_{min}$ become elucidated, the global fee range boundaries should be adjusted accordingly. 
+\\\\
+A final variable we may now project is the number of total network users – i.e. in order to see what level of adoption the network needs to reach for the provisional constraints $ACPU_{max}$ and $AR_{min}$ to \textit{both} be satisfied.
+
+\begin{equation}
+     \frac{ACPU_{max}}{P_a \cdot P_d \cdot n} = \frac{AR_{min \cdot S_t}}{P_a \cdot P_d \cdot U_t}
+\end{equation}
+
+\begin{equation}
+     U_t = \frac{AR_{min} \cdot S_t \cdot n}{ACPU_{max}} = 750,000 
+\end{equation}. \\
+
+\section{Quasi-Universal Pricing}
+
+\subsection{Global fee range}
+
+When service-providers join the network, they specify a \textit{minimum fee rate}, on a per sharing policy and per 24h period basis, that their machine(s) will accept at the point of engagement with a network user. If the user’s offered per period rate for a specified policy duration computes as equal to or greater than the minimum fee rate, the sharing policy will be accepted by the service-provider and the access control service will commence. They service the sharing policy by being online and answering access requests, at that unchanging per period fee rate, until the specified policy expiration date or an early revocation is instigated by the user.
+\\\\
+The \textit{global fee range} is a means of establishing quasi-universal pricing for the NuCypher service. \textbf{The minimum fee rate chosen by each service-provider must fall within the global fee range.} Hence, the global fee range is adhered to in identical fashion by all service-providers, regardless of their stake size or capacity. The fee range also applies to all sharing policies, irrespective of the volume of re-encryption requests or other distinguishing attributes. Finally, the global fee range applies consistently to all periods in the future, up until the period in which the global fee range’s parameters are adjusted or the range is removed via official governance processes. 
+\\\\
+Note that network users are technically free to offer and pay any fee rate they wish. However, users are able to discover all the fee rates available to them, by retrieving the list of active service-provider addresses, then querying the function `getMinFeeRate' in a public contract. Hence, there is little information asymmetry that could be leveraged to overcharge users.  
+
+\subsection{Determining the width and position of the global fee range} \label{width}
+
+In parametrizing the global fee range, there are at least two trade-offs to analyse and resolve. Firstly, the \textbf{width} of the range must find the optima amongst the advantages and disadvantages of heterogeneous and homogeneous pricing. Greater price freedom brings greater self-correcting power, but also the potential for greater friction for adopting developers and network users. Secondly, with respect to the \textbf{absolute price figures} chosen as the range's upper and lower bound, a balance must be struck between the extremes of 1) unaffordability for early customers leading to low demand, and 2) unsustainability for service-providers leading to low participation. This second trade-off is formally described in section \ref{dvss}. 
+\\\\
+Notably, the protocol's subsidy mechanism is designed to steadily support service-providers for the first 5 to 8 years – conferring the community an extended window to trial various fee range parameters.
+
+\subsubsection{Case for a wider global fee range}
+
+Given limited insight into future customer budgets, willingness-to-pay and end-user behavior (for example, how many sharing policies an adopting platform's end-users will create per month), the range's parameters are likely to be non-optimal at network launch. The corollary to this is further uncertainty surrounding the characteristics of demand, including its volume, growth, retention and elasticity (with respect to price). A wider range allows greater scope for individual, quick correction instead of collective, slower intervention.
+\\\\
+Regardless of the actual breakdown of future customer budgets and requirements, reducing the lower bound’s absolute value will capture a larger set of use cases and market segments, that otherwise are unable to afford the service. 
+
+\subsubsection{Case for a narrower global fee range}
+
+Adopting the NuCypher service involves irretrievable integration costs, plus a time lag between making the decision to integrate and the commencement (and first payment for) network usage. Sensible customers need as strong a guarantee as possible that the available price quotes with which they decided to adopt the service do not rise unreasonably by the time integration is complete, rendering their usage of the network (and its unique attributes) unaffordable or undesirable. The wider the range, and the greater pricing freedom bestowed to service-providers, the less strategic certainty bestowed to prospective network users.
+\\\\
+Aspects of NuCypher services necessitate concurrent work by multiple service-providers in order to be maximally secure and redundant. A wider price range, and consequently higher variance in acceptable price points amongst service-providers, increases engagement friction for customers. One option is to broadcast an inflated rate via the service-provider selection algorithm in order to guarantee acceptance of service, which means paying most service-providers more than their stated minimum rate. Alternatively, a customer might hand-pick service-providers they know are affordable – though their rates may have changed since last engagement. Finally, a customer might attempt to manually pay service-providers different rates – although this is not supported by the selection algorithm at the time of writing. The greater the variance in price points, the more difficult, more expensive, and higher-latency the engagement flow becomes, possibly requiring manual intervention by the customer following failed engagements.
+\\\\
+A tighter range increases the predictability/stability of the service to customers over the long-term. For example, a very low lower bound enables service-providers to offer prices that are operationally unsustainable below a given subsidy value, which almost inevitably necessitates price rises later. This risks irrevocable damage to the network if customers with large sunk costs and technical dependence on the service are suddenly, or even gradually, are unable to afford it. 
+
+
+\subsection{Pricing strategies}
+
+Setting a price point, even within a tight range, requires the evaluation and weighting of many factors against one another. Many of these considerations are unique to the staker, such as their ongoing operational costs, economy of scale (e.g. through participation in other networks) and participation timeframe. However, the most important factors to consider pertain to the holistic service from the perspective of network users – for example, the affordability, congruency, and stability, of all offered price points – i.e. how probable it is that prices remain affordable to a developer after they are irreversibly committed to integrating NuCypher access control into their application’s technology stack.
+
+\subsubsection{Divergent pricing}
+
+Service-providers may diverge from the dominant price point and offer lower prices in order to attract more business, in lieu of other options for a service-provider to differentiate themselves\footnote{One exception to the predominantly binary nature of NuCypher service quality is the latency with which request calls are answered. Thus an avenue for differentiation, besides price, may be the strategic placing of worker machines around the world paired with other optimisation (e.g. higher RAM). This will only be a fruitful differentiator if customers both need, and are optimising for, low-latency, and is a costly exercise if customers are not. This chicken-and-egg situation means latency differentiation of this sort will probably not occur in early epochs of the network.}. Customer perception of service ‘quality’ for a given engagement is relatively binary – a correct re-encryption or revocation is either delivered when expected, or it isn't. End-user tolerance of failed re-encryption on demand are likely to be near zero, hence customers may opt to simply blacklist unreliable service-providers rather than paying more for historically dependable service-providers. The pressure on service-providers to differentiate in some way is stronger in epochs of oversupply. Relatedly, service-providers may also attempt to undercut other service-providers and/or undermine their operational sustainability\footnote{Unlike in the traditional economy (particularly publicly traded companies), the finances and operational efficiency of other service-providers are highly opaque. Sacrificing revenue to put another service-provider out of business is an extraordinarily risky strategy, as they may have deeper pockets or other revenue streams that are unknowable.}.
+\\\\
+Service-providers may offer lower prices in order to serve a customer segment or addressable market that cannot currently afford to leverage the NuCypher service. Though this strategy may be motivated by the prospect of additional income on an individual level, widening the overall demand for the service is beneficial to the whole network. 
+
+\subsubsection{Convergent pricing}
+
+A key reason for service-providers to converge to the dominant or default price point is the serious lack of `relationship stickiness’ between customer and service-provider. Although some customers may configure their policies to persist for a long time (e.g. 1-2 years),  there is almost nothing preventing the customer switching to another service-provider once these policies have expired, if they need other policies prior to expiry, or even revoking the original policies if a cheaper service-provider emerges (and receiving a near-full refund). In other words there is zero customer `lock-in’, either contractually or in terms of time, effort or opportunity cost\footnote{For example, the costs associated with the time it takes a sales force to learn a new CRM interface}. This means that offering unsustainably low prices in an attempt to secure customer lock-in or loyalty is an irrational strategy.
+\\\\
+Undercutting strategies are difficult to achieve in practice because service-provider overheads are dominated by Ethereum gas costs, which are not malleable via economies of scale\footnote{If service-providers are allowed to mint their rewards with temporal flexibility, then there is greater scope for outperforming others by choosing the right moment for on-chain interactions (i.e. when gas prices are low). At the time of writing all service-providers must pay almost identical gas costs to receive subsidies, so greater operational efficiency is difficult to achieve.}. Thus, differentiation based on price can only go so far (i.e. as close as possible to the almost universal minimum overheads) if it is to be sustainable. Price wars may involve service-providers running at a loss, which is very risky given the opacity of other service-provider balance sheets. 
+\\\\
+Service-providers may choose to maximise the predictability and stability of the service to customers. If many service-providers offer prices that imply unsustainable operations (once subsidies dry up), this inevitably necessitates future price rises. Any prospect of price hikes risks damage to the network. Customers with large sunk costs may suddenly, or even gradually, be unable to afford the service. Service-providers vested in the network's long-term success will seek to avoid this scenario, even the prospect of which could seriously hamper medium and long-term adoption.
+\\\\
+Finally, service-providers may converge simply because the majority of customers also do so. It is conceivable that application developers create a rule to only select service-providers at a lower-than-default price point, but this involves risk and proactivity and may be limited to a minority of sophisticated customers, especially in early epochs.
+
+
+\bibliography{pp}
+
+\end{document}
